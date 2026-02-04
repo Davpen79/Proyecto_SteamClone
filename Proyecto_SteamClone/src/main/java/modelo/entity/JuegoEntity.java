@@ -4,17 +4,17 @@ import enums.TipoCategoriaJuego;
 import enums.TipoClasificacionEdades;
 import enums.TipoEstadoJuego;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 public class JuegoEntity {
 
     //Atributos
-    private int idJuego;
+    private long idJuego;
     private String tituloJuego;
     private String descripcionJuego;
     private String desarrolladorJuego;
-    private LocalDate fechaLanzaJuego;
+    private LocalDateTime fechaLanzaJuego;
     private double precioBaseJuego;
     private int descuentoActualJuego;
     private TipoCategoriaJuego categoriaJuego;
@@ -23,7 +23,7 @@ public class JuegoEntity {
     private TipoEstadoJuego estadoJuego;
 
     //Constructor
-    public JuegoEntity(int idJuego, String tituloJuego, String descripcionJuego, String desarrolladorJuego, LocalDate fechaLanzaJuego, double precioBaseJuego, int descuentoActualJuego, TipoCategoriaJuego categoriaJuego, TipoClasificacionEdades clasEdadJuego, ArrayList idiomasJuego, TipoEstadoJuego estadoJuego) {
+    public JuegoEntity(long idJuego, String tituloJuego, String descripcionJuego, String desarrolladorJuego, LocalDateTime fechaLanzaJuego, double precioBaseJuego, int descuentoActualJuego, TipoCategoriaJuego categoriaJuego, TipoClasificacionEdades clasEdadJuego, ArrayList idiomasJuego, TipoEstadoJuego estadoJuego) {
         this.idJuego = idJuego;
         this.tituloJuego = tituloJuego;
         this.descripcionJuego = descripcionJuego;
@@ -39,7 +39,7 @@ public class JuegoEntity {
 
     //Getters y Setters
 
-    public int getIdJuego() {
+    public long getIdJuego() {
         return idJuego;
     }
 
@@ -71,11 +71,11 @@ public class JuegoEntity {
         this.desarrolladorJuego = desarrolladorJuego;
     }
 
-    public LocalDate getFechaLanzaJuego() {
+    public LocalDateTime getFechaLanzaJuego() {
         return fechaLanzaJuego;
     }
 
-    public void setFechaLanzaJuego(LocalDate fechaLanzaJuego) {
+    public void setFechaLanzaJuego(LocalDateTime fechaLanzaJuego) {
         this.fechaLanzaJuego = fechaLanzaJuego;
     }
 

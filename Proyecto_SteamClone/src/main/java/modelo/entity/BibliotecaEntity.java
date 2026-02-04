@@ -3,20 +3,21 @@ package modelo.entity;
 import enums.TipoEstadoInstalacion;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public class BibliotecaEntity {
 
     //Atributos
-    private int idBiblio;
+    private long idBiblio;
     private int idUsuarioBiblio;
     private int idJuegoBiblio;
-    private LocalDate fechaCompraJuegoBiblio;
+    private LocalDateTime fechaCompraJuegoBiblio;
     private double tiempoJuegoBiblio;
-    private LocalDate ultiFechaJuegoBiblio;
+    private LocalDateTime ultiFechaJuegoBiblio;
     private TipoEstadoInstalacion estadoInstJuegoBiblio;
 
     //Constructor
-    public BibliotecaEntity(int idBiblio, int idUsuarioBiblio, int idJuegoBiblio, LocalDate fechaCompraJuegoBiblio, double tiempoJuegoBiblio, LocalDate ultiFechaJuegoBiblio, TipoEstadoInstalacion estadoInstJuegoBiblio) {
+    public BibliotecaEntity(long idBiblio, int idUsuarioBiblio, int idJuegoBiblio, LocalDateTime fechaCompraJuegoBiblio, double tiempoJuegoBiblio, LocalDateTime ultiFechaJuegoBiblio, TipoEstadoInstalacion estadoInstJuegoBiblio) {
         this.idBiblio = idBiblio;
         this.idUsuarioBiblio = idUsuarioBiblio;
         this.idJuegoBiblio = idJuegoBiblio;
@@ -28,7 +29,7 @@ public class BibliotecaEntity {
 
     //Getters y Setters
 
-    public int getIdBiblio() {
+    public long getIdBiblio() {
         return idBiblio;
     }
 
@@ -52,11 +53,11 @@ public class BibliotecaEntity {
         this.idJuegoBiblio = idJuegoBiblio;
     }
 
-    public LocalDate getFechaCompraJuegoBiblio() {
+    public LocalDateTime getFechaCompraJuegoBiblio() {
         return fechaCompraJuegoBiblio;
     }
 
-    public void setFechaCompraJuegoBiblio(LocalDate fechaCompraJuegoBiblio) {
+    public void setFechaCompraJuegoBiblio(LocalDateTime fechaCompraJuegoBiblio) {
         this.fechaCompraJuegoBiblio = fechaCompraJuegoBiblio;
     }
 
@@ -68,11 +69,11 @@ public class BibliotecaEntity {
         this.tiempoJuegoBiblio = tiempoJuegoBiblio;
     }
 
-    public LocalDate getUltiFechaJuegoBiblio() {
+    public LocalDateTime getUltiFechaJuegoBiblio() {
         return ultiFechaJuegoBiblio;
     }
 
-    public void setUltiFechaJuegoBiblio(LocalDate ultiFechaJuegoBiblio) {
+    public void setUltiFechaJuegoBiblio(LocalDateTime ultiFechaJuegoBiblio) {
         this.ultiFechaJuegoBiblio = ultiFechaJuegoBiblio;
     }
 

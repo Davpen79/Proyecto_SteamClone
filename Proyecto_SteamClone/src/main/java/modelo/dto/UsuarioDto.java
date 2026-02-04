@@ -2,28 +2,26 @@ package modelo.dto;
 
 import enums.TipoEstadoCuenta;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public class UsuarioDto {
     //Atributos
-    private int idUsuario;
+    private long idUsuario;
     private String nombreCuentaUsuario;
     private String emailUsuario;
-    //private String passwordUsuario;
     private String nombreRealUsuario;
     private String paisUsuario;
-    private LocalDate fechaNacUsuario;
-    private LocalDate fechaRegUsuario;
+    private LocalDateTime fechaNacUsuario;
+    private LocalDateTime fechaRegUsuario;
     private String avatarUsuario;
     private double saldoUsuario;
     private TipoEstadoCuenta estadoCuentaUsuario;
 
     //Constructor
-    public UsuarioDto(int idUsuario, String nombreCuentaUsuario, String emailUsuario, String nombreRealUsuario, String paisUsuario, LocalDate fechaNacUsuario, LocalDate fechaRegUsuario, String avatarUsuario, double saldoUsuario, TipoEstadoCuenta estadoCuentaUsuario) {
+    public UsuarioDto(long idUsuario, String nombreCuentaUsuario, String emailUsuario, String nombreRealUsuario, String paisUsuario, LocalDateTime fechaNacUsuario, LocalDateTime fechaRegUsuario, String avatarUsuario, double saldoUsuario, TipoEstadoCuenta estadoCuentaUsuario) {
         this.idUsuario = idUsuario;
         this.nombreCuentaUsuario = nombreCuentaUsuario;
         this.emailUsuario = emailUsuario;
-        //this.passwordUsuario = passwordUsuario;
         this.nombreRealUsuario = nombreRealUsuario;
         this.paisUsuario = paisUsuario;
         this.fechaNacUsuario = fechaNacUsuario;
@@ -34,7 +32,7 @@ public class UsuarioDto {
     }
 
     //Getters y Setters
-    public int getIdUsuario() {
+    public long getIdUsuario() {
         return idUsuario;
     }
 
@@ -58,14 +56,6 @@ public class UsuarioDto {
         this.emailUsuario = emailUsuario;
     }
 
-    //public String getPasswordUsuario() {
-    //    return passwordUsuario;
-    //}
-
-    //public void setPasswordUsuario(String passwordUsuario) {
-    //    this.passwordUsuario = passwordUsuario;
-    //}
-
     public String getNombreRealUsuario() {
         return nombreRealUsuario;
     }
@@ -82,19 +72,19 @@ public class UsuarioDto {
         this.paisUsuario = paisUsuario;
     }
 
-    public LocalDate getFechaNacUsuario() {
+    public LocalDateTime getFechaNacUsuario() {
         return fechaNacUsuario;
     }
 
-    public void setFechaNacUsuario(LocalDate fechaNacUsuario) {
+    public void setFechaNacUsuario(LocalDateTime fechaNacUsuario) {
         this.fechaNacUsuario = fechaNacUsuario;
     }
 
-    public LocalDate getFechaRegUsuario() {
+    public LocalDateTime getFechaRegUsuario() {
         return fechaRegUsuario;
     }
 
-    public void setFechaRegUsuario(LocalDate fechaRegUsuario) {
+    public void setFechaRegUsuario(LocalDateTime fechaRegUsuario) {
         this.fechaRegUsuario = fechaRegUsuario;
     }
 

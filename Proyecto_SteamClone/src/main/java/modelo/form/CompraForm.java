@@ -3,21 +3,21 @@ package modelo.form;
 import enums.TipoEstadoCompra;
 import enums.TipoMetodoPago;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public class CompraForm {
 
     //Atributos
-    private int idUsuarioCompra;
+    private long idUsuarioCompra;
     private int idJuegoCompra;
-    private LocalDate fechaCompra;
+    private LocalDateTime fechaCompra;
     private TipoMetodoPago tipoPagoCompra;
     private double precioBaseCompra;
     private int descuentoEnCompra;
     private TipoEstadoCompra estadoCompra;
 
     //Constructor
-    public CompraForm(int idUsuarioCompra, int idJuegoCompra, LocalDate fechaCompra, TipoMetodoPago tipoPagoCompra, double precioBaseCompra, int descuentoEnCompra, TipoEstadoCompra estadoCompra) {
+    public CompraForm(long idUsuarioCompra, int idJuegoCompra, LocalDateTime fechaCompra, TipoMetodoPago tipoPagoCompra, double precioBaseCompra, int descuentoEnCompra, TipoEstadoCompra estadoCompra) {
         this.idUsuarioCompra = idUsuarioCompra;
         this.idJuegoCompra = idJuegoCompra;
         this.fechaCompra = fechaCompra;
@@ -29,7 +29,7 @@ public class CompraForm {
 
     //Getters y Setters
 
-    public int getIdUsuarioCompra() {
+    public long getIdUsuarioCompra() {
         return idUsuarioCompra;
     }
 
@@ -45,11 +45,11 @@ public class CompraForm {
         this.idJuegoCompra = idJuegoCompra;
     }
 
-    public LocalDate getFechaCompra() {
+    public LocalDateTime getFechaCompra() {
         return fechaCompra;
     }
 
-    public void setFechaCompra(LocalDate fechaCompra) {
+    public void setFechaCompra(LocalDateTime fechaCompra) {
         this.fechaCompra = fechaCompra;
     }
 

@@ -1,29 +1,28 @@
 package modelo.dto;
 
-import enums.TipoCategoriaJuego;
 import enums.TipoClasificacionEdades;
 import enums.TipoEstadoJuego;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 public class JuegoDto {
 
     //Atributos
-    private int idJuego;
+    private long idJuego;
     private String tituloJuego;
     private String descripcionJuego;
     private String desarrolladorJuego;
-    private LocalDate fechaLanzaJuego;
+    private LocalDateTime fechaLanzaJuego;
     private double precioBaseJuego;
     private int descuentoActualJuego;
-    private TipoCategoriaJuego categoriaJuego;
+    private String categoriaJuego;
     private TipoClasificacionEdades clasEdadJuego;
     private ArrayList idiomasJuego;
     private TipoEstadoJuego estadoJuego;
 
     //Constructor
-    public JuegoDto(int idJuego, String tituloJuego, String descripcionJuego, String desarrolladorJuego, LocalDate fechaLanzaJuego, double precioBaseJuego, int descuentoActualJuego, TipoCategoriaJuego categoriaJuego, TipoClasificacionEdades clasEdadJuego, ArrayList idiomasJuego, TipoEstadoJuego estadoJuego) {
+    public JuegoDto(long idJuego, String tituloJuego, String descripcionJuego, String desarrolladorJuego, LocalDateTime fechaLanzaJuego, double precioBaseJuego, int descuentoActualJuego, String categoriaJuego, TipoClasificacionEdades clasEdadJuego, ArrayList idiomasJuego, TipoEstadoJuego estadoJuego) {
         this.idJuego = idJuego;
         this.tituloJuego = tituloJuego;
         this.descripcionJuego = descripcionJuego;
@@ -39,7 +38,7 @@ public class JuegoDto {
 
     //Getters y Setters
 
-    public int getIdJuego() {
+    public long getIdJuego() {
         return idJuego;
     }
 
@@ -71,11 +70,11 @@ public class JuegoDto {
         this.desarrolladorJuego = desarrolladorJuego;
     }
 
-    public LocalDate getFechaLanzaJuego() {
+    public LocalDateTime getFechaLanzaJuego() {
         return fechaLanzaJuego;
     }
 
-    public void setFechaLanzaJuego(LocalDate fechaLanzaJuego) {
+    public void setFechaLanzaJuego(LocalDateTime fechaLanzaJuego) {
         this.fechaLanzaJuego = fechaLanzaJuego;
     }
 
@@ -95,11 +94,11 @@ public class JuegoDto {
         this.descuentoActualJuego = descuentoActualJuego;
     }
 
-    public TipoCategoriaJuego getCategoriaJuego() {
+    public String getCategoriaJuego() {
         return categoriaJuego;
     }
 
-    public void setCategoriaJuego(TipoCategoriaJuego categoriaJuego) {
+    public void setCategoriaJuego(String categoriaJuego) {
         this.categoriaJuego = categoriaJuego;
     }
 

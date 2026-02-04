@@ -2,7 +2,7 @@ package modelo.form;
 
 import enums.TipoEstadoCuenta;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,14 +13,14 @@ public class UsuarioForm {
     //private String passwordUsuario;
     private String nombreRealUsuario;
     private String paisUsuario;
-    private LocalDate fechaNacUsuario;
-    private LocalDate fechaRegUsuario;
+    private LocalDateTime fechaNacUsuario;
+    private LocalDateTime fechaRegUsuario;
     private String avatarUsuario;
     private double saldoUsuario;
     private TipoEstadoCuenta estadoCuentaUsuario;
 
     //Constructor
-    public UsuarioForm(String nombreCuentaUsuario, String emailUsuario, String nombreRealUsuario, String paisUsuario, LocalDate fechaNacUsuario, LocalDate fechaRegUsuario, String avatarUsuario, double saldoUsuario, TipoEstadoCuenta estadoCuentaUsuario) {
+    public UsuarioForm(String nombreCuentaUsuario, String emailUsuario, String nombreRealUsuario, String paisUsuario, LocalDateTime fechaNacUsuario, LocalDateTime fechaRegUsuario, String avatarUsuario, double saldoUsuario, TipoEstadoCuenta estadoCuentaUsuario) {
         this.nombreCuentaUsuario = nombreCuentaUsuario;
         this.emailUsuario = emailUsuario;
         //this.passwordUsuario = passwordUsuario;
@@ -74,19 +74,19 @@ public class UsuarioForm {
         this.paisUsuario = paisUsuario;
     }
 
-    public LocalDate getFechaNacUsuario() {
+    public LocalDateTime getFechaNacUsuario() {
         return fechaNacUsuario;
     }
 
-    public void setFechaNacUsuario(LocalDate fechaNacUsuario) {
+    public void setFechaNacUsuario(LocalDateTime fechaNacUsuario) {
         this.fechaNacUsuario = fechaNacUsuario;
     }
 
-    public LocalDate getFechaRegUsuario() {
+    public LocalDateTime getFechaRegUsuario() {
         return fechaRegUsuario;
     }
 
-    public void setFechaRegUsuario(LocalDate fechaRegUsuario) {
+    public void setFechaRegUsuario(LocalDateTime fechaRegUsuario) {
         this.fechaRegUsuario = fechaRegUsuario;
     }
 

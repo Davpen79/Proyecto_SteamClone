@@ -4,7 +4,7 @@ import enums.TipoCategoriaJuego;
 import enums.TipoClasificacionEdades;
 import enums.TipoEstadoJuego;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 public class JuegoForm {
@@ -13,7 +13,7 @@ public class JuegoForm {
     private String tituloJuego;
     private String descripcionJuego;
     private String desarrolladorJuego;
-    private LocalDate fechaLanzaJuego;
+    private LocalDateTime fechaLanzaJuego;
     private double precioBaseJuego;
     private int descuentoActualJuego;
     private TipoCategoriaJuego categoriaJuego;
@@ -22,7 +22,7 @@ public class JuegoForm {
     private TipoEstadoJuego estadoJuego;
 
     //Constructor
-    public JuegoForm(String tituloJuego, String descripcionJuego, String desarrolladorJuego, LocalDate fechaLanzaJuego, double precioBaseJuego, int descuentoActualJuego, TipoCategoriaJuego categoriaJuego, TipoClasificacionEdades clasEdadJuego, ArrayList idiomasJuego, TipoEstadoJuego estadoJuego) {
+    public JuegoForm(String tituloJuego, String descripcionJuego, String desarrolladorJuego, LocalDateTime fechaLanzaJuego, double precioBaseJuego, int descuentoActualJuego, TipoCategoriaJuego categoriaJuego, TipoClasificacionEdades clasEdadJuego, ArrayList idiomasJuego, TipoEstadoJuego estadoJuego) {
         this.tituloJuego = tituloJuego;
         this.descripcionJuego = descripcionJuego;
         this.desarrolladorJuego = desarrolladorJuego;
@@ -61,11 +61,11 @@ public class JuegoForm {
         this.desarrolladorJuego = desarrolladorJuego;
     }
 
-    public LocalDate getFechaLanzaJuego() {
+    public LocalDateTime getFechaLanzaJuego() {
         return fechaLanzaJuego;
     }
 
-    public void setFechaLanzaJuego(LocalDate fechaLanzaJuego) {
+    public void setFechaLanzaJuego(LocalDateTime fechaLanzaJuego) {
         this.fechaLanzaJuego = fechaLanzaJuego;
     }
 
