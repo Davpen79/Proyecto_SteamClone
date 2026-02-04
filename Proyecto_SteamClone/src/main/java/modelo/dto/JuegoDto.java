@@ -1,4 +1,4 @@
-package modelo.form;
+package modelo.dto;
 
 import enums.TipoCategoriaJuego;
 import enums.TipoClasificacionEdades;
@@ -7,9 +7,10 @@ import enums.TipoEstadoJuego;
 import java.time.LocalDate;
 import java.util.ArrayList;
 
-public class JuegoFormDTO {
+public class JuegoDto {
 
     //Atributos
+    private int idJuego;
     private String tituloJuego;
     private String descripcionJuego;
     private String desarrolladorJuego;
@@ -22,7 +23,8 @@ public class JuegoFormDTO {
     private TipoEstadoJuego estadoJuego;
 
     //Constructor
-    public JuegoFormDTO(String tituloJuego, String descripcionJuego, String desarrolladorJuego, LocalDate fechaLanzaJuego, double precioBaseJuego, int descuentoActualJuego, TipoCategoriaJuego categoriaJuego, TipoClasificacionEdades clasEdadJuego, ArrayList idiomasJuego, TipoEstadoJuego estadoJuego) {
+    public JuegoDto(int idJuego, String tituloJuego, String descripcionJuego, String desarrolladorJuego, LocalDate fechaLanzaJuego, double precioBaseJuego, int descuentoActualJuego, TipoCategoriaJuego categoriaJuego, TipoClasificacionEdades clasEdadJuego, ArrayList idiomasJuego, TipoEstadoJuego estadoJuego) {
+        this.idJuego = idJuego;
         this.tituloJuego = tituloJuego;
         this.descripcionJuego = descripcionJuego;
         this.desarrolladorJuego = desarrolladorJuego;
@@ -36,6 +38,14 @@ public class JuegoFormDTO {
     }
 
     //Getters y Setters
+
+    public int getIdJuego() {
+        return idJuego;
+    }
+
+    public void setIdJuego(int idJuego) {
+        this.idJuego = idJuego;
+    }
 
     public String getTituloJuego() {
         return tituloJuego;

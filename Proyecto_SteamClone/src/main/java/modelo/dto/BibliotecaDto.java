@@ -4,7 +4,7 @@ import enums.TipoEstadoInstalacion;
 
 import java.time.LocalDate;
 
-public class BibliotecaDTO {
+public class BibliotecaDto {
 
     //Atributos
     private int idBiblio;
@@ -16,7 +16,7 @@ public class BibliotecaDTO {
     private TipoEstadoInstalacion estadoInstJuegoBiblio;
 
     //Constructor
-    public BibliotecaDTO(int idBiblio, int idUsuarioBiblio, int idJuegoBiblio, LocalDate fechaCompraJuegoBiblio, double tiempoJuegoBiblio, LocalDate ultiFechaJuegoBiblio, TipoEstadoInstalacion estadoInstJuegoBiblio) {
+    public BibliotecaDto(int idBiblio, int idUsuarioBiblio, int idJuegoBiblio, LocalDate fechaCompraJuegoBiblio, double tiempoJuegoBiblio, LocalDate ultiFechaJuegoBiblio, TipoEstadoInstalacion estadoInstJuegoBiblio) {
         this.idBiblio = idBiblio;
         this.idUsuarioBiblio = idUsuarioBiblio;
         this.idJuegoBiblio = idJuegoBiblio;

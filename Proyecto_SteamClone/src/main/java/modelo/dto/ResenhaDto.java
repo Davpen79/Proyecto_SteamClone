@@ -4,7 +4,7 @@ import enums.TipoEstadoResenha;
 
 import java.time.LocalDate;
 
-public class ResenhaDTO {
+public class ResenhaDto {
 
     //Atributos
     private int idResenha;
@@ -18,7 +18,7 @@ public class ResenhaDTO {
     private TipoEstadoResenha estadoResenha;
 
     //Constructor
-    public ResenhaDTO(int idResenha, int idUsuarioResenha, int idJuegoResenha, boolean recomendacionResenha, String textoResenha, double tiempoJugadoResenha, LocalDate fechaPublicacionResenha, LocalDate fechaUltiEdicResenha, TipoEstadoResenha estadoResenha) {
+    public ResenhaDto(int idResenha, int idUsuarioResenha, int idJuegoResenha, boolean recomendacionResenha, String textoResenha, double tiempoJugadoResenha, LocalDate fechaPublicacionResenha, LocalDate fechaUltiEdicResenha, TipoEstadoResenha estadoResenha) {
         this.idResenha = idResenha;
         this.idUsuarioResenha = idUsuarioResenha;
         this.idJuegoResenha = idJuegoResenha;

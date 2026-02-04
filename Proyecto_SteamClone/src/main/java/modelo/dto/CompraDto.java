@@ -5,7 +5,7 @@ import enums.TipoMetodoPago;
 
 import java.time.LocalDate;
 
-public class CompraDTO {
+public class CompraDto {
 
     //Atributos
     private int idCompra;
@@ -18,7 +18,7 @@ public class CompraDTO {
     private TipoEstadoCompra estadoCompra;
 
     //Constructor
-    public CompraDTO(int idCompra, int idUsuarioCompra, int idJuegoCompra, LocalDate fechaCompra, TipoMetodoPago tipoPagoCompra, double precioBaseCompra, int descuentoEnCompra, TipoEstadoCompra estadoCompra) {
+    public CompraDto(int idCompra, int idUsuarioCompra, int idJuegoCompra, LocalDate fechaCompra, TipoMetodoPago tipoPagoCompra, double precioBaseCompra, int descuentoEnCompra, TipoEstadoCompra estadoCompra) {
         this.idCompra = idCompra;
         this.idUsuarioCompra = idUsuarioCompra;
         this.idJuegoCompra = idJuegoCompra;

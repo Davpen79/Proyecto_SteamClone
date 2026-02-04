@@ -1,12 +1,13 @@
-package modelo.dto;
+package modelo.form;
 
 import enums.TipoEstadoCuenta;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
-public class UsuarioDTO {
+public class UsuarioForm {
     //Atributos
-    private int idUsuario;
     private String nombreCuentaUsuario;
     private String emailUsuario;
     //private String passwordUsuario;
@@ -19,8 +20,7 @@ public class UsuarioDTO {
     private TipoEstadoCuenta estadoCuentaUsuario;
 
     //Constructor
-    public UsuarioDTO(int idUsuario, String nombreCuentaUsuario, String emailUsuario, String nombreRealUsuario, String paisUsuario, LocalDate fechaNacUsuario, LocalDate fechaRegUsuario, String avatarUsuario, double saldoUsuario, TipoEstadoCuenta estadoCuentaUsuario) {
-        this.idUsuario = idUsuario;
+    public UsuarioForm(String nombreCuentaUsuario, String emailUsuario, String nombreRealUsuario, String paisUsuario, LocalDate fechaNacUsuario, LocalDate fechaRegUsuario, String avatarUsuario, double saldoUsuario, TipoEstadoCuenta estadoCuentaUsuario) {
         this.nombreCuentaUsuario = nombreCuentaUsuario;
         this.emailUsuario = emailUsuario;
         //this.passwordUsuario = passwordUsuario;
@@ -34,14 +34,6 @@ public class UsuarioDTO {
     }
 
     //Getters y Setters
-    public int getIdUsuario() {
-        return idUsuario;
-    }
-
-    public void setIdUsuario(int idUsuario) {
-        this.idUsuario = idUsuario;
-    }
-
     public String getNombreCuentaUsuario() {
         return nombreCuentaUsuario;
     }
@@ -120,5 +112,11 @@ public class UsuarioDTO {
 
     public void setEstadoCuentaUsuario(TipoEstadoCuenta estadoCuentaUsuario) {
         this.estadoCuentaUsuario = estadoCuentaUsuario;
+    }
+
+    //Funciones Validacion
+    public List<ErrorDto> validar(){
+        List<ErrorDto> errores = new ArrayList<>();
+        return errores;
     }
 }

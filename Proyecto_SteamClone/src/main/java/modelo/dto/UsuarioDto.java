@@ -1,11 +1,12 @@
-package modelo.form;
+package modelo.dto;
 
 import enums.TipoEstadoCuenta;
 
 import java.time.LocalDate;
 
-public class UsuarioFormDTO {
+public class UsuarioDto {
     //Atributos
+    private int idUsuario;
     private String nombreCuentaUsuario;
     private String emailUsuario;
     //private String passwordUsuario;
@@ -18,7 +19,8 @@ public class UsuarioFormDTO {
     private TipoEstadoCuenta estadoCuentaUsuario;
 
     //Constructor
-    public UsuarioFormDTO(String nombreCuentaUsuario, String emailUsuario, String nombreRealUsuario, String paisUsuario, LocalDate fechaNacUsuario, LocalDate fechaRegUsuario, String avatarUsuario, double saldoUsuario, TipoEstadoCuenta estadoCuentaUsuario) {
+    public UsuarioDto(int idUsuario, String nombreCuentaUsuario, String emailUsuario, String nombreRealUsuario, String paisUsuario, LocalDate fechaNacUsuario, LocalDate fechaRegUsuario, String avatarUsuario, double saldoUsuario, TipoEstadoCuenta estadoCuentaUsuario) {
+        this.idUsuario = idUsuario;
         this.nombreCuentaUsuario = nombreCuentaUsuario;
         this.emailUsuario = emailUsuario;
         //this.passwordUsuario = passwordUsuario;
@@ -32,6 +34,14 @@ public class UsuarioFormDTO {
     }
 
     //Getters y Setters
+    public int getIdUsuario() {
+        return idUsuario;
+    }
+
+    public void setIdUsuario(int idUsuario) {
+        this.idUsuario = idUsuario;
+    }
+
     public String getNombreCuentaUsuario() {
         return nombreCuentaUsuario;
     }

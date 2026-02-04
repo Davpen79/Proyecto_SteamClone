@@ -4,7 +4,7 @@ import enums.TipoEstadoResenha;
 
 import java.time.LocalDate;
 
-public class ResenhaFormDTO {
+public class ResenhaForm {
 
     //Atributos
     private int idUsuarioResenha;
@@ -17,7 +17,7 @@ public class ResenhaFormDTO {
     private TipoEstadoResenha estadoResenha;
 
     //Constructor
-    public ResenhaFormDTO(int idUsuarioResenha, int idJuegoResenha, boolean recomendacionResenha, String textoResenha, double tiempoJugadoResenha, LocalDate fechaPublicacionResenha, LocalDate fechaUltiEdicResenha, TipoEstadoResenha estadoResenha) {
+    public ResenhaForm(int idUsuarioResenha, int idJuegoResenha, boolean recomendacionResenha, String textoResenha, double tiempoJugadoResenha, LocalDate fechaPublicacionResenha, LocalDate fechaUltiEdicResenha, TipoEstadoResenha estadoResenha) {
         this.idUsuarioResenha = idUsuarioResenha;
         this.idJuegoResenha = idJuegoResenha;
         this.recomendacionResenha = recomendacionResenha;
