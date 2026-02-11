@@ -3,22 +3,22 @@ package modelo.entity;
 import enums.TipoEstadoCompra;
 import enums.TipoMetodoPago;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 public class CompraEntity {
 
     //Atributos
-    private long idCompra;
+    private int idCompra;
     private int idUsuarioCompra;
     private int idJuegoCompra;
-    private LocalDateTime fechaCompra;
+    private LocalDate fechaCompra;
     private TipoMetodoPago tipoPagoCompra;
     private double precioBaseCompra;
     private int descuentoEnCompra;
     private TipoEstadoCompra estadoCompra;
 
     //Constructor
-    public CompraEntity(long idCompra, int idUsuarioCompra, int idJuegoCompra, LocalDateTime fechaCompra, TipoMetodoPago tipoPagoCompra, double precioBaseCompra, int descuentoEnCompra, TipoEstadoCompra estadoCompra) {
+    public CompraEntity(int idCompra, int idUsuarioCompra, int idJuegoCompra, LocalDate fechaCompra, TipoMetodoPago tipoPagoCompra, double precioBaseCompra, int descuentoEnCompra, TipoEstadoCompra estadoCompra) {
         this.idCompra = idCompra;
         this.idUsuarioCompra = idUsuarioCompra;
         this.idJuegoCompra = idJuegoCompra;
@@ -31,7 +31,7 @@ public class CompraEntity {
 
     //Getters y Setters
 
-    public long getIdCompra() {
+    public int getIdCompra() {
         return idCompra;
     }
 
@@ -55,11 +55,11 @@ public class CompraEntity {
         this.idJuegoCompra = idJuegoCompra;
     }
 
-    public LocalDateTime getFechaCompra() {
+    public LocalDate getFechaCompra() {
         return fechaCompra;
     }
 
-    public void setFechaCompra(LocalDateTime fechaCompra) {
+    public void setFechaCompra(LocalDate fechaCompra) {
         this.fechaCompra = fechaCompra;
     }
 

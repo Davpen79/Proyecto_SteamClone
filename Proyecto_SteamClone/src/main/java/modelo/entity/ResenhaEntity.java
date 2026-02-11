@@ -2,23 +2,23 @@ package modelo.entity;
 
 import enums.TipoEstadoResenha;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 public class ResenhaEntity {
 
     //Atributos
-    private long idResenha;
+    private int idResenha;
     private int idUsuarioResenha;
     private int idJuegoResenha;
     private boolean recomendacionResenha;
     private String textoResenha;
     private double tiempoJugadoResenha;
-    private LocalDateTime fechaPublicacionResenha;
-    private LocalDateTime fechaUltiEdicResenha;
+    private LocalDate fechaPublicacionResenha;
+    private LocalDate fechaUltiEdicResenha;
     private TipoEstadoResenha estadoResenha;
 
     //Constructor
-    public ResenhaEntity(long idResenha, int idUsuarioResenha, int idJuegoResenha, boolean recomendacionResenha, String textoResenha, double tiempoJugadoResenha, LocalDateTime fechaPublicacionResenha, LocalDateTime fechaUltiEdicResenha, TipoEstadoResenha estadoResenha) {
+    public ResenhaEntity(int idResenha, int idUsuarioResenha, int idJuegoResenha, boolean recomendacionResenha, String textoResenha, double tiempoJugadoResenha, LocalDate fechaPublicacionResenha, LocalDate fechaUltiEdicResenha, TipoEstadoResenha estadoResenha) {
         this.idResenha = idResenha;
         this.idUsuarioResenha = idUsuarioResenha;
         this.idJuegoResenha = idJuegoResenha;
@@ -32,7 +32,7 @@ public class ResenhaEntity {
 
     //Getters y Setters
 
-    public long getIdResenha() {
+    public int getIdResenha() {
         return idResenha;
     }
 
@@ -80,19 +80,19 @@ public class ResenhaEntity {
         this.tiempoJugadoResenha = tiempoJugadoResenha;
     }
 
-    public LocalDateTime getFechaPublicacionResenha() {
+    public LocalDate getFechaPublicacionResenha() {
         return fechaPublicacionResenha;
     }
 
-    public void setFechaPublicacionResenha(LocalDateTime fechaPublicacionResenha) {
+    public void setFechaPublicacionResenha(LocalDate fechaPublicacionResenha) {
         this.fechaPublicacionResenha = fechaPublicacionResenha;
     }
 
-    public LocalDateTime getFechaUltiEdicResenha() {
+    public LocalDate getFechaUltiEdicResenha() {
         return fechaUltiEdicResenha;
     }
 
-    public void setFechaUltiEdicResenha(LocalDateTime fechaUltiEdicResenha) {
+    public void setFechaUltiEdicResenha(LocalDate fechaUltiEdicResenha) {
         this.fechaUltiEdicResenha = fechaUltiEdicResenha;
     }
 

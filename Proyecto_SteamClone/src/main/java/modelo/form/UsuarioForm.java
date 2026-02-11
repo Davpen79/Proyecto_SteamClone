@@ -2,7 +2,7 @@ package modelo.form;
 
 import enums.TipoEstadoCuenta;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,20 +10,20 @@ public class UsuarioForm {
     //Atributos
     private String nombreCuentaUsuario;
     private String emailUsuario;
-    //private String passwordUsuario;
+    private String passwordUsuario;
     private String nombreRealUsuario;
     private String paisUsuario;
-    private LocalDateTime fechaNacUsuario;
-    private LocalDateTime fechaRegUsuario;
+    private LocalDate fechaNacUsuario;
+    private LocalDate fechaRegUsuario;
     private String avatarUsuario;
     private double saldoUsuario;
     private TipoEstadoCuenta estadoCuentaUsuario;
 
     //Constructor
-    public UsuarioForm(String nombreCuentaUsuario, String emailUsuario, String nombreRealUsuario, String paisUsuario, LocalDateTime fechaNacUsuario, LocalDateTime fechaRegUsuario, String avatarUsuario, double saldoUsuario, TipoEstadoCuenta estadoCuentaUsuario) {
+    public UsuarioForm(String nombreCuentaUsuario, String emailUsuario, String passwordUsuario, String nombreRealUsuario, String paisUsuario, LocalDate fechaNacUsuario, LocalDate fechaRegUsuario, String avatarUsuario, double saldoUsuario, TipoEstadoCuenta estadoCuentaUsuario) {
         this.nombreCuentaUsuario = nombreCuentaUsuario;
         this.emailUsuario = emailUsuario;
-        //this.passwordUsuario = passwordUsuario;
+        this.passwordUsuario = passwordUsuario;
         this.nombreRealUsuario = nombreRealUsuario;
         this.paisUsuario = paisUsuario;
         this.fechaNacUsuario = fechaNacUsuario;
@@ -50,13 +50,13 @@ public class UsuarioForm {
         this.emailUsuario = emailUsuario;
     }
 
-    //public String getPasswordUsuario() {
-    //    return passwordUsuario;
-    //}
+    public String getPasswordUsuario() {
+        return passwordUsuario;
+    }
 
-    //public void setPasswordUsuario(String passwordUsuario) {
-    //    this.passwordUsuario = passwordUsuario;
-    //}
+    public void setPasswordUsuario(String passwordUsuario) {
+        this.passwordUsuario = passwordUsuario;
+    }
 
     public String getNombreRealUsuario() {
         return nombreRealUsuario;
@@ -74,19 +74,19 @@ public class UsuarioForm {
         this.paisUsuario = paisUsuario;
     }
 
-    public LocalDateTime getFechaNacUsuario() {
+    public LocalDate getFechaNacUsuario() {
         return fechaNacUsuario;
     }
 
-    public void setFechaNacUsuario(LocalDateTime fechaNacUsuario) {
+    public void setFechaNacUsuario(LocalDate fechaNacUsuario) {
         this.fechaNacUsuario = fechaNacUsuario;
     }
 
-    public LocalDateTime getFechaRegUsuario() {
+    public LocalDate getFechaRegUsuario() {
         return fechaRegUsuario;
     }
 
-    public void setFechaRegUsuario(LocalDateTime fechaRegUsuario) {
+    public void setFechaRegUsuario(LocalDate fechaRegUsuario) {
         this.fechaRegUsuario = fechaRegUsuario;
     }
 
@@ -115,8 +115,50 @@ public class UsuarioForm {
     }
 
     //Funciones Validacion
-    public List<ErrorDto> validar(){
+    public List<ErrorDto> validar() {
         List<ErrorDto> errores = new ArrayList<>();
+
+        //Validaciones Nombre Usuario
+        if (nombreCuentaUsuario == null || nombreCuentaUsuario.isBlank()) {
+            errores.add(new ErrorDto("Nombre_Cuenta", ErrorType.REQUERIDO));
+        }
+
+        if (nombreCuentaUsuario.length() < 3) {
+            errores.add(new ErrorDto("Nombre_Cuenta", ErrorType.DEMASIADO_CORTO));
+        }
+
+        if (nombreCuentaUsuario.length() > 20) {
+            errores.add(new ErrorDto("Nombre_Cuenta", ErrorType.DEMASIADO_LARGO));
+        }
+
+        if (Character.isDigit(nombreCuentaUsuario.charAt(0))) {
+            errores.add(new ErrorDto("Nombre_Cuenta", ErrorType.FORMATO_INVALIDO));
+        }
+
+        //TODO Comprueba nombre alfanumerico-_
+
+        //Validaciones email Usuario
+        if (emailUsuario == null || emailUsuario.isBlank()) {
+            errores.add(new ErrorDto("email_Cuenta", ErrorType.REQUERIDO));
+        }
+
+        if (emailUsuario != null && !emailUsuario.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$")){
+            errores.add(new ErrorDto("email_Cuenta", ErrorType.FORMATO_INVALIDO));
+        }
+
+        //Validaciones contraseña usuario
+        if (passwordUsuario == null || passwordUsuario.isBlank()){
+            errores.add(new ErrorDto("password", ErrorType.REQUERIDO));
+        }
+
+        if (passwordUsuario !=null && !passwordUsuario.matches("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)[A-Za-z\\d\\p{Punct}]+$")){
+            errores.add(new ErrorDto("password", ErrorType.FORMATO_INVALIDO));
+        }
+
+        if (passwordUsuario.length() < 8){
+            errores.add(new ErrorDto("password", ErrorType.DEMASIADO_CORTO));
+        }
+
         return errores;
     }
 }

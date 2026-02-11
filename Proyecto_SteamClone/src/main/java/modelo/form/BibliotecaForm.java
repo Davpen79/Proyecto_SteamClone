@@ -2,20 +2,20 @@ package modelo.form;
 
 import enums.TipoEstadoInstalacion;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 public class BibliotecaForm {
 
     //Atributos
-    private long idUsuarioBiblio;
+    private int idUsuarioBiblio;
     private int idJuegoBiblio;
-    private LocalDateTime fechaCompraJuegoBiblio;
+    private LocalDate fechaCompraJuegoBiblio;
     private double tiempoJuegoBiblio;
-    private LocalDateTime ultiFechaJuegoBiblio;
+    private LocalDate ultiFechaJuegoBiblio;
     private TipoEstadoInstalacion estadoInstJuegoBiblio;
 
     //Constructor
-    public BibliotecaForm(long idUsuarioBiblio, int idJuegoBiblio, LocalDateTime fechaCompraJuegoBiblio, double tiempoJuegoBiblio, LocalDateTime ultiFechaJuegoBiblio, TipoEstadoInstalacion estadoInstJuegoBiblio) {
+    public BibliotecaForm(int idUsuarioBiblio, int idJuegoBiblio, LocalDate fechaCompraJuegoBiblio, double tiempoJuegoBiblio, LocalDate ultiFechaJuegoBiblio, TipoEstadoInstalacion estadoInstJuegoBiblio) {
         this.idUsuarioBiblio = idUsuarioBiblio;
         this.idJuegoBiblio = idJuegoBiblio;
         this.fechaCompraJuegoBiblio = fechaCompraJuegoBiblio;
@@ -26,7 +26,7 @@ public class BibliotecaForm {
 
     //Getters y Setters
 
-    public long getIdUsuarioBiblio() {
+    public int getIdUsuarioBiblio() {
         return idUsuarioBiblio;
     }
 
@@ -42,11 +42,11 @@ public class BibliotecaForm {
         this.idJuegoBiblio = idJuegoBiblio;
     }
 
-    public LocalDateTime getFechaCompraJuegoBiblio() {
+    public LocalDate getFechaCompraJuegoBiblio() {
         return fechaCompraJuegoBiblio;
     }
 
-    public void setFechaCompraJuegoBiblio(LocalDateTime fechaCompraJuegoBiblio) {
+    public void setFechaCompraJuegoBiblio(LocalDate fechaCompraJuegoBiblio) {
         this.fechaCompraJuegoBiblio = fechaCompraJuegoBiblio;
     }
 
@@ -58,11 +58,11 @@ public class BibliotecaForm {
         this.tiempoJuegoBiblio = tiempoJuegoBiblio;
     }
 
-    public LocalDateTime getUltiFechaJuegoBiblio() {
+    public LocalDate getUltiFechaJuegoBiblio() {
         return ultiFechaJuegoBiblio;
     }
 
-    public void setUltiFechaJuegoBiblio(LocalDateTime ultiFechaJuegoBiblio) {
+    public void setUltiFechaJuegoBiblio(LocalDate ultiFechaJuegoBiblio) {
         this.ultiFechaJuegoBiblio = ultiFechaJuegoBiblio;
     }
 
