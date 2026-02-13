@@ -17,7 +17,7 @@ public enum ErrorType {
     FECHA_PASADA("La fecha no puede ser anterior a la compra"),
     CUENTA_INACTIVA("La cuenta debe estar activa"),
     NO_DISPONIBLE("El juego no está disponible"),
-    ;
+    MENOR_DE_EDAD("Debes tener al menos 13 años de edad");
 
     private final String mensaje;
 

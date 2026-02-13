@@ -3,6 +3,7 @@ package modelo.form;
 import enums.TipoEstadoCuenta;
 
 import java.time.LocalDate;
+import java.time.Period;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -123,15 +124,15 @@ public class UsuarioForm {
             errores.add(new ErrorDto("Nombre_Cuenta", ErrorType.REQUERIDO));
         }
 
-        if (nombreCuentaUsuario.length() < 3) {
+        if (nombreCuentaUsuario != null && nombreCuentaUsuario.length() < 3) {
             errores.add(new ErrorDto("Nombre_Cuenta", ErrorType.DEMASIADO_CORTO));
         }
 
-        if (nombreCuentaUsuario.length() > 20) {
+        if (nombreCuentaUsuario != null && nombreCuentaUsuario.length() > 20) {
             errores.add(new ErrorDto("Nombre_Cuenta", ErrorType.DEMASIADO_LARGO));
         }
 
-        if (Character.isDigit(nombreCuentaUsuario.charAt(0))) {
+        if (nombreCuentaUsuario != null && Character.isDigit(nombreCuentaUsuario.charAt(0))) {
             errores.add(new ErrorDto("Nombre_Cuenta", ErrorType.FORMATO_INVALIDO));
         }
 
@@ -155,9 +156,52 @@ public class UsuarioForm {
             errores.add(new ErrorDto("password", ErrorType.FORMATO_INVALIDO));
         }
 
-        if (passwordUsuario.length() < 8){
+        if (passwordUsuario !=null && passwordUsuario.length() < 8){
             errores.add(new ErrorDto("password", ErrorType.DEMASIADO_CORTO));
         }
+
+        //Validaciones nombre Real de usuario
+        if (nombreRealUsuario == null || nombreRealUsuario.isBlank()){
+            errores.add(new ErrorDto("nombre_real", ErrorType.REQUERIDO));
+        }
+
+        if (nombreRealUsuario != null && nombreRealUsuario.length() < 2){
+            errores.add(new ErrorDto("nombre_real", ErrorType.DEMASIADO_CORTO));
+        }
+
+        if (nombreRealUsuario != null && nombreRealUsuario.length() > 50){
+            errores.add(new ErrorDto("nombre_real", ErrorType.DEMASIADO_LARGO));
+        }
+
+        //Validaciones del Pais
+        if (paisUsuario == null || paisUsuario.isBlank()){
+            errores.add(new ErrorDto("pais", ErrorType.REQUERIDO));
+        }
+
+        List<String> listaPaises = List.of("España","Francia","Portugal");
+        if (!listaPaises.contains(paisUsuario)){
+            errores.add(new ErrorDto("pais", ErrorType.NO_ENCONTRADO));
+        }
+
+        //Validaciones Fecha nacimiento
+        if (fechaNacUsuario == null || fechaNacUsuario.toString().isBlank()){
+            errores.add(new ErrorDto("fecha_nacimiento", ErrorType.REQUERIDO));
+        }
+
+        if (fechaNacUsuario != null && fechaNacUsuario.isAfter(LocalDate.now())){
+            errores.add(new ErrorDto("fecha_nacimiento", ErrorType.FECHA_FUTURA));
+        }
+
+        if (fechaNacUsuario != null && Period.between(fechaNacUsuario,fechaRegUsuario).getYears() < 14){
+            errores.add(new ErrorDto("fecha_nacimiento", ErrorType.MENOR_DE_EDAD));
+        }
+
+        //Validaciones Avatar
+
+        if (avatarUsuario != null && avatarUsuario.length() > 100){
+            errores.add(new ErrorDto("avatar", ErrorType.DEMASIADO_LARGO));
+        }
+
 
         return errores;
     }
