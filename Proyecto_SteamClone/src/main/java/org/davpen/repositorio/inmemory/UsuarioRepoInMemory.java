@@ -1,9 +1,11 @@
 package org.davpen.repositorio.inmemory;
 
+import org.davpen.enums.TipoEstadoCuenta;
 import org.davpen.modelo.entity.UsuarioEntity;
 import org.davpen.modelo.form.UsuarioForm;
 import org.davpen.repositorio.intefaces.IUsuarioRepo;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -19,8 +21,8 @@ public class UsuarioRepoInMemory implements IUsuarioRepo {
     public Optional<UsuarioEntity> crear(UsuarioForm form) {
 
         var usuario = new UsuarioEntity(idCounter++, form.getNombreCuentaUsuario(), form.getEmailUsuario(), form.getPasswordUsuario(),
-                form.getNombreRealUsuario(), form.getPaisUsuario(), form.getFechaNacUsuario(),form.getFechaRegUsuario(), form.getAvatarUsuario(),
-                form.getSaldoUsuario(), form.getEstadoCuentaUsuario());
+                form.getNombreRealUsuario(), form.getPaisUsuario(), form.getFechaNacUsuario(), LocalDate.now(), form.getAvatarUsuario(),
+                0.00, TipoEstadoCuenta.ACTIVA);
         listaUsuarios.add(usuario);
         return Optional.of(usuario);
     }
@@ -58,5 +60,12 @@ public class UsuarioRepoInMemory implements IUsuarioRepo {
     @Override
     public boolean eliminar(Long id) {
         return listaUsuarios.removeIf(u -> u.getIdUsuario().equals(id));
+    }
+
+    @Override
+    public Optional<UsuarioEntity> obtenerPorNombre(String nombreCuentaUsuario) {
+        return listaUsuarios.stream()
+                .filter(u -> u.getNombreCuentaUsuario().equals(nombreCuentaUsuario))
+                .findFirst();
     }
 }

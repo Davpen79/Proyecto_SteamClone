@@ -144,11 +144,6 @@ public class UsuarioForm {
             errores.add(new ErrorDto("pais", ErrorType.REQUERIDO));
         }
 
-        //List<String> listaPaises = List.of("España","Francia","Portugal");
-        if (!listaPaises.contains(paisUsuario)){
-            errores.add(new ErrorDto("pais", ErrorType.NO_ENCONTRADO));
-        }
-
         //Validaciones Fecha nacimiento
         if (fechaNacUsuario == null || fechaNacUsuario.toString().isBlank()){
             errores.add(new ErrorDto("fecha_nacimiento", ErrorType.REQUERIDO));
