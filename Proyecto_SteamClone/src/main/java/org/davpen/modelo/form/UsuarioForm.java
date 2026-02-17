@@ -7,6 +7,8 @@ import java.time.Period;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.davpen.repositorio.inmemory.UsuarioRepoInMemory.listaPaises;
+
 public class UsuarioForm {
     //Atributos
     private String nombreCuentaUsuario;
@@ -34,85 +36,47 @@ public class UsuarioForm {
         this.estadoCuentaUsuario = estadoCuentaUsuario;
     }
 
-    //Getters y Setters
+    //Getters
+
+
     public String getNombreCuentaUsuario() {
         return nombreCuentaUsuario;
-    }
-
-    public void setNombreCuentaUsuario(String nombreCuentaUsuario) {
-        this.nombreCuentaUsuario = nombreCuentaUsuario;
     }
 
     public String getEmailUsuario() {
         return emailUsuario;
     }
 
-    public void setEmailUsuario(String emailUsuario) {
-        this.emailUsuario = emailUsuario;
-    }
-
     public String getPasswordUsuario() {
         return passwordUsuario;
-    }
-
-    public void setPasswordUsuario(String passwordUsuario) {
-        this.passwordUsuario = passwordUsuario;
     }
 
     public String getNombreRealUsuario() {
         return nombreRealUsuario;
     }
 
-    public void setNombreRealUsuario(String nombreRealUsuario) {
-        this.nombreRealUsuario = nombreRealUsuario;
-    }
-
     public String getPaisUsuario() {
         return paisUsuario;
-    }
-
-    public void setPaisUsuario(String paisUsuario) {
-        this.paisUsuario = paisUsuario;
     }
 
     public LocalDate getFechaNacUsuario() {
         return fechaNacUsuario;
     }
 
-    public void setFechaNacUsuario(LocalDate fechaNacUsuario) {
-        this.fechaNacUsuario = fechaNacUsuario;
-    }
-
     public LocalDate getFechaRegUsuario() {
         return fechaRegUsuario;
-    }
-
-    public void setFechaRegUsuario(LocalDate fechaRegUsuario) {
-        this.fechaRegUsuario = fechaRegUsuario;
     }
 
     public String getAvatarUsuario() {
         return avatarUsuario;
     }
 
-    public void setAvatarUsuario(String avatarUsuario) {
-        this.avatarUsuario = avatarUsuario;
-    }
-
     public double getSaldoUsuario() {
         return saldoUsuario;
     }
 
-    public void setSaldoUsuario(double saldoUsuario) {
-        this.saldoUsuario = saldoUsuario;
-    }
-
     public TipoEstadoCuenta getEstadoCuentaUsuario() {
         return estadoCuentaUsuario;
-    }
-
-    public void setEstadoCuentaUsuario(TipoEstadoCuenta estadoCuentaUsuario) {
-        this.estadoCuentaUsuario = estadoCuentaUsuario;
     }
 
     //Funciones Validacion
@@ -136,7 +100,9 @@ public class UsuarioForm {
             errores.add(new ErrorDto("Nombre_Cuenta", ErrorType.FORMATO_INVALIDO));
         }
 
-        //TODO Comprueba nombre alfanumerico-_
+        if (nombreCuentaUsuario != null && !nombreCuentaUsuario.matches("[A-Za-z0-9_-]+")){
+            errores.add(new ErrorDto("Nombre_Cuenta", ErrorType.FORMATO_INVALIDO));
+        }
 
         //Validaciones email Usuario
         if (emailUsuario == null || emailUsuario.isBlank()) {
@@ -178,7 +144,7 @@ public class UsuarioForm {
             errores.add(new ErrorDto("pais", ErrorType.REQUERIDO));
         }
 
-        List<String> listaPaises = List.of("España","Francia","Portugal");
+        //List<String> listaPaises = List.of("España","Francia","Portugal");
         if (!listaPaises.contains(paisUsuario)){
             errores.add(new ErrorDto("pais", ErrorType.NO_ENCONTRADO));
         }

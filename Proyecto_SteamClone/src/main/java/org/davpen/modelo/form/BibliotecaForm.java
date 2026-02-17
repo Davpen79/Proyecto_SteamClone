@@ -9,71 +9,47 @@ import java.util.List;
 public class BibliotecaForm {
 
     //Atributos
-    private int idUsuarioBiblio;
-    private int idJuegoBiblio;
-    private LocalDate fechaCompraJuegoBiblio;
+    private Long idUsuarioBiblio;
+    private Long idJuegoBiblio;
+    private LocalDate fechaAdquisicionJuegoBiblio;
     private double tiempoJuegoBiblio;
     private LocalDate ultiFechaJuegoBiblio;
     private TipoEstadoInstalacion estadoInstJuegoBiblio;
 
     //Constructor
-    public BibliotecaForm(int idUsuarioBiblio, int idJuegoBiblio, LocalDate fechaCompraJuegoBiblio, double tiempoJuegoBiblio, LocalDate ultiFechaJuegoBiblio, TipoEstadoInstalacion estadoInstJuegoBiblio) {
+    public BibliotecaForm(Long idUsuarioBiblio, Long idJuegoBiblio, LocalDate fechaAdquisicionJuegoBiblio, double tiempoJuegoBiblio, LocalDate ultiFechaJuegoBiblio, TipoEstadoInstalacion estadoInstJuegoBiblio) {
         this.idUsuarioBiblio = idUsuarioBiblio;
         this.idJuegoBiblio = idJuegoBiblio;
-        this.fechaCompraJuegoBiblio = fechaCompraJuegoBiblio;
+        this.fechaAdquisicionJuegoBiblio = fechaAdquisicionJuegoBiblio;
         this.tiempoJuegoBiblio = tiempoJuegoBiblio;
         this.ultiFechaJuegoBiblio = ultiFechaJuegoBiblio;
         this.estadoInstJuegoBiblio = estadoInstJuegoBiblio;
     }
 
-    //Getters y Setters
+    //Getters
 
-    public int getIdUsuarioBiblio() {
+    public Long getIdUsuarioBiblio() {
         return idUsuarioBiblio;
     }
 
-    public void setIdUsuarioBiblio(int idUsuarioBiblio) {
-        this.idUsuarioBiblio = idUsuarioBiblio;
-    }
-
-    public int getIdJuegoBiblio() {
+    public Long getIdJuegoBiblio() {
         return idJuegoBiblio;
     }
 
-    public void setIdJuegoBiblio(int idJuegoBiblio) {
-        this.idJuegoBiblio = idJuegoBiblio;
-    }
-
-    public LocalDate getFechaCompraJuegoBiblio() {
-        return fechaCompraJuegoBiblio;
-    }
-
-    public void setFechaCompraJuegoBiblio(LocalDate fechaCompraJuegoBiblio) {
-        this.fechaCompraJuegoBiblio = fechaCompraJuegoBiblio;
+    public LocalDate getFechaAdquisicionJuegoBiblio() {
+        return fechaAdquisicionJuegoBiblio;
     }
 
     public double getTiempoJuegoBiblio() {
         return tiempoJuegoBiblio;
     }
 
-    public void setTiempoJuegoBiblio(double tiempoJuegoBiblio) {
-        this.tiempoJuegoBiblio = tiempoJuegoBiblio;
-    }
-
     public LocalDate getUltiFechaJuegoBiblio() {
         return ultiFechaJuegoBiblio;
     }
 
-    public void setUltiFechaJuegoBiblio(LocalDate ultiFechaJuegoBiblio) {
-        this.ultiFechaJuegoBiblio = ultiFechaJuegoBiblio;
-    }
-
     public TipoEstadoInstalacion getEstadoInstJuegoBiblio() {
         return estadoInstJuegoBiblio;
-    }
-
-    public void setEstadoInstJuegoBiblio(TipoEstadoInstalacion estadoInstJuegoBiblio) {
-        this.estadoInstJuegoBiblio = estadoInstJuegoBiblio;
     }
 
     //Funciones Validacion
@@ -81,14 +57,24 @@ public class BibliotecaForm {
         List<ErrorDto> errores = new ArrayList<>();
 
         //Validaciones Id Usuario
+        if (idUsuarioBiblio == null) {
+            errores.add(new ErrorDto("Id_usuario", ErrorType.REQUERIDO));
+        }
 
         //Validaciones Id Juego
+        if (idJuegoBiblio == null){
+            errores.add(new ErrorDto("Id_juego", ErrorType.REQUERIDO));
+        }
 
         //Validaciones Fecha adquisicion
-        if (fechaCompraJuegoBiblio.isAfter(LocalDate.now())){
+        if (fechaAdquisicionJuegoBiblio == null){
+            errores.add(new ErrorDto("fecha_adquisicion", ErrorType.REQUERIDO));
+        }
+
+        // ESTO NO ES AQUI VA A CONTROLADOR
+        if (fechaAdquisicionJuegoBiblio.isAfter(LocalDate.now())) {
             errores.add(new ErrorDto("fecha_compra", ErrorType.FECHA_FUTURA));
         }
-        //Como paso de Id usuario a usuario
 
         return errores;
     }

@@ -8,6 +8,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class JuegoForm {
 
@@ -38,86 +39,46 @@ public class JuegoForm {
         this.estadoJuego = estadoJuego;
     }
 
-    //Getters y Setters
+    //Getters
 
     public String getTituloJuego() {
         return tituloJuego;
-    }
-
-    public void setTituloJuego(String tituloJuego) {
-        this.tituloJuego = tituloJuego;
     }
 
     public String getDescripcionJuego() {
         return descripcionJuego;
     }
 
-    public void setDescripcionJuego(String descripcionJuego) {
-        this.descripcionJuego = descripcionJuego;
-    }
-
     public String getDesarrolladorJuego() {
         return desarrolladorJuego;
-    }
-
-    public void setDesarrolladorJuego(String desarrolladorJuego) {
-        this.desarrolladorJuego = desarrolladorJuego;
     }
 
     public LocalDate getFechaLanzaJuego() {
         return fechaLanzaJuego;
     }
 
-    public void setFechaLanzaJuego(LocalDate fechaLanzaJuego) {
-        this.fechaLanzaJuego = fechaLanzaJuego;
-    }
-
     public Double getPrecioBaseJuego() {
         return precioBaseJuego;
     }
 
-    public void setPrecioBaseJuego(Double precioBaseJuego) {
-        this.precioBaseJuego = precioBaseJuego;
-    }
-
-    public int getDescuentoActualJuego() {
+    public Integer getDescuentoActualJuego() {
         return descuentoActualJuego;
-    }
-
-    public void setDescuentoActualJuego(int descuentoActualJuego) {
-        this.descuentoActualJuego = descuentoActualJuego;
     }
 
     public TipoCategoriaJuego getCategoriaJuego() {
         return categoriaJuego;
     }
 
-    public void setCategoriaJuego(TipoCategoriaJuego categoriaJuego) {
-        this.categoriaJuego = categoriaJuego;
-    }
-
     public TipoClasificacionEdades getClasEdadJuego() {
         return clasEdadJuego;
-    }
-
-    public void setClasEdadJuego(TipoClasificacionEdades clasEdadJuego) {
-        this.clasEdadJuego = clasEdadJuego;
     }
 
     public ArrayList getIdiomasJuego() {
         return idiomasJuego;
     }
 
-    public void setIdiomasJuego(ArrayList idiomasJuego) {
-        this.idiomasJuego = idiomasJuego;
-    }
-
     public TipoEstadoJuego getEstadoJuego() {
         return estadoJuego;
-    }
-
-    public void setEstadoJuego(TipoEstadoJuego estadoJuego) {
-        this.estadoJuego = estadoJuego;
     }
 
     //Funciones Validacion
@@ -172,10 +133,13 @@ public class JuegoForm {
         if (precioBaseJuego != null && precioBaseJuego > 999.99d){
             errores.add(new ErrorDto("precio_base", ErrorType.VALOR_DEMASIADO_ALTO));
         }
-        //TODO max 2 decimales - Usar DecimalFormat ¿?
+
+        if (precioBaseJuego != null && !precioBaseJuego.toString().matches("\\d+(\\.\\d{0,2})?")){
+            errores.add(new ErrorDto("precio_base", ErrorType.DEMASIADOS_DECIMALES));
+        }
 
         //Validaciones Precio descuento
-        if (descuentoActualJuego < 0){
+        if (descuentoActualJuego != null && descuentoActualJuego < 0){
             errores.add(new ErrorDto("descuento", ErrorType.VALOR_NEGATIVO));
         }
 
@@ -184,7 +148,7 @@ public class JuegoForm {
         }
 
         boolean descuentoEsEntero = descuentoActualJuego instanceof Integer;
-        if (!descuentoEsEntero){
+        if (descuentoActualJuego != null && !descuentoEsEntero){
             errores.add(new ErrorDto("descuento", ErrorType.SOLO_ENTEROS));
         }
 
@@ -193,13 +157,12 @@ public class JuegoForm {
             errores.add(new ErrorDto("edad", ErrorType.REQUERIDO));
         }
         //
-        if (!Arrays.stream(TipoClasificacionEdades.values()).anyMatch(e -> e.equals(clasEdadJuego))){
+        if (clasEdadJuego != null && !Arrays.stream(TipoClasificacionEdades.values()).anyMatch(e -> e.equals(clasEdadJuego))){
             errores.add(new ErrorDto("edad", ErrorType.NO_ENCONTRADO));
         }
 
         //Validaciones Idiomas - Lista ¿?
 
-        //Validaciones Estado
 
         return  errores;
     }

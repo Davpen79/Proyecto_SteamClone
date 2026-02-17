@@ -11,31 +11,52 @@ import java.util.Optional;
 
 public class UsuarioRepoInMemory implements IUsuarioRepo {
 
-    private static final List<UsuarioEntity> usuarios = new ArrayList<>();
+    private static final List<UsuarioEntity> listaUsuarios = new ArrayList<>();
     private static Long idCounter = 1L;
+    public static List<String> listaPaises = List.of("España", "Francia", "Portugal");
 
     @Override
     public Optional<UsuarioEntity> crear(UsuarioForm form) {
-        return Optional.empty();
+
+        var usuario = new UsuarioEntity(idCounter++, form.getNombreCuentaUsuario(), form.getEmailUsuario(), form.getPasswordUsuario(),
+                form.getNombreRealUsuario(), form.getPaisUsuario(), form.getFechaNacUsuario(),form.getFechaRegUsuario(), form.getAvatarUsuario(),
+                form.getSaldoUsuario(), form.getEstadoCuentaUsuario());
+        listaUsuarios.add(usuario);
+        return Optional.of(usuario);
     }
 
     @Override
-    public Optional<UsuarioEntity> obtenerPorId(Long Long) {
-        return Optional.empty();
+    public Optional<UsuarioEntity> obtenerPorId(Long id) {
+
+        return listaUsuarios.stream()
+                .filter(u -> u.getIdUsuario()
+                .equals(id)).findFirst();
     }
 
     @Override
     public List<UsuarioEntity> obtenerTodos() {
-        return List.of();
+
+        return new ArrayList<>(listaUsuarios);
     }
 
     @Override
-    public Optional<UsuarioEntity> actualizar(Long Long, UsuarioForm form) {
-        return Optional.empty();
+    public Optional<UsuarioEntity> actualizar(Long id, UsuarioForm form) {
+        var usuarioInicial = obtenerPorId(id);
+        if (usuarioInicial.isEmpty()){
+            throw new IllegalArgumentException("Usuario no encontrado");
+        }
+        var usuarioActualizado = new UsuarioEntity(id, form.getNombreCuentaUsuario(), form.getEmailUsuario(), form.getPasswordUsuario(),
+                form.getNombreRealUsuario(), form.getPaisUsuario(), form.getFechaNacUsuario(),form.getFechaRegUsuario(), form.getAvatarUsuario(),
+                form.getSaldoUsuario(), form.getEstadoCuentaUsuario());
+
+        listaUsuarios.removeIf(u -> u.getIdUsuario().equals(id));
+        listaUsuarios.add(usuarioActualizado);
+
+        return Optional.of(usuarioActualizado);
     }
 
     @Override
-    public boolean eliminar(Long Long) {
-        return false;
+    public boolean eliminar(Long id) {
+        return listaUsuarios.removeIf(u -> u.getIdUsuario().equals(id));
     }
 }

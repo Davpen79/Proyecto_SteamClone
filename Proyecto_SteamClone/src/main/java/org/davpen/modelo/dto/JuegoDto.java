@@ -10,7 +10,7 @@ import java.util.ArrayList;
 public class JuegoDto {
 
     //Atributos
-    private int idJuego;
+    private Long idJuego;
     private String tituloJuego;
     private String descripcionJuego;
     private String desarrolladorJuego;
@@ -23,7 +23,7 @@ public class JuegoDto {
     private TipoEstadoJuego estadoJuego;
 
     //Constructor
-    public JuegoDto(int idJuego, String tituloJuego, String descripcionJuego, String desarrolladorJuego, LocalDate fechaLanzaJuego, double precioBaseJuego, int descuentoActualJuego, TipoCategoriaJuego categoriaJuego, TipoClasificacionEdades clasEdadJuego, ArrayList idiomasJuego, TipoEstadoJuego estadoJuego) {
+    public JuegoDto(Long idJuego, String tituloJuego, String descripcionJuego, String desarrolladorJuego, LocalDate fechaLanzaJuego, double precioBaseJuego, int descuentoActualJuego, TipoCategoriaJuego categoriaJuego, TipoClasificacionEdades clasEdadJuego, ArrayList idiomasJuego, TipoEstadoJuego estadoJuego) {
         this.idJuego = idJuego;
         this.tituloJuego = tituloJuego;
         this.descripcionJuego = descripcionJuego;
@@ -37,93 +37,49 @@ public class JuegoDto {
         this.estadoJuego = estadoJuego;
     }
 
-    //Getters y Setters
+    //Getters
 
-    public int getIdJuego() {
+    public Long getIdJuego() {
         return idJuego;
-    }
-
-    public void setIdJuego(int idJuego) {
-        this.idJuego = idJuego;
     }
 
     public String getTituloJuego() {
         return tituloJuego;
     }
 
-    public void setTituloJuego(String tituloJuego) {
-        this.tituloJuego = tituloJuego;
-    }
-
     public String getDescripcionJuego() {
         return descripcionJuego;
-    }
-
-    public void setDescripcionJuego(String descripcionJuego) {
-        this.descripcionJuego = descripcionJuego;
     }
 
     public String getDesarrolladorJuego() {
         return desarrolladorJuego;
     }
 
-    public void setDesarrolladorJuego(String desarrolladorJuego) {
-        this.desarrolladorJuego = desarrolladorJuego;
-    }
-
     public LocalDate getFechaLanzaJuego() {
         return fechaLanzaJuego;
-    }
-
-    public void setFechaLanzaJuego(LocalDate fechaLanzaJuego) {
-        this.fechaLanzaJuego = fechaLanzaJuego;
     }
 
     public double getPrecioBaseJuego() {
         return precioBaseJuego;
     }
 
-    public void setPrecioBaseJuego(double precioBaseJuego) {
-        this.precioBaseJuego = precioBaseJuego;
-    }
-
     public int getDescuentoActualJuego() {
         return descuentoActualJuego;
-    }
-
-    public void setDescuentoActualJuego(int descuentoActualJuego) {
-        this.descuentoActualJuego = descuentoActualJuego;
     }
 
     public TipoCategoriaJuego getCategoriaJuego() {
         return categoriaJuego;
     }
 
-    public void setCategoriaJuego(TipoCategoriaJuego categoriaJuego) {
-        this.categoriaJuego = categoriaJuego;
-    }
-
     public TipoClasificacionEdades getClasEdadJuego() {
         return clasEdadJuego;
-    }
-
-    public void setClasEdadJuego(TipoClasificacionEdades clasEdadJuego) {
-        this.clasEdadJuego = clasEdadJuego;
     }
 
     public ArrayList getIdiomasJuego() {
         return idiomasJuego;
     }
 
-    public void setIdiomasJuego(ArrayList idiomasJuego) {
-        this.idiomasJuego = idiomasJuego;
-    }
-
     public TipoEstadoJuego getEstadoJuego() {
         return estadoJuego;
-    }
-
-    public void setEstadoJuego(TipoEstadoJuego estadoJuego) {
-        this.estadoJuego = estadoJuego;
     }
 }

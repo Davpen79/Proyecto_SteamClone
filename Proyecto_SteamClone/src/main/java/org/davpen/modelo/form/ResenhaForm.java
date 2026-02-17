@@ -3,12 +3,14 @@ package org.davpen.modelo.form;
 import org.davpen.enums.TipoEstadoResenha;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ResenhaForm {
 
     //Atributos
-    private int idUsuarioResenha;
-    private int idJuegoResenha;
+    private Long idUsuarioResenha;
+    private Long idJuegoResenha;
     private boolean recomendacionResenha;
     private String textoResenha;
     private double tiempoJugadoResenha;
@@ -17,7 +19,7 @@ public class ResenhaForm {
     private TipoEstadoResenha estadoResenha;
 
     //Constructor
-    public ResenhaForm(int idUsuarioResenha, int idJuegoResenha, boolean recomendacionResenha, String textoResenha, double tiempoJugadoResenha, LocalDate fechaPublicacionResenha, LocalDate fechaUltiEdicResenha, TipoEstadoResenha estadoResenha) {
+    public ResenhaForm(Long idUsuarioResenha, Long idJuegoResenha, boolean recomendacionResenha, String textoResenha, double tiempoJugadoResenha, LocalDate fechaPublicacionResenha, LocalDate fechaUltiEdicResenha, TipoEstadoResenha estadoResenha) {
         this.idUsuarioResenha = idUsuarioResenha;
         this.idJuegoResenha = idJuegoResenha;
         this.recomendacionResenha = recomendacionResenha;
@@ -28,69 +30,68 @@ public class ResenhaForm {
         this.estadoResenha = estadoResenha;
     }
 
-    //Getters y Setters
+    //Getters
 
-    public int getIdUsuarioResenha() {
+    public Long getIdUsuarioResenha() {
         return idUsuarioResenha;
     }
 
-    public void setIdUsuarioResenha(int idUsuarioResenha) {
-        this.idUsuarioResenha = idUsuarioResenha;
-    }
-
-    public int getIdJuegoResenha() {
+    public Long getIdJuegoResenha() {
         return idJuegoResenha;
-    }
-
-    public void setIdJuegoResenha(int idJuegoResenha) {
-        this.idJuegoResenha = idJuegoResenha;
     }
 
     public boolean isRecomendacionResenha() {
         return recomendacionResenha;
     }
 
-    public void setRecomendacionResenha(boolean recomendacionResenha) {
-        this.recomendacionResenha = recomendacionResenha;
-    }
-
     public String getTextoResenha() {
         return textoResenha;
-    }
-
-    public void setTextoResenha(String textoResenha) {
-        this.textoResenha = textoResenha;
     }
 
     public double getTiempoJugadoResenha() {
         return tiempoJugadoResenha;
     }
 
-    public void setTiempoJugadoResenha(double tiempoJugadoResenha) {
-        this.tiempoJugadoResenha = tiempoJugadoResenha;
-    }
-
     public LocalDate getFechaPublicacionResenha() {
         return fechaPublicacionResenha;
-    }
-
-    public void setFechaPublicacionResenha(LocalDate fechaPublicacionResenha) {
-        this.fechaPublicacionResenha = fechaPublicacionResenha;
     }
 
     public LocalDate getFechaUltiEdicResenha() {
         return fechaUltiEdicResenha;
     }
 
-    public void setFechaUltiEdicResenha(LocalDate fechaUltiEdicResenha) {
-        this.fechaUltiEdicResenha = fechaUltiEdicResenha;
-    }
-
     public TipoEstadoResenha getEstadoResenha() {
         return estadoResenha;
     }
 
-    public void setEstadoResenha(TipoEstadoResenha estadoResenha) {
-        this.estadoResenha = estadoResenha;
+    //Funciones Validacion
+    public List<ErrorDto> validar() {
+        List<ErrorDto> errores = new ArrayList<>();
+
+        //Validaciones usuario
+        if (idUsuarioResenha == null){
+            errores.add(new ErrorDto("Id_Usario", ErrorType.REQUERIDO));
+        }
+        //Validaciones juego
+        if (idJuegoResenha == null){
+            errores.add(new ErrorDto("Id_Juego", ErrorType.REQUERIDO));
+        }
+        //TODO Validaciones Recomendacion
+
+
+        //Validaciones Texto Reseña
+        if (textoResenha == null || textoResenha.isBlank()){
+            errores.add(new ErrorDto("texto_reseña", ErrorType.REQUERIDO));
+        }
+
+        if (textoResenha != null && textoResenha.length() < 50){
+            errores.add(new ErrorDto("texto_reseña", ErrorType.DEMASIADO_CORTO));
+        }
+
+        if (textoResenha != null && textoResenha.length() > 8000){
+            errores.add(new ErrorDto("texto_reseña", ErrorType.DEMASIADO_LARGO));
+        }
+
+        return errores;
     }
 }

@@ -8,9 +8,9 @@ import java.time.LocalDate;
 public class CompraEntity {
 
     //Atributos
-    private int idCompra;
-    private int idUsuarioCompra;
-    private int idJuegoCompra;
+    private Long idCompra;
+    private Long idUsuarioCompra;
+    private Long idJuegoCompra;
     private LocalDate fechaCompra;
     private TipoMetodoPago tipoPagoCompra;
     private double precioBaseCompra;
@@ -18,7 +18,7 @@ public class CompraEntity {
     private TipoEstadoCompra estadoCompra;
 
     //Constructor
-    public CompraEntity(int idCompra, int idUsuarioCompra, int idJuegoCompra, LocalDate fechaCompra, TipoMetodoPago tipoPagoCompra, double precioBaseCompra, int descuentoEnCompra, TipoEstadoCompra estadoCompra) {
+    public CompraEntity(Long idCompra, Long idUsuarioCompra, Long idJuegoCompra, LocalDate fechaCompra, TipoMetodoPago tipoPagoCompra, double precioBaseCompra, int descuentoEnCompra, TipoEstadoCompra estadoCompra) {
         this.idCompra = idCompra;
         this.idUsuarioCompra = idUsuarioCompra;
         this.idJuegoCompra = idJuegoCompra;
@@ -29,69 +29,37 @@ public class CompraEntity {
         this.estadoCompra = estadoCompra;
     }
 
-    //Getters y Setters
+    //Getters
 
-    public int getIdCompra() {
+    public Long getIdCompra() {
         return idCompra;
     }
 
-    public void setIdCompra(int idCompra) {
-        this.idCompra = idCompra;
-    }
-
-    public int getIdUsuarioCompra() {
+    public Long getIdUsuarioCompra() {
         return idUsuarioCompra;
     }
 
-    public void setIdUsuarioCompra(int idUsuarioCompra) {
-        this.idUsuarioCompra = idUsuarioCompra;
-    }
-
-    public int getIdJuegoCompra() {
+    public Long getIdJuegoCompra() {
         return idJuegoCompra;
-    }
-
-    public void setIdJuegoCompra(int idJuegoCompra) {
-        this.idJuegoCompra = idJuegoCompra;
     }
 
     public LocalDate getFechaCompra() {
         return fechaCompra;
     }
 
-    public void setFechaCompra(LocalDate fechaCompra) {
-        this.fechaCompra = fechaCompra;
-    }
-
     public TipoMetodoPago getTipoPagoCompra() {
         return tipoPagoCompra;
-    }
-
-    public void setTipoPagoCompra(TipoMetodoPago tipoPagoCompra) {
-        this.tipoPagoCompra = tipoPagoCompra;
     }
 
     public double getPrecioBaseCompra() {
         return precioBaseCompra;
     }
 
-    public void setPrecioBaseCompra(double precioBaseCompra) {
-        this.precioBaseCompra = precioBaseCompra;
-    }
-
     public int getDescuentoEnCompra() {
         return descuentoEnCompra;
     }
 
-    public void setDescuentoEnCompra(int descuentoEnCompra) {
-        this.descuentoEnCompra = descuentoEnCompra;
-    }
-
     public TipoEstadoCompra getEstadoCompra() {
         return estadoCompra;
-    }
-
-    public void setEstadoCompra(TipoEstadoCompra estadoCompra) {
-        this.estadoCompra = estadoCompra;
     }
 }
