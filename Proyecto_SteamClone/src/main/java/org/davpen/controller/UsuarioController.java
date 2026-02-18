@@ -7,6 +7,7 @@ import org.davpen.modelo.dto.UsuarioDto;
 import org.davpen.modelo.form.ErrorDto;
 import org.davpen.modelo.form.ErrorType;
 import org.davpen.modelo.form.UsuarioForm;
+import org.davpen.repositorio.inmemory.UsuarioRepoInMemory;
 import org.davpen.repositorio.intefaces.IUsuarioRepo;
 
 import java.util.ArrayList;
@@ -20,7 +21,6 @@ public class UsuarioController {
     public UsuarioController(IUsuarioRepo usuarioRepo) {
         this.usuarioRepo = usuarioRepo;
     }
-
 
     //Registrar nuevo usuario
     public UsuarioDto registrarUsuario(UsuarioForm usuarioForm) throws ValidationException {
@@ -47,7 +47,7 @@ public class UsuarioController {
         var usuarioOpt = usuarioRepo.crear(usuarioForm);
         var usuario = usuarioOpt.orElse(null);
 
-        return Mapper.mapaCompleto(usuario);
+        return Mapper.mapaJuegoCompleto(usuario);
     }
 
 
@@ -99,6 +99,14 @@ public class UsuarioController {
         }
 
         var nuevoSaldo = usuarioRepo.obtenerPorId(id).get().getSaldoUsuario() + cantidadAnhadida;
+        var usuarioActual = usuarioRepo.obtenerPorId(id);
+
+        var usuarioActualizadoForm = new UsuarioForm(usuarioActual.get().getNombreCuentaUsuario(),usuarioActual.get().getEmailUsuario(),
+                                    usuarioActual.get().getPasswordUsuario(), usuarioActual.get().getNombreRealUsuario(),
+                                    usuarioActual.get().getPaisUsuario(), usuarioActual.get().getFechaNacUsuario(), usuarioActual.get().getFechaRegUsuario(),
+                                    usuarioActual.get().getAvatarUsuario(), nuevoSaldo, usuarioActual.get().getEstadoCuentaUsuario());
+
+        usuarioRepo.actualizar(id, usuarioActualizadoForm);
         return nuevoSaldo;
 
     }

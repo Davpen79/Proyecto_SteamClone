@@ -7,7 +7,7 @@ import java.util.Optional;
 
 public class Mapper {
 
-    public static UsuarioDto mapaCompleto(UsuarioEntity usuario) {
+    public static UsuarioDto mapaJuegoCompleto(UsuarioEntity usuario) {
 
         if (usuario == null) {
             return null;
@@ -26,7 +26,7 @@ public class Mapper {
                 usuario.getEstadoCuentaUsuario());
     }
 
-    public static JuegoDto mapaCompleto(JuegoEntity juego) {
+    public static JuegoDto mapaJuegoCompleto(JuegoEntity juego) {
 
         if (juego == null) {
             return null;

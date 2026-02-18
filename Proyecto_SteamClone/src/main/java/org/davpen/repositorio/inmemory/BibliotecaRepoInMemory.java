@@ -40,7 +40,7 @@ public class BibliotecaRepoInMemory implements IBibliotecaRepo {
     public Optional<BibliotecaEntity> actualizar(Long id, BibliotecaForm form) {
 
         var bibliotecaInicial = obtenerPorId(id);
-        if (bibliotecaInicial.isEmpty()){
+        if (bibliotecaInicial.isEmpty()) {
             throw new IllegalArgumentException();
         }
         var bibliotecaActualizada = new BibliotecaEntity(id, form.getIdUsuarioBiblio(), form.getIdJuegoBiblio(), form.getFechaAdquisicionJuegoBiblio(),

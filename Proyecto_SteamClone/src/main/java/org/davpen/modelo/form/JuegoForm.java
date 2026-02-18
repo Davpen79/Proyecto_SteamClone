@@ -162,7 +162,12 @@ public class JuegoForm {
         }
 
         //Validaciones Idiomas - Lista ¿?
-
+        if (idiomasJuego != null && idiomasJuego.isEmpty()){
+            errores.add(new ErrorDto("idioma", ErrorType.CAMPO_VACIO));
+        }
+        if (idiomasJuego != null && !idiomasJuego.isEmpty() && idiomasJuego.toString().length() > 200){
+            errores.add(new ErrorDto("idioma", ErrorType.DEMASIADO_LARGO));
+        }
 
         return  errores;
     }
