@@ -18,7 +18,9 @@ public enum ErrorType {
     CUENTA_INACTIVA("La cuenta debe estar activa"),
     NO_DISPONIBLE("El juego no está disponible"),
     MENOR_DE_EDAD("Debes tener al menos 13 años de edad"),
-    CAMPO_VACIO("Al menos un valor valido");
+    CAMPO_VACIO("Al menos un valor valido"),
+    NUNCA_JUGADO("Nunca jugado"),
+    NO_PERTENECE("El usuario no coincide");
 
     private final String mensaje;
 

@@ -3,6 +3,7 @@ package org.davpen.modelo.form;
 import org.davpen.enums.TipoEstadoInstalacion;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,11 +14,11 @@ public class BibliotecaForm {
     private Long idJuegoBiblio;
     private LocalDate fechaAdquisicionJuegoBiblio;
     private double tiempoJuegoBiblio;
-    private LocalDate ultiFechaJuegoBiblio;
+    private LocalDateTime ultiFechaJuegoBiblio;
     private TipoEstadoInstalacion estadoInstJuegoBiblio;
 
     //Constructor
-    public BibliotecaForm(Long idUsuarioBiblio, Long idJuegoBiblio, LocalDate fechaAdquisicionJuegoBiblio, double tiempoJuegoBiblio, LocalDate ultiFechaJuegoBiblio, TipoEstadoInstalacion estadoInstJuegoBiblio) {
+    public BibliotecaForm(Long idUsuarioBiblio, Long idJuegoBiblio, LocalDate fechaAdquisicionJuegoBiblio, double tiempoJuegoBiblio, LocalDateTime ultiFechaJuegoBiblio, TipoEstadoInstalacion estadoInstJuegoBiblio) {
         this.idUsuarioBiblio = idUsuarioBiblio;
         this.idJuegoBiblio = idJuegoBiblio;
         this.fechaAdquisicionJuegoBiblio = fechaAdquisicionJuegoBiblio;
@@ -44,7 +45,7 @@ public class BibliotecaForm {
         return tiempoJuegoBiblio;
     }
 
-    public LocalDate getUltiFechaJuegoBiblio() {
+    public LocalDateTime getUltiFechaJuegoBiblio() {
         return ultiFechaJuegoBiblio;
     }
 

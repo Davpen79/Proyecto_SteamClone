@@ -3,6 +3,7 @@ package org.davpen.modelo.entity;
 import org.davpen.enums.TipoEstadoInstalacion;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public class BibliotecaEntity {
 
@@ -12,11 +13,11 @@ public class BibliotecaEntity {
     private Long idJuegoBiblio;
     private LocalDate fechaCompraJuegoBiblio;
     private double tiempoJuegoBiblio;
-    private LocalDate ultiFechaJuegoBiblio;
+    private LocalDateTime ultiFechaJuegoBiblio;
     private TipoEstadoInstalacion estadoInstJuegoBiblio;
 
     //Constructor
-    public BibliotecaEntity(Long idBiblio, Long idUsuarioBiblio, Long idJuegoBiblio, LocalDate fechaCompraJuegoBiblio, double tiempoJuegoBiblio, LocalDate ultiFechaJuegoBiblio, TipoEstadoInstalacion estadoInstJuegoBiblio) {
+    public BibliotecaEntity(Long idBiblio, Long idUsuarioBiblio, Long idJuegoBiblio, LocalDate fechaCompraJuegoBiblio, double tiempoJuegoBiblio, LocalDateTime ultiFechaJuegoBiblio, TipoEstadoInstalacion estadoInstJuegoBiblio) {
         this.idBiblio = idBiblio;
         this.idUsuarioBiblio = idUsuarioBiblio;
         this.idJuegoBiblio = idJuegoBiblio;
@@ -48,7 +49,7 @@ public class BibliotecaEntity {
         return tiempoJuegoBiblio;
     }
 
-    public LocalDate getUltiFechaJuegoBiblio() {
+    public LocalDateTime getUltiFechaJuegoBiblio() {
         return ultiFechaJuegoBiblio;
     }
 

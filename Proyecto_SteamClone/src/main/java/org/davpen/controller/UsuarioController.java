@@ -7,7 +7,6 @@ import org.davpen.modelo.dto.UsuarioDto;
 import org.davpen.modelo.form.ErrorDto;
 import org.davpen.modelo.form.ErrorType;
 import org.davpen.modelo.form.UsuarioForm;
-import org.davpen.repositorio.inmemory.UsuarioRepoInMemory;
 import org.davpen.repositorio.intefaces.IUsuarioRepo;
 
 import java.util.ArrayList;
@@ -47,11 +46,11 @@ public class UsuarioController {
         var usuarioOpt = usuarioRepo.crear(usuarioForm);
         var usuario = usuarioOpt.orElse(null);
 
-        return Mapper.mapaJuegoCompleto(usuario);
+        return Mapper.mapaUsuarioCompleto(usuario);
     }
 
 
-    //Consultar perfil - Estadisticas??
+    //Consultar perfil?? - Estadisticas??
 
 
     //Consultar saldo

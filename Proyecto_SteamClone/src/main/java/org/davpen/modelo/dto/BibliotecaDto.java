@@ -3,6 +3,7 @@ package org.davpen.modelo.dto;
 import org.davpen.enums.TipoEstadoInstalacion;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 public class BibliotecaDto {
@@ -15,14 +16,14 @@ public class BibliotecaDto {
     private Optional<JuegoDto> juegoDto;
     private LocalDate fechaCompraJuegoBiblio;
     private double tiempoJuegoBiblio;
-    private LocalDate ultiFechaJuegoBiblio;
+    private LocalDateTime ultiFechaJuegoBiblio;
     private TipoEstadoInstalacion estadoInstJuegoBiblio;
 
     //Constructor
 
     public BibliotecaDto(Long idBiblio, Long idUsuarioBiblio, Optional<UsuarioDto> usuarioDto, Long idJuegoBiblio,
                          Optional<JuegoDto> juegoDto, LocalDate fechaCompraJuegoBiblio, double tiempoJuegoBiblio,
-                         LocalDate ultiFechaJuegoBiblio, TipoEstadoInstalacion estadoInstJuegoBiblio) {
+                         LocalDateTime ultiFechaJuegoBiblio, TipoEstadoInstalacion estadoInstJuegoBiblio) {
         this.idBiblio = idBiblio;
         this.idUsuarioBiblio = idUsuarioBiblio;
         this.usuarioDto = usuarioDto;
@@ -65,7 +66,7 @@ public class BibliotecaDto {
         return tiempoJuegoBiblio;
     }
 
-    public LocalDate getUltiFechaJuegoBiblio() {
+    public LocalDateTime getUltiFechaJuegoBiblio() {
         return ultiFechaJuegoBiblio;
     }
 

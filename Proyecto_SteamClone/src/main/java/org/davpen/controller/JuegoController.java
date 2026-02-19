@@ -46,12 +46,12 @@ public class JuegoController {
 
 
     //TODO: Buscar juegos
-    //public List<JuegoDto> listaJuegosPorCategoria(TipoCategoriaJuego categoria){
-    //    return juegoRepo.obtenerTodos().stream()
-    //            .filter(j -> j.getCategoriaJuego().equals(categoria))
-    //            .map(Mapper.mapaJuegoCompleto())
-    //            .toList();
-    //}
+    public List<JuegoDto> listaJuegosPorCategoria(TipoCategoriaJuego categoria){
+        return juegoRepo.obtenerTodos().stream()
+                .filter(j -> j.getCategoriaJuego().equals(categoria))
+                .map(Mapper::mapaJuegoCompleto)
+                .toList();
+    }
 
 
     //TODO: Consultar catalogo completo - Metadatos Paginacion??
