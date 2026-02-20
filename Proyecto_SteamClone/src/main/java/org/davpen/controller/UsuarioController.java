@@ -7,8 +7,10 @@ import org.davpen.modelo.dto.UsuarioDto;
 import org.davpen.modelo.form.ErrorDto;
 import org.davpen.modelo.form.ErrorType;
 import org.davpen.modelo.form.UsuarioForm;
+import org.davpen.repositorio.inmemory.UsuarioRepoInMemory;
 import org.davpen.repositorio.intefaces.IUsuarioRepo;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 
 import static org.davpen.repositorio.inmemory.UsuarioRepoInMemory.listaPaises;
@@ -108,6 +110,22 @@ public class UsuarioController {
         usuarioRepo.actualizar(id, usuarioActualizadoForm);
         return nuevoSaldo;
 
+    }
+
+    public static void main(String[] args) throws ValidationException {
+        var c = new UsuarioController(new UsuarioRepoInMemory());
+
+        var cuenta1 = c.registrarUsuario(new UsuarioForm("JugadorTotal", "usuario@email.com", "Aa1!nnnnnn", "Pedro",
+                                         "Portugal", LocalDate.of(1982, 10, 5), LocalDate.of(2024,4,6), "avatar", 5.00, TipoEstadoCuenta.ACTIVA));
+
+        var salidaNombre1 = cuenta1.getNombreCuentaUsuario();
+
+        var cuentaRepetida = c.registrarUsuario(new UsuarioForm("JugadorBasico", "usuario2@email.com", "Ab1!nnnnnn", "Paco",
+                "Portugal", LocalDate.of(1982, 11, 5), LocalDate.of(2024,5,6), "avatar", 5.00, TipoEstadoCuenta.ACTIVA));
+
+        var salidaNombre2 = cuentaRepetida.getNombreCuentaUsuario();
+        System.out.println(salidaNombre1);
+        System.out.println(salidaNombre2);
     }
 
 }
