@@ -78,7 +78,7 @@ public class JuegoController {
 
     //Aplicar descuento
 
-    public double aplicarDescuento(Long id, int descuento) throws ValidationException {
+    public JuegoDto aplicarDescuento(Long id, int descuento) throws ValidationException {
 
         var errores = new ArrayList<ErrorDto>();
         if (!juegoRepo.obtenerPorId(id).isPresent()){
@@ -107,14 +107,14 @@ public class JuegoController {
                             nuevoPrecio, descuento, juegoActual.get().getCategoriaJuego(), juegoActual.get().getClasEdadJuego(),
                             juegoActual.get().getIdiomasJuego(), juegoActual.get().getEstadoJuego());
 
-        juegoRepo.actualizar(id, juegoActualizadoForm);
+        var juegoActualizado = juegoRepo.actualizar(id, juegoActualizadoForm).orElse(null);
 
-        return nuevoPrecio;
+        return Mapper.mapaJuegoCompleto(juegoActualizado);
     }
 
     //Cambiar estado de juego
 
-    public TipoEstadoJuego cambiarEstadoJuego(Long id, TipoEstadoJuego nuevoEstado) throws ValidationException {
+    public JuegoDto cambiarEstadoJuego(Long id, TipoEstadoJuego nuevoEstado) throws ValidationException {
 
         var errores = new ArrayList<ErrorDto>();
         if (!juegoRepo.obtenerPorId(id).isPresent()){
@@ -132,9 +132,9 @@ public class JuegoController {
                 juegoActual.get().getPrecioBaseJuego(), juegoActual.get().getDescuentoActualJuego(), juegoActual.get().getCategoriaJuego(),
                 juegoActual.get().getClasEdadJuego(), juegoActual.get().getIdiomasJuego(), nuevoEstado);
 
-        juegoRepo.actualizar(id, juegoActualizadoForm);
+        var juegoActualizado = juegoRepo.actualizar(id, juegoActualizadoForm).orElse(null);
 
-        return nuevoEstado;
+        return Mapper.mapaJuegoCompleto(juegoActualizado);
     }
 
 

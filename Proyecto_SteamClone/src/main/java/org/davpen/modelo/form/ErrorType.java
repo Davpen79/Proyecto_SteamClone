@@ -20,7 +20,10 @@ public enum ErrorType {
     MENOR_DE_EDAD("Debes tener al menos 13 años de edad"),
     CAMPO_VACIO("Al menos un valor valido"),
     NUNCA_JUGADO("Nunca jugado"),
-    NO_PERTENECE("El usuario no coincide");
+    NO_PERTENECE("El usuario no coincide"),
+    PLAZO_SUPERADO("El plazo de devolución se ha superado"),
+    TIEMPO_SUPERADO("El tiempo de devolucion se ha superado"),
+    COMPRA_FALLIDA("La compra no se ha efectuado");
 
     private final String mensaje;
 

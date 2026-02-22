@@ -73,7 +73,7 @@ public class UsuarioController {
 
     //Añadir saldo
 
-    private double anhadirSaldo(Long id, Double cantidadAnhadida) throws ValidationException {
+    private UsuarioDto anhadirSaldo(Long id, Double cantidadAnhadida) throws ValidationException {
 
         var errores = new ArrayList<ErrorDto>();
         if (!usuarioRepo.obtenerPorId(id).isPresent()){
@@ -107,8 +107,9 @@ public class UsuarioController {
                                     usuarioActual.get().getPaisUsuario(), usuarioActual.get().getFechaNacUsuario(), usuarioActual.get().getFechaRegUsuario(),
                                     usuarioActual.get().getAvatarUsuario(), nuevoSaldo, usuarioActual.get().getEstadoCuentaUsuario());
 
-        usuarioRepo.actualizar(id, usuarioActualizadoForm);
-        return nuevoSaldo;
+        var usuarioActualizado = usuarioRepo.actualizar(id, usuarioActualizadoForm).orElse(null);
+
+        return Mapper.mapaUsuarioCompleto(usuarioActualizado);
 
     }
 

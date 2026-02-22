@@ -113,7 +113,7 @@ public class BibliotecaController {
     }
 
     //Actualizar tiempo de juego
-    public double actualizarTiempoJuego(Long idUsuario,Long idJuego,double horasParaAnhadir) throws ValidationException {
+    public BibliotecaDto actualizarTiempoJuego(Long idUsuario,Long idJuego,double horasParaAnhadir) throws ValidationException {
         var errores = new ArrayList<ErrorDto>();
         //Validar Usuario && Juego existen
         var usuarioExiste = usuarioRepo.obtenerPorId(idUsuario).isPresent();
@@ -141,8 +141,8 @@ public class BibliotecaController {
                                         entradaBibEntity.getFechaCompraJuegoBiblio(), horasActualizadas, entradaBibEntity.getUltiFechaJuegoBiblio(),
                                         entradaBibEntity.getEstadoInstJuegoBiblio());
 
-        bibliotecaRepo.actualizar(idEntradaEncontrada, bibliotecaActualizadaForm);
-        return horasActualizadas;
+        var bibliotecaActualizada = bibliotecaRepo.actualizar(idEntradaEncontrada, bibliotecaActualizadaForm).orElse(null);
+        return Mapper.mapaSimple(bibliotecaActualizada);
     }
 
     //Consultar ultima sesion
@@ -162,7 +162,6 @@ public class BibliotecaController {
         if (entradaBiblioteca.isEmpty()){
             errores.add(new ErrorDto("entrada", ErrorType.NO_ENCONTRADO));
         }
-
         if (!errores.isEmpty()){
             throw new ValidationException(errores);
         }
@@ -171,6 +170,9 @@ public class BibliotecaController {
 
         if (ultimaPartida == null){
             errores.add(new ErrorDto("Fecha_ultima_sesion", ErrorType.NUNCA_JUGADO));
+        }
+        if (!errores.isEmpty()){
+            throw new ValidationException(errores);
         }
         return ultimaPartida;
     }

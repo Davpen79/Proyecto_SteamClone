@@ -20,11 +20,16 @@ public class UsuarioControllerTest {
     UsuarioController usuarioController = new UsuarioController(usuarioRepo);
 
     @Test
-    public void registrarUsuariotest() throws ValidationException {
+    public void testRegistrarUsuario_UsuarioCorrecto_UsuarioDto() throws ValidationException {
 
-        final var usuario = new UsuarioForm("Carlos", "carlos@mail.com", "cArlos123",
-                "carlos", "es", LocalDate.of(1950, 1, 1), null,
+        final var usuarioCorrecto = new UsuarioForm("Carlos", "carlos@mail.com", "cArlos123",
+                "carlos", "España", LocalDate.of(1950, 1, 1), LocalDate.now(),
                 "avatar", 0.5, TipoEstadoCuenta.ACTIVA);
 
+        final var usuarioDto = new UsuarioDto(1L,"Carlos","carlos@mail.com", "cArlos123",
+                "España", LocalDate.of(1950, 1, 1), LocalDate.now(),
+                "avatar", 0.5, TipoEstadoCuenta.ACTIVA);
+
+        assertEquals(usuarioDto, usuarioController.registrarUsuario(usuarioCorrecto));
     }
 }
