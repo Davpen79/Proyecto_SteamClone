@@ -23,7 +23,8 @@ public enum ErrorType {
     NO_PERTENECE("El usuario no coincide"),
     PLAZO_SUPERADO("El plazo de devolución se ha superado"),
     TIEMPO_SUPERADO("El tiempo de devolucion se ha superado"),
-    COMPRA_FALLIDA("La compra no se ha efectuado");
+    COMPRA_FALLIDA("La compra no se ha efectuado"),
+    RESENHA_NO_PUBLICADA("La reseña no se ha publicado");
 
     private final String mensaje;
 
