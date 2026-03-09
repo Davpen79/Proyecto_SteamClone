@@ -10,6 +10,12 @@ import java.util.List;
 import static org.davpen.repositorio.inmemory.UsuarioRepoInMemory.listaPaises;
 
 public class UsuarioForm {
+    public static final int CUENTA_LENGTH_MIN = 3;
+    public static final int CUENTA_LENGTH_MAX = 20;
+    public static final int PASS_LENGTH_MIN = 8;
+    public static final int NOMBRE_LENGTH_MIN = 2;
+    public static final int NOMBRE_LENGTH_MAX = 50;
+    public static final int EDAD_MIN = 14;
     //Atributos
     private String nombreCuentaUsuario;
     private String emailUsuario;
@@ -88,11 +94,11 @@ public class UsuarioForm {
             errores.add(new ErrorDto("Nombre_Cuenta", ErrorType.REQUERIDO));
         }
 
-        if (nombreCuentaUsuario != null && nombreCuentaUsuario.length() < 3) {
+        if (nombreCuentaUsuario != null && nombreCuentaUsuario.length() < CUENTA_LENGTH_MIN) {
             errores.add(new ErrorDto("Nombre_Cuenta", ErrorType.DEMASIADO_CORTO));
         }
 
-        if (nombreCuentaUsuario != null && nombreCuentaUsuario.length() > 20) {
+        if (nombreCuentaUsuario != null && nombreCuentaUsuario.length() > CUENTA_LENGTH_MAX) {
             errores.add(new ErrorDto("Nombre_Cuenta", ErrorType.DEMASIADO_LARGO));
         }
 
@@ -122,7 +128,7 @@ public class UsuarioForm {
             errores.add(new ErrorDto("password", ErrorType.FORMATO_INVALIDO));
         }
 
-        if (passwordUsuario !=null && passwordUsuario.length() < 8){
+        if (passwordUsuario !=null && passwordUsuario.length() < PASS_LENGTH_MIN){
             errores.add(new ErrorDto("password", ErrorType.DEMASIADO_CORTO));
         }
 
@@ -131,11 +137,11 @@ public class UsuarioForm {
             errores.add(new ErrorDto("nombre_real", ErrorType.REQUERIDO));
         }
 
-        if (nombreRealUsuario != null && nombreRealUsuario.length() < 2){
+        if (nombreRealUsuario != null && nombreRealUsuario.length() < NOMBRE_LENGTH_MIN){
             errores.add(new ErrorDto("nombre_real", ErrorType.DEMASIADO_CORTO));
         }
 
-        if (nombreRealUsuario != null && nombreRealUsuario.length() > 50){
+        if (nombreRealUsuario != null && nombreRealUsuario.length() > NOMBRE_LENGTH_MAX){
             errores.add(new ErrorDto("nombre_real", ErrorType.DEMASIADO_LARGO));
         }
 
@@ -153,7 +159,7 @@ public class UsuarioForm {
             errores.add(new ErrorDto("fecha_nacimiento", ErrorType.FECHA_FUTURA));
         }
 
-        if (fechaNacUsuario != null && Period.between(fechaNacUsuario,fechaRegUsuario).getYears() < 14){
+        if (fechaNacUsuario != null && Period.between(fechaNacUsuario,fechaRegUsuario).getYears() < EDAD_MIN){
             errores.add(new ErrorDto("fecha_nacimiento", ErrorType.MENOR_DE_EDAD));
         }
 

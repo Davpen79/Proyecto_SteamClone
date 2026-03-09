@@ -7,7 +7,6 @@ import org.davpen.repositorio.intefaces.IResenhaRepo;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 public class ResenhaInRepoMemory implements IResenhaRepo {
 

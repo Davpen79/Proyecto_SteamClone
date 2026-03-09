@@ -4,7 +4,6 @@ import org.davpen.enums.TipoEstadoResenha;
 import org.davpen.excepciones.ValidationException;
 import org.davpen.mapper.Mapper;
 import org.davpen.modelo.dto.ResenhaDto;
-import org.davpen.modelo.entity.ResenhaEntity;
 import org.davpen.modelo.form.ErrorDto;
 import org.davpen.modelo.form.ErrorType;
 import org.davpen.modelo.form.ResenhaForm;

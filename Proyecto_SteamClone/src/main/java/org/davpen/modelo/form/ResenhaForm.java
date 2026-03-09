@@ -8,6 +8,8 @@ import java.util.List;
 
 public class ResenhaForm {
 
+    public static final int RESENHA_LENGTH_MIN = 50;
+    public static final int RESENHA_LENGTH_MAX = 8000;
     //Atributos
     private Long idUsuarioResenha;
     private Long idJuegoResenha;
@@ -84,11 +86,11 @@ public class ResenhaForm {
             errores.add(new ErrorDto("texto_reseña", ErrorType.REQUERIDO));
         }
 
-        if (textoResenha != null && textoResenha.length() < 50){
+        if (textoResenha != null && textoResenha.length() < RESENHA_LENGTH_MIN){
             errores.add(new ErrorDto("texto_reseña", ErrorType.DEMASIADO_CORTO));
         }
 
-        if (textoResenha != null && textoResenha.length() > 8000){
+        if (textoResenha != null && textoResenha.length() > RESENHA_LENGTH_MAX){
             errores.add(new ErrorDto("texto_reseña", ErrorType.DEMASIADO_LARGO));
         }
 

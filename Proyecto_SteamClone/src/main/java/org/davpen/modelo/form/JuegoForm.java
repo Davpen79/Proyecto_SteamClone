@@ -12,6 +12,16 @@ import java.util.stream.Collectors;
 
 public class JuegoForm {
 
+    public static final int DESCRIPCION_MAX = 2000;
+    public static final int TITULO_LENGTH_MAX = 100;
+    public static final int TITULO_LENGTH_MIN = 1;
+    public static final int DESARROLLADOR_LENGTH_MIN = 2;
+    public static final int DESARROLLADOR_LENGTH_MAX = 100;
+    public static final double PRECIO_MIN = 0.00d;
+    public static final double PRECIO_MAX = 999.99d;
+    public static final int DESCUENTO_MIN = 0;
+    public static final int DESCUENTO_MAX = 100;
+    public static final int IDIOMAS_LENGTH_MAX = 200;
     //Atributos
     private String tituloJuego;
     private String descripcionJuego;
@@ -90,16 +100,16 @@ public class JuegoForm {
             errores.add(new ErrorDto("titulo", ErrorType.REQUERIDO));
         }
 
-        if (tituloJuego != null && tituloJuego.length() < 1){
+        if (tituloJuego != null && tituloJuego.length() < TITULO_LENGTH_MIN){
             errores.add(new ErrorDto("titulo", ErrorType.DEMASIADO_CORTO));
         }
 
-        if (tituloJuego != null && tituloJuego.length() > 100){
+        if (tituloJuego != null && tituloJuego.length() > TITULO_LENGTH_MAX){
             errores.add(new ErrorDto("titulo", ErrorType.DEMASIADO_LARGO));
         }
 
         //Validaciones Descripcion
-        if (descripcionJuego != null && descripcionJuego.length() > 2000){
+        if (descripcionJuego != null && descripcionJuego.length() > DESCRIPCION_MAX){
             errores.add(new ErrorDto("descripcion", ErrorType.DEMASIADO_LARGO));
         }
 
@@ -108,11 +118,11 @@ public class JuegoForm {
             errores.add(new ErrorDto("desarrollador", ErrorType.REQUERIDO));
         }
 
-        if (desarrolladorJuego != null && desarrolladorJuego.length() < 2){
+        if (desarrolladorJuego != null && desarrolladorJuego.length() < DESARROLLADOR_LENGTH_MIN){
             errores.add(new ErrorDto("desarrollador", ErrorType.DEMASIADO_CORTO));
         }
 
-        if (desarrolladorJuego != null && desarrolladorJuego.length() > 100){
+        if (desarrolladorJuego != null && desarrolladorJuego.length() > DESARROLLADOR_LENGTH_MAX){
             errores.add(new ErrorDto("desarrollador", ErrorType.DEMASIADO_LARGO));
         }
 
@@ -126,11 +136,11 @@ public class JuegoForm {
             errores.add(new ErrorDto("precio_base", ErrorType.REQUERIDO));
         }
 
-        if (precioBaseJuego != null && precioBaseJuego < 0.00d){
+        if (precioBaseJuego != null && precioBaseJuego < PRECIO_MIN){
             errores.add(new ErrorDto("precio_base", ErrorType.VALOR_NEGATIVO));
         }
 
-        if (precioBaseJuego != null && precioBaseJuego > 999.99d){
+        if (precioBaseJuego != null && precioBaseJuego > PRECIO_MAX){
             errores.add(new ErrorDto("precio_base", ErrorType.VALOR_DEMASIADO_ALTO));
         }
 
@@ -139,11 +149,11 @@ public class JuegoForm {
         }
 
         //Validaciones Precio descuento
-        if (descuentoActualJuego != null && descuentoActualJuego < 0){
+        if (descuentoActualJuego != null && descuentoActualJuego < DESCUENTO_MIN){
             errores.add(new ErrorDto("descuento", ErrorType.VALOR_NEGATIVO));
         }
 
-        if (descuentoActualJuego > 100){
+        if (descuentoActualJuego > DESCUENTO_MAX){
             errores.add(new ErrorDto("descuento", ErrorType.VALOR_DEMASIADO_ALTO));
         }
 
@@ -165,7 +175,7 @@ public class JuegoForm {
         if (idiomasJuego != null && idiomasJuego.isEmpty()){
             errores.add(new ErrorDto("idioma", ErrorType.CAMPO_VACIO));
         }
-        if (idiomasJuego != null && !idiomasJuego.isEmpty() && idiomasJuego.toString().length() > 200){
+        if (idiomasJuego != null && !idiomasJuego.isEmpty() && idiomasJuego.toString().length() > IDIOMAS_LENGTH_MAX){
             errores.add(new ErrorDto("idioma", ErrorType.DEMASIADO_LARGO));
         }
 

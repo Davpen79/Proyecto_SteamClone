@@ -17,6 +17,8 @@ import static org.davpen.repositorio.inmemory.UsuarioRepoInMemory.listaPaises;
 
 public class UsuarioController {
 
+    public static final double SALDO_MINIMO = 5.00;
+    public static final double SALDO_MAXIMO = 500.00;
     private final IUsuarioRepo usuarioRepo;
 
     public UsuarioController(IUsuarioRepo usuarioRepo) {
@@ -85,10 +87,10 @@ public class UsuarioController {
         if (cantidadAnhadida < 0){
             errores.add(new ErrorDto("cantidad", ErrorType.VALOR_NEGATIVO));
         }
-        if (cantidadAnhadida < 5.00){
+        if (cantidadAnhadida < SALDO_MINIMO){
             errores.add(new ErrorDto("cantidad", ErrorType.VALOR_DEMASIADO_BAJO));
         }
-        if (cantidadAnhadida > 500.00){
+        if (cantidadAnhadida > SALDO_MAXIMO){
             errores.add(new ErrorDto("cantidad", ErrorType.VALOR_DEMASIADO_ALTO));
         }
         if (usuarioRepo.obtenerPorId(id).get().getEstadoCuentaUsuario() != TipoEstadoCuenta.ACTIVA){
