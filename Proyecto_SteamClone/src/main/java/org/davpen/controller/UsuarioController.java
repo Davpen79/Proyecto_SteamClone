@@ -13,7 +13,7 @@ import org.davpen.repositorio.intefaces.IUsuarioRepo;
 import java.time.LocalDate;
 import java.util.ArrayList;
 
-import static org.davpen.repositorio.inmemory.UsuarioRepoInMemory.listaPaises;
+
 
 public class UsuarioController {
 
@@ -39,7 +39,7 @@ public class UsuarioController {
             errores.add(new ErrorDto("email", ErrorType.DUPLICADO));
         }
         //comprobar pais existe en lista
-        if (!listaPaises.contains(usuarioForm.getPaisUsuario())){
+        if (!UsuarioRepoInMemory.listaPaises.contains(usuarioForm.getPaisUsuario())){
             errores.add(new ErrorDto("pais", ErrorType.NO_ENCONTRADO));
         }
 
@@ -59,7 +59,7 @@ public class UsuarioController {
 
     //Consultar saldo
 
-    private double consultarSaldo(Long id) throws ValidationException {
+    public double consultarSaldo(Long id) throws ValidationException {
 
         var errores = new ArrayList<ErrorDto>();
         if (!usuarioRepo.obtenerPorId(id).isPresent()){
@@ -75,7 +75,7 @@ public class UsuarioController {
 
     //Añadir saldo
 
-    private UsuarioDto anhadirSaldo(Long id, Double cantidadAnhadida) throws ValidationException {
+    public UsuarioDto anhadirSaldo(Long id, Double cantidadAnhadida) throws ValidationException {
 
         var errores = new ArrayList<ErrorDto>();
         if (!usuarioRepo.obtenerPorId(id).isPresent()){

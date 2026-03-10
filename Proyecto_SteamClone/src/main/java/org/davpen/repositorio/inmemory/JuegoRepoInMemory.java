@@ -10,7 +10,7 @@ import java.util.Optional;
 
 public class JuegoRepoInMemory implements IJuegoRepo {
 
-    private static final List<JuegoEntity> listaJuegos = new ArrayList<>();
+    private static final List<JuegoEntity> LISTA_JUEGOS = new ArrayList<>();
     private static Long idCounter = 1L;
 
     @Override
@@ -19,7 +19,7 @@ public class JuegoRepoInMemory implements IJuegoRepo {
         var juegoNuevo = new JuegoEntity(idCounter++, form.getTituloJuego(), form.getDescripcionJuego(), form.getDesarrolladorJuego(),
                 form.getFechaLanzaJuego(), form.getPrecioBaseJuego(), form.getDescuentoActualJuego(), form.getCategoriaJuego(),
                 form.getClasEdadJuego(), form.getIdiomasJuego(), form.getEstadoJuego());
-        listaJuegos.add(juegoNuevo);
+        LISTA_JUEGOS.add(juegoNuevo);
 
         return Optional.of(juegoNuevo);
     }
@@ -27,7 +27,7 @@ public class JuegoRepoInMemory implements IJuegoRepo {
     @Override
     public Optional<JuegoEntity> obtenerPorId(Long id) {
 
-        return listaJuegos.stream()
+        return LISTA_JUEGOS.stream()
                 .filter(j -> j.getIdJuego().equals(id))
                 .findFirst();
     }
@@ -35,7 +35,7 @@ public class JuegoRepoInMemory implements IJuegoRepo {
     @Override
     public List<JuegoEntity> obtenerTodos() {
 
-        return new ArrayList<>(listaJuegos);
+        return new ArrayList<>(LISTA_JUEGOS);
     }
 
     @Override
@@ -48,15 +48,15 @@ public class JuegoRepoInMemory implements IJuegoRepo {
         var juegoActualizado = new JuegoEntity(id, form.getTituloJuego(), form.getDescripcionJuego(), form.getDesarrolladorJuego(),
                 form.getFechaLanzaJuego(), form.getPrecioBaseJuego(), form.getDescuentoActualJuego(), form.getCategoriaJuego(),
                 form.getClasEdadJuego(), form.getIdiomasJuego(), form.getEstadoJuego());
-        listaJuegos.removeIf(j -> j.getIdJuego().equals(id));
-        listaJuegos.add(juegoActualizado);
+        LISTA_JUEGOS.removeIf(j -> j.getIdJuego().equals(id));
+        LISTA_JUEGOS.add(juegoActualizado);
 
         return Optional.of(juegoActualizado);
     }
 
     @Override
     public boolean eliminar(Long id) {
-        return listaJuegos.removeIf(j -> j.getIdJuego().equals(id));
+        return LISTA_JUEGOS.removeIf(j -> j.getIdJuego().equals(id));
     }
 }
 

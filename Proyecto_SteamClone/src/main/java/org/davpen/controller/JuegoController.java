@@ -16,6 +16,8 @@ import java.util.List;
 
 public class JuegoController {
 
+    public static final int DESCUENTO_MIN = 0;
+    public static final int DESCUENTO_MAX = 100;
     private final IJuegoRepo juegoRepo;
 
     public JuegoController(IJuegoRepo juegoRepo) {
@@ -87,10 +89,10 @@ public class JuegoController {
         if (juegoRepo.obtenerPorId(id).get().getEstadoJuego() == TipoEstadoJuego.NO_DISPONIBLE){
             errores.add(new ErrorDto("estado", ErrorType.NO_DISPONIBLE));
         }
-        if (descuento < 0){
+        if (descuento < DESCUENTO_MIN){
             errores.add(new ErrorDto("descuento", ErrorType.VALOR_NEGATIVO));
         }
-        if (descuento > 0){
+        if (descuento > DESCUENTO_MAX){
             errores.add(new ErrorDto("descuento", ErrorType.VALOR_DEMASIADO_ALTO));
         }
 

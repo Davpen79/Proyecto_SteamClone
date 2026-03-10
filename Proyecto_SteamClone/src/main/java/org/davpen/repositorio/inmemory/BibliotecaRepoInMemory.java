@@ -10,7 +10,7 @@ import java.util.Optional;
 
 public class BibliotecaRepoInMemory implements IBibliotecaRepo {
 
-    private static final List<BibliotecaEntity> listaBibliotecas = new ArrayList<>();
+    private static final List<BibliotecaEntity> LISTA_BIBLIOTECAS = new ArrayList<>();
     private static Long idCounter = 1L;
 
     @Override
@@ -18,7 +18,7 @@ public class BibliotecaRepoInMemory implements IBibliotecaRepo {
 
         var bibliotecaNueva = new BibliotecaEntity(idCounter++, form.getIdUsuarioBiblio(), form.getIdJuegoBiblio(), form.getFechaAdquisicionJuegoBiblio(),
                 form.getTiempoJuegoBiblio(), form.getUltiFechaJuegoBiblio(), form.getEstadoInstJuegoBiblio());
-        listaBibliotecas.add(bibliotecaNueva);
+        LISTA_BIBLIOTECAS.add(bibliotecaNueva);
 
         return Optional.of(bibliotecaNueva);
     }
@@ -26,14 +26,14 @@ public class BibliotecaRepoInMemory implements IBibliotecaRepo {
     @Override
     public Optional<BibliotecaEntity> obtenerPorId(Long id) {
 
-        return listaBibliotecas.stream()
+        return LISTA_BIBLIOTECAS.stream()
                 .filter(b -> b.getIdBiblio().equals(id))
                 .findFirst();
     }
 
     @Override
     public List<BibliotecaEntity> obtenerTodos() {
-        return new ArrayList<>(listaBibliotecas);
+        return new ArrayList<>(LISTA_BIBLIOTECAS);
     }
 
     @Override
@@ -45,14 +45,14 @@ public class BibliotecaRepoInMemory implements IBibliotecaRepo {
         }
         var bibliotecaActualizada = new BibliotecaEntity(id, form.getIdUsuarioBiblio(), form.getIdJuegoBiblio(), form.getFechaAdquisicionJuegoBiblio(),
                 form.getTiempoJuegoBiblio(), form.getUltiFechaJuegoBiblio(), form.getEstadoInstJuegoBiblio());
-        listaBibliotecas.removeIf(b -> b.getIdBiblio().equals(id));
-        listaBibliotecas.add(bibliotecaActualizada);
+        LISTA_BIBLIOTECAS.removeIf(b -> b.getIdBiblio().equals(id));
+        LISTA_BIBLIOTECAS.add(bibliotecaActualizada);
 
         return Optional.of(bibliotecaActualizada);
     }
 
     @Override
     public boolean eliminar(Long id) {
-        return listaBibliotecas.removeIf(b -> b.getIdBiblio().equals(id));
+        return LISTA_BIBLIOTECAS.removeIf(b -> b.getIdBiblio().equals(id));
     }
 }

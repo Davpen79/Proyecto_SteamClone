@@ -10,7 +10,7 @@ import java.util.Optional;
 
 public class ResenhaInRepoMemory implements IResenhaRepo {
 
-    private static final List<ResenhaEntity> listaResenhas = new ArrayList<>();
+    private static final List<ResenhaEntity> LISTA_RESENHAS = new ArrayList<>();
     private static Long idCounter = 1L;
 
     @Override
@@ -19,21 +19,21 @@ public class ResenhaInRepoMemory implements IResenhaRepo {
         var resenhaNueva = new ResenhaEntity(idCounter++, form.getIdUsuarioResenha(), form.getIdJuegoResenha(),
                 form.isRecomendacionResenha(), form.getTextoResenha(), form.getTiempoJugadoResenha(),
                 form.getFechaPublicacionResenha(), form.getFechaUltiEdicResenha(), form.getEstadoResenha());
-        listaResenhas.add(resenhaNueva);
+        LISTA_RESENHAS.add(resenhaNueva);
 
         return Optional.of(resenhaNueva);
     }
 
     @Override
     public Optional<ResenhaEntity> obtenerPorId(Long id) {
-        return listaResenhas.stream()
+        return LISTA_RESENHAS.stream()
                 .filter(r -> r.getIdResenha().equals(id))
                 .findFirst();
     }
 
     @Override
     public List<ResenhaEntity> obtenerTodos() {
-        return new ArrayList<>(listaResenhas);
+        return new ArrayList<>(LISTA_RESENHAS);
     }
 
     @Override
@@ -46,15 +46,15 @@ public class ResenhaInRepoMemory implements IResenhaRepo {
         var resenhaActualizada = new ResenhaEntity(id, form.getIdUsuarioResenha(), form.getIdJuegoResenha(),
                 form.isRecomendacionResenha(), form.getTextoResenha(), form.getTiempoJugadoResenha(),
                 form.getFechaPublicacionResenha(), form.getFechaUltiEdicResenha(), form.getEstadoResenha());
-        listaResenhas.removeIf(r -> r.getIdResenha().equals(id));
-        listaResenhas.add(resenhaActualizada);
+        LISTA_RESENHAS.removeIf(r -> r.getIdResenha().equals(id));
+        LISTA_RESENHAS.add(resenhaActualizada);
 
         return Optional.of(resenhaActualizada);
     }
 
     @Override
     public boolean eliminar(Long id) {
-        return listaResenhas.removeIf(r -> r.getIdResenha().equals(id));
+        return LISTA_RESENHAS.removeIf(r -> r.getIdResenha().equals(id));
     }
 
     @Override

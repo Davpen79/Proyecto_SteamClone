@@ -13,7 +13,7 @@ import java.util.Optional;
 
 public class UsuarioRepoInMemory implements IUsuarioRepo {
 
-    private static final List<UsuarioEntity> listaUsuarios = new ArrayList<>();
+    private static final List<UsuarioEntity> LISTA_USUARIOS = new ArrayList<>();
     private static Long idCounter = 1L;
     public static List<String> listaPaises = List.of("España", "Francia", "Portugal");
 
@@ -23,14 +23,14 @@ public class UsuarioRepoInMemory implements IUsuarioRepo {
         var usuario = new UsuarioEntity(idCounter++, form.getNombreCuentaUsuario(), form.getEmailUsuario(), form.getPasswordUsuario(),
                 form.getNombreRealUsuario(), form.getPaisUsuario(), form.getFechaNacUsuario(), LocalDate.now(), form.getAvatarUsuario(),
                 0.00, TipoEstadoCuenta.ACTIVA);
-        listaUsuarios.add(usuario);
+        LISTA_USUARIOS.add(usuario);
         return Optional.of(usuario);
     }
 
     @Override
     public Optional<UsuarioEntity> obtenerPorId(Long id) {
 
-        return listaUsuarios.stream()
+        return LISTA_USUARIOS.stream()
                 .filter(u -> u.getIdUsuario()
                 .equals(id)).findFirst();
     }
@@ -38,7 +38,7 @@ public class UsuarioRepoInMemory implements IUsuarioRepo {
     @Override
     public List<UsuarioEntity> obtenerTodos() {
 
-        return new ArrayList<>(listaUsuarios);
+        return new ArrayList<>(LISTA_USUARIOS);
     }
 
     @Override
@@ -51,20 +51,20 @@ public class UsuarioRepoInMemory implements IUsuarioRepo {
                 form.getNombreRealUsuario(), form.getPaisUsuario(), form.getFechaNacUsuario(),form.getFechaRegUsuario(), form.getAvatarUsuario(),
                 form.getSaldoUsuario(), form.getEstadoCuentaUsuario());
 
-        listaUsuarios.removeIf(u -> u.getIdUsuario().equals(id));
-        listaUsuarios.add(usuarioActualizado);
+        LISTA_USUARIOS.removeIf(u -> u.getIdUsuario().equals(id));
+        LISTA_USUARIOS.add(usuarioActualizado);
 
         return Optional.of(usuarioActualizado);
     }
 
     @Override
     public boolean eliminar(Long id) {
-        return listaUsuarios.removeIf(u -> u.getIdUsuario().equals(id));
+        return LISTA_USUARIOS.removeIf(u -> u.getIdUsuario().equals(id));
     }
 
     @Override
     public Optional<UsuarioEntity> obtenerPorNombre(String nombreCuentaUsuario) {
-        return listaUsuarios.stream()
+        return LISTA_USUARIOS.stream()
                 .filter(u -> u.getNombreCuentaUsuario().equals(nombreCuentaUsuario))
                 .findFirst();
     }

@@ -7,8 +7,6 @@ import java.time.Period;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.davpen.repositorio.inmemory.UsuarioRepoInMemory.listaPaises;
-
 public class UsuarioForm {
     public static final int CUENTA_LENGTH_MIN = 3;
     public static final int CUENTA_LENGTH_MAX = 20;

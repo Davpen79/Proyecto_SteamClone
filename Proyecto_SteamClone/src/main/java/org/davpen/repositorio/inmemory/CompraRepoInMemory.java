@@ -10,7 +10,7 @@ import java.util.Optional;
 
 public class CompraRepoInMemory implements ICompraRepo {
 
-    private static final List<CompraEntity> listaCompras = new ArrayList<>();
+    private static final List<CompraEntity> LISTA_COMPRAS = new ArrayList<>();
     private static Long idCounter = 1L;
 
     @Override
@@ -18,7 +18,7 @@ public class CompraRepoInMemory implements ICompraRepo {
 
         var compraNueva = new CompraEntity(idCounter++, form.getIdUsuarioCompra(), form.getIdJuegoCompra(), form.getFechaCompra(),
                 form.getTipoPagoCompra(), form.getPrecioBaseCompra(), form.getDescuentoEnCompra(), form.getEstadoCompra());
-        listaCompras.add(compraNueva);
+        LISTA_COMPRAS.add(compraNueva);
 
         return Optional.of(compraNueva);
     }
@@ -26,14 +26,14 @@ public class CompraRepoInMemory implements ICompraRepo {
     @Override
     public Optional<CompraEntity> obtenerPorId(Long id) {
 
-        return listaCompras.stream()
+        return LISTA_COMPRAS.stream()
                 .filter(c -> c.getIdCompra().equals(id))
                 .findFirst();
     }
 
     @Override
     public List<CompraEntity> obtenerTodos() {
-        return new ArrayList<>(listaCompras);
+        return new ArrayList<>(LISTA_COMPRAS);
     }
     //Como Actualizas una compra
     @Override
@@ -45,14 +45,14 @@ public class CompraRepoInMemory implements ICompraRepo {
         }
         var compraActualizada = new CompraEntity(id, form.getIdUsuarioCompra(), form.getIdJuegoCompra(), form.getFechaCompra(),
                 form.getTipoPagoCompra(), form.getPrecioBaseCompra(), form.getDescuentoEnCompra(), form.getEstadoCompra());
-        listaCompras.removeIf(c -> c.getIdCompra().equals(id));
-        listaCompras.add(compraActualizada);
+        LISTA_COMPRAS.removeIf(c -> c.getIdCompra().equals(id));
+        LISTA_COMPRAS.add(compraActualizada);
 
         return Optional.of(compraActualizada);
     }
 
     @Override
     public boolean eliminar(Long id) {
-        return listaCompras.removeIf(c -> c.getIdCompra().equals(id));
+        return LISTA_COMPRAS.removeIf(c -> c.getIdCompra().equals(id));
     }
 }
