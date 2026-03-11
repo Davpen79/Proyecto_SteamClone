@@ -17,8 +17,7 @@ import java.time.LocalDate;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 
 @ExtendWith(MockitoExtension.class)
@@ -42,17 +41,40 @@ public class UsuarioControllerTest {
                 "nombreUsuario1", "España",LocalDate.of(1980, 5, 5),
                 LocalDate.of(2026, 3, 3),"avatarUsuario1",
                 10.00d, TipoEstadoCuenta.ACTIVA);
-        when(usuarioRepo.crear(formularioValido)).thenReturn(Optional.of(new UsuarioEntity(1L,"usuario1", "usuario1@mail.com",
-                "passUsuario1",
+        when(usuarioRepo.crear(formularioValido)).thenReturn(Optional.of(new UsuarioEntity(1L,
+                "usuario1", "usuario1@mail.com","passUsuario1",
                 "nombreUsuario1", "España",LocalDate.of(1980, 5, 5),
                 LocalDate.of(2026, 3, 3),"avatarUsuario1",
                 10.00d, TipoEstadoCuenta.ACTIVA)));
 
         //Act - el controlador crea un usuario nuevo
-        var resultado = usuarioController.registrarUsuario(formularioValido);
+        var resultadoRegistro = usuarioController.registrarUsuario(formularioValido);
         //Assert
-        assertEquals(usuarioDTO, resultado);
+        assertEquals(usuarioDTO, resultadoRegistro);
         verify(usuarioRepo).crear(formularioValido);
+
+    }
+
+    @Test
+    public void testConsultarSaldo_IdUsuarioValido_UsuarioDTO_LlamaUsuarioRepoObtenerPorId() throws ValidationException {
+        //Arrange
+        var idValido = 1L;
+        var usuarioDTO = new UsuarioDto(1L,"usuario1", "usuario1@mail.com",
+                "nombreUsuario1", "España",LocalDate.of(1980, 5, 5),
+                LocalDate.of(2026, 3, 3),"avatarUsuario1",
+                10.00d, TipoEstadoCuenta.ACTIVA);
+        when(usuarioRepo.obtenerPorId(idValido)).thenReturn(Optional.of(new UsuarioEntity(1L,
+                "usuario1", "usuario1@mail.com","passUsuario1",
+                "nombreUsuario1", "España",LocalDate.of(1980, 5, 5),
+                LocalDate.of(2026, 3, 3),"avatarUsuario1",
+                10.00d, TipoEstadoCuenta.ACTIVA)));
+
+        //Act
+        var resultadoSaldo = usuarioController.consultarSaldo(idValido);
+
+        //Assert
+        assertEquals(usuarioDTO, resultadoSaldo);
+        verify(usuarioRepo, atLeast(1)).obtenerPorId(idValido);
 
     }
 

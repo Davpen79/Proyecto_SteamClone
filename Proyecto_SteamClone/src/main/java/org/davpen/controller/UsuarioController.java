@@ -59,7 +59,7 @@ public class UsuarioController {
 
     //Consultar saldo
 
-    public double consultarSaldo(Long id) throws ValidationException {
+    public UsuarioDto consultarSaldo(Long id) throws ValidationException {
 
         var errores = new ArrayList<ErrorDto>();
         if (!usuarioRepo.obtenerPorId(id).isPresent()){
@@ -69,7 +69,9 @@ public class UsuarioController {
             throw new ValidationException(errores);
         }
 
-        return usuarioRepo.obtenerPorId(id).get().getSaldoUsuario();
+        //return usuarioRepo.obtenerPorId(id).get().getSaldoUsuario();
+        var usuarioEntity = usuarioRepo.obtenerPorId(id).get();
+        return Mapper.mapaUsuarioCompleto(usuarioEntity);
 
     }
 
