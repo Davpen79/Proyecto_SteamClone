@@ -3,6 +3,7 @@ package org.davpen.modelo.entity;
 import org.davpen.enums.TipoEstadoCuenta;
 
 import java.time.LocalDate;
+import java.util.Objects;
 
 public class UsuarioEntity {
     //Atributos
@@ -78,5 +79,28 @@ public class UsuarioEntity {
 
     public Long getIdUsuario() {
         return idUsuario;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        UsuarioEntity that = (UsuarioEntity) o;
+        return Double.compare(saldoUsuario, that.saldoUsuario) == 0
+                && Objects.equals(idUsuario, that.idUsuario)
+                && Objects.equals(nombreCuentaUsuario, that.nombreCuentaUsuario)
+                && Objects.equals(emailUsuario, that.emailUsuario)
+                && Objects.equals(passwordUsuario, that.passwordUsuario)
+                && Objects.equals(nombreRealUsuario, that.nombreRealUsuario)
+                && Objects.equals(paisUsuario, that.paisUsuario)
+                && Objects.equals(fechaNacUsuario, that.fechaNacUsuario)
+                && Objects.equals(fechaRegUsuario, that.fechaRegUsuario)
+                && Objects.equals(avatarUsuario, that.avatarUsuario)
+                && estadoCuentaUsuario == that.estadoCuentaUsuario;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(idUsuario, nombreCuentaUsuario, emailUsuario, passwordUsuario, nombreRealUsuario,
+                paisUsuario, fechaNacUsuario, fechaRegUsuario, avatarUsuario, saldoUsuario, estadoCuentaUsuario);
     }
 }
