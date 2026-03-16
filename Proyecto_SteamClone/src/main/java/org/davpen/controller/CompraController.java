@@ -27,7 +27,8 @@ public class CompraController {
     private final IJuegoRepo juegoRepo;
     private final IBibliotecaRepo bibliotecaRepo;
 
-    public CompraController(ICompraRepo compraRepo, IUsuarioRepo usuarioRepo, IJuegoRepo juegoRepo, IBibliotecaRepo bibliotecaRepo) {
+    public CompraController(ICompraRepo compraRepo, IUsuarioRepo usuarioRepo, IJuegoRepo juegoRepo,
+                            IBibliotecaRepo bibliotecaRepo) {
         this.compraRepo = compraRepo;
         this.usuarioRepo = usuarioRepo;
         this.juegoRepo = juegoRepo;
@@ -35,39 +36,39 @@ public class CompraController {
     }
 
     //Realizar compra => relacion con añadir juego a biblioteca
-    public CompraDto realizarCompra(Long idUsuario, Long idJuego, TipoMetodoPago metodoPago){
+    public CompraDto realizarCompra(Long idUsuario, Long idJuego, TipoMetodoPago metodoPago) {
         //Validar
         var errores = new ArrayList<ErrorDto>();
         //usuario activo
-        if (!usuarioRepo.obtenerPorId(idUsuario).get().getEstadoCuentaUsuario().equals(TipoEstadoCuenta.ACTIVA)){
+        if (!usuarioRepo.obtenerPorId(idUsuario).get().getEstadoCuentaUsuario().equals(TipoEstadoCuenta.ACTIVA)) {
             errores.add(new ErrorDto("estado_cuenta", ErrorType.CUENTA_INACTIVA));
         }
         //juego comprable
-        if (juegoRepo.obtenerPorId(idJuego).get().getEstadoJuego().equals(TipoEstadoJuego.NO_DISPONIBLE)){
+        if (juegoRepo.obtenerPorId(idJuego).get().getEstadoJuego().equals(TipoEstadoJuego.NO_DISPONIBLE)) {
             errores.add(new ErrorDto("estado_juego", ErrorType.NO_DISPONIBLE));
         }
         //juego duplicado
         if (bibliotecaRepo.obtenerTodos().stream()
                 .filter(b -> b.getIdUsuarioBiblio().equals(idUsuario))
-                .anyMatch(b -> b.getIdJuegoBiblio().equals(idJuego))){
+                .anyMatch(b -> b.getIdJuegoBiblio().equals(idJuego))) {
             errores.add(new ErrorDto("id_juego", ErrorType.DUPLICADO));
         }
         //saldo suficiente ¿¿SI USA CARTERA??
         var saldoCartera = usuarioRepo.obtenerPorId(idUsuario).get().getSaldoUsuario();
         var precioCompra = juegoRepo.obtenerPorId(idJuego).get().getPrecioBaseJuego();
         var descuentoCompra = juegoRepo.obtenerPorId(idJuego).get().getDescuentoActualJuego();
-        var precioFinal = precioCompra - (precioCompra * descuentoCompra /100);
-        if (metodoPago == TipoMetodoPago.CARTERA_STEAM && saldoCartera < precioFinal){
+        var precioFinal = precioCompra - (precioCompra * descuentoCompra / 100);
+        if (metodoPago == TipoMetodoPago.CARTERA_STEAM && saldoCartera < precioFinal) {
             errores.add(new ErrorDto("saldo_cartera", ErrorType.VALOR_DEMASIADO_BAJO));
         }
 
-        CompraForm compraForm = new CompraForm(idUsuario,idJuego, LocalDate.now(),metodoPago,precioCompra,
-                                                descuentoCompra, TipoEstadoCompra.COMPLETADA);
+        CompraForm compraForm = new CompraForm(idUsuario, idJuego, LocalDate.now(), metodoPago, precioCompra,
+                descuentoCompra, TipoEstadoCompra.COMPLETADA);
         var compraEfectuada = compraRepo.crear(compraForm).orElse(null);
         var idCompraEfectuada = compraRepo.obtenerTodos().stream()
-                                .filter(c -> c.getIdUsuarioCompra().equals(idUsuario))
-                                .filter(c -> c.getIdJuegoCompra().equals(idJuego)).findFirst()
-                                .get().getIdCompra();
+                .filter(c -> c.getIdUsuarioCompra().equals(idUsuario))
+                .filter(c -> c.getIdJuegoCompra().equals(idJuego)).findFirst()
+                .get().getIdCompra();
 
         return Mapper.mapaSimple(compraEfectuada);
     }
@@ -76,23 +77,22 @@ public class CompraController {
     //TODO Procesar pago ¿¿Datos según metodo de pago??
 
 
-
     //Consultar detalles de compra - TODO Factura + INFO detallada
     public CompraDto consultarHistorialCompras(Long idCompra, Long idUsuario) throws ValidationException {
         //Validaciones
         var errores = new ArrayList<ErrorDto>();
         //Compra existe
-        if (!compraRepo.obtenerPorId(idCompra).isPresent()){
+        if (!compraRepo.obtenerPorId(idCompra).isPresent()) {
             errores.add(new ErrorDto("id_compra", ErrorType.NO_ENCONTRADO));
         }
         //verificar pertenencia de compra a usuario
         var compraConsultada = compraRepo.obtenerPorId(idCompra);
         var idUsuarioEnCompra = compraConsultada.get().getIdUsuarioCompra();
-        if (idUsuarioEnCompra != idUsuario){
+        if (idUsuarioEnCompra != idUsuario) {
             errores.add(new ErrorDto("id", ErrorType.NO_PERTENECE));
         }
 
-        if (!errores.isEmpty()){
+        if (!errores.isEmpty()) {
             throw new ValidationException(errores);
         }
 
@@ -108,25 +108,25 @@ public class CompraController {
         //Validaciones
         var errores = new ArrayList<ErrorDto>();
         //validar compra completada
-        if (compraRepo.obtenerPorId(idCompra).get().getEstadoCompra() != TipoEstadoCompra.COMPLETADA){
+        if (compraRepo.obtenerPorId(idCompra).get().getEstadoCompra() != TipoEstadoCompra.COMPLETADA) {
             errores.add(new ErrorDto("estado_compra", ErrorType.COMPRA_FALLIDA));
         }
         //Validar Condiciones Devolución 14 dias
-        if (compraRepo.obtenerPorId(idCompra).get().getFechaCompra().isBefore(LocalDate.now().minusDays(14))){
+        if (compraRepo.obtenerPorId(idCompra).get().getFechaCompra().isBefore(LocalDate.now().minusDays(14))) {
             errores.add(new ErrorDto("plazo", ErrorType.PLAZO_SUPERADO));
         }
         //Validar Condiciones de devolución 2 horas
         var idUsuarioCompra = compraRepo.obtenerPorId(idCompra).get().getIdUsuarioCompra();
         var idJuegoCompra = compraRepo.obtenerPorId(idCompra).get().getIdJuegoCompra();
         var entradaBiblioteca = bibliotecaRepo.obtenerTodos().stream()
-                                .filter(b -> b.getIdUsuarioBiblio().equals(idUsuarioCompra))
-                                .filter(b -> b.getIdJuegoBiblio().equals(idJuegoCompra))
-                                .findFirst();
+                .filter(b -> b.getIdUsuarioBiblio().equals(idUsuarioCompra))
+                .filter(b -> b.getIdJuegoBiblio().equals(idJuegoCompra))
+                .findFirst();
         var tiempoJugado = entradaBiblioteca.get().getTiempoJuegoBiblio();
-        if (tiempoJugado > 2.00){
+        if (tiempoJugado > 2.00) {
             errores.add(new ErrorDto("tiempo_jugado", ErrorType.TIEMPO_SUPERADO));
         }
-        if (!errores.isEmpty()){
+        if (!errores.isEmpty()) {
             throw new ValidationException(errores);
         }
 
@@ -136,8 +136,10 @@ public class CompraController {
         var nuevoSaldoUsuario = saldoActualUsuario + precioAReembolsar;
 
         var usuarioCompra = usuarioRepo.obtenerPorId(idUsuarioCompra).get();
-        var usuarioForm = new UsuarioForm(usuarioCompra.getNombreCuentaUsuario(), usuarioCompra.getEmailUsuario(), usuarioCompra.getPasswordUsuario(),
-                usuarioCompra.getNombreRealUsuario(), usuarioCompra.getPaisUsuario(), usuarioCompra.getFechaNacUsuario(), usuarioCompra.getFechaRegUsuario(),
+        var usuarioForm = new UsuarioForm(usuarioCompra.getNombreCuentaUsuario(), usuarioCompra.getEmailUsuario(),
+                usuarioCompra.getPasswordUsuario(),
+                usuarioCompra.getNombreRealUsuario(), usuarioCompra.getPaisUsuario(),
+                usuarioCompra.getFechaNacUsuario(), usuarioCompra.getFechaRegUsuario(),
                 usuarioCompra.getAvatarUsuario(), nuevoSaldoUsuario, usuarioCompra.getEstadoCuentaUsuario());
         usuarioRepo.actualizar(idUsuarioCompra, usuarioForm);
 
@@ -149,9 +151,7 @@ public class CompraController {
     //Consultar historial de compras(Ficheros)
 
 
-
     //Generar factura (Ficheros)
-
 
 
 }

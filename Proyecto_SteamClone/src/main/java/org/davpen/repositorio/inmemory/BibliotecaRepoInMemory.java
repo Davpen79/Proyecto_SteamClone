@@ -16,8 +16,9 @@ public class BibliotecaRepoInMemory implements IBibliotecaRepo {
     @Override
     public Optional<BibliotecaEntity> crear(BibliotecaForm form) {
 
-        var bibliotecaNueva = new BibliotecaEntity(idCounter++, form.getIdUsuarioBiblio(), form.getIdJuegoBiblio(), form.getFechaAdquisicionJuegoBiblio(),
-                form.getTiempoJuegoBiblio(), form.getUltiFechaJuegoBiblio(), form.getEstadoInstJuegoBiblio());
+        var bibliotecaNueva = new BibliotecaEntity(idCounter++, form.getIdUsuarioBiblio(), form.getIdJuegoBiblio(),
+                form.getFechaAdquisicionJuegoBiblio(), form.getTiempoJuegoBiblio(), form.getUltiFechaJuegoBiblio(),
+                form.getEstadoInstJuegoBiblio());
         LISTA_BIBLIOTECAS.add(bibliotecaNueva);
 
         return Optional.of(bibliotecaNueva);
@@ -26,9 +27,7 @@ public class BibliotecaRepoInMemory implements IBibliotecaRepo {
     @Override
     public Optional<BibliotecaEntity> obtenerPorId(Long id) {
 
-        return LISTA_BIBLIOTECAS.stream()
-                .filter(b -> b.getIdBiblio().equals(id))
-                .findFirst();
+        return LISTA_BIBLIOTECAS.stream().filter(b -> b.getIdBiblio().equals(id)).findFirst();
     }
 
     @Override
@@ -43,8 +42,9 @@ public class BibliotecaRepoInMemory implements IBibliotecaRepo {
         if (bibliotecaInicial.isEmpty()) {
             throw new IllegalArgumentException();
         }
-        var bibliotecaActualizada = new BibliotecaEntity(id, form.getIdUsuarioBiblio(), form.getIdJuegoBiblio(), form.getFechaAdquisicionJuegoBiblio(),
-                form.getTiempoJuegoBiblio(), form.getUltiFechaJuegoBiblio(), form.getEstadoInstJuegoBiblio());
+        var bibliotecaActualizada = new BibliotecaEntity(id, form.getIdUsuarioBiblio(), form.getIdJuegoBiblio(),
+                form.getFechaAdquisicionJuegoBiblio(), form.getTiempoJuegoBiblio(), form.getUltiFechaJuegoBiblio(),
+                form.getEstadoInstJuegoBiblio());
         LISTA_BIBLIOTECAS.removeIf(b -> b.getIdBiblio().equals(id));
         LISTA_BIBLIOTECAS.add(bibliotecaActualizada);
 

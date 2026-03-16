@@ -20,9 +20,10 @@ public class UsuarioRepoInMemory implements IUsuarioRepo {
     @Override
     public Optional<UsuarioEntity> crear(UsuarioForm form) {
 
-        var usuario = new UsuarioEntity(idCounter++, form.getNombreCuentaUsuario(), form.getEmailUsuario(), form.getPasswordUsuario(),
-                form.getNombreRealUsuario(), form.getPaisUsuario(), form.getFechaNacUsuario(), LocalDate.now(), form.getAvatarUsuario(),
-                0.00, TipoEstadoCuenta.ACTIVA);
+        var usuario = new UsuarioEntity(idCounter++, form.getNombreCuentaUsuario(), form.getEmailUsuario(),
+                form.getPasswordUsuario(), form.getNombreRealUsuario(), form.getPaisUsuario(),
+                form.getFechaNacUsuario(), LocalDate.now(), form.getAvatarUsuario(), 0.00,
+                TipoEstadoCuenta.ACTIVA);
         LISTA_USUARIOS.add(usuario);
         return Optional.of(usuario);
     }
@@ -30,9 +31,7 @@ public class UsuarioRepoInMemory implements IUsuarioRepo {
     @Override
     public Optional<UsuarioEntity> obtenerPorId(Long id) {
 
-        return LISTA_USUARIOS.stream()
-                .filter(u -> u.getIdUsuario()
-                .equals(id)).findFirst();
+        return LISTA_USUARIOS.stream().filter(u -> u.getIdUsuario().equals(id)).findFirst();
     }
 
     @Override
@@ -44,12 +43,13 @@ public class UsuarioRepoInMemory implements IUsuarioRepo {
     @Override
     public Optional<UsuarioEntity> actualizar(Long id, UsuarioForm form) {
         var usuarioInicial = obtenerPorId(id);
-        if (usuarioInicial.isEmpty()){
+        if (usuarioInicial.isEmpty()) {
             throw new IllegalArgumentException("Usuario no encontrado");
         }
-        var usuarioActualizado = new UsuarioEntity(id, form.getNombreCuentaUsuario(), form.getEmailUsuario(), form.getPasswordUsuario(),
-                form.getNombreRealUsuario(), form.getPaisUsuario(), form.getFechaNacUsuario(),form.getFechaRegUsuario(), form.getAvatarUsuario(),
-                form.getSaldoUsuario(), form.getEstadoCuentaUsuario());
+        var usuarioActualizado = new UsuarioEntity(id, form.getNombreCuentaUsuario(), form.getEmailUsuario(),
+                form.getPasswordUsuario(), form.getNombreRealUsuario(), form.getPaisUsuario(),
+                form.getFechaNacUsuario(), form.getFechaRegUsuario(), form.getAvatarUsuario(), form.getSaldoUsuario()
+                , form.getEstadoCuentaUsuario());
 
         LISTA_USUARIOS.removeIf(u -> u.getIdUsuario().equals(id));
         LISTA_USUARIOS.add(usuarioActualizado);
@@ -64,8 +64,7 @@ public class UsuarioRepoInMemory implements IUsuarioRepo {
 
     @Override
     public Optional<UsuarioEntity> obtenerPorNombre(String nombreCuentaUsuario) {
-        return LISTA_USUARIOS.stream()
-                .filter(u -> u.getNombreCuentaUsuario().equals(nombreCuentaUsuario))
-                .findFirst();
+        return LISTA_USUARIOS.stream().filter(u -> u.getNombreCuentaUsuario()
+                .equals(nombreCuentaUsuario)).findFirst();
     }
 }

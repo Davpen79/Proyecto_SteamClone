@@ -23,7 +23,10 @@ public class JuegoEntity {
     private TipoEstadoJuego estadoJuego;
 
     //Constructor
-    public JuegoEntity(Long idJuego, String tituloJuego, String descripcionJuego, String desarrolladorJuego, LocalDate fechaLanzaJuego, double precioBaseJuego, int descuentoActualJuego, TipoCategoriaJuego categoriaJuego, TipoClasificacionEdades clasEdadJuego, ArrayList idiomasJuego, TipoEstadoJuego estadoJuego) {
+    public JuegoEntity(Long idJuego, String tituloJuego, String descripcionJuego, String desarrolladorJuego,
+                       LocalDate fechaLanzaJuego, double precioBaseJuego, int descuentoActualJuego,
+                       TipoCategoriaJuego categoriaJuego, TipoClasificacionEdades clasEdadJuego,
+                       ArrayList idiomasJuego, TipoEstadoJuego estadoJuego) {
         this.idJuego = idJuego;
         this.tituloJuego = tituloJuego;
         this.descripcionJuego = descripcionJuego;

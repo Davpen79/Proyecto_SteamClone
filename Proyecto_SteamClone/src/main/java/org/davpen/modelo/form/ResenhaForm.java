@@ -21,7 +21,9 @@ public class ResenhaForm {
     private TipoEstadoResenha estadoResenha;
 
     //Constructor
-    public ResenhaForm(Long idUsuarioResenha, Long idJuegoResenha, boolean recomendacionResenha, String textoResenha, double tiempoJugadoResenha, LocalDate fechaPublicacionResenha, LocalDate fechaUltiEdicResenha, TipoEstadoResenha estadoResenha) {
+    public ResenhaForm(Long idUsuarioResenha, Long idJuegoResenha, boolean recomendacionResenha, String textoResenha,
+                       double tiempoJugadoResenha, LocalDate fechaPublicacionResenha, LocalDate fechaUltiEdicResenha,
+                       TipoEstadoResenha estadoResenha) {
         this.idUsuarioResenha = idUsuarioResenha;
         this.idJuegoResenha = idJuegoResenha;
         this.recomendacionResenha = recomendacionResenha;
@@ -71,26 +73,26 @@ public class ResenhaForm {
         List<ErrorDto> errores = new ArrayList<>();
 
         //Validaciones usuario
-        if (idUsuarioResenha == null){
+        if (idUsuarioResenha == null) {
             errores.add(new ErrorDto("Id_Usario", ErrorType.REQUERIDO));
         }
         //Validaciones juego
-        if (idJuegoResenha == null){
+        if (idJuegoResenha == null) {
             errores.add(new ErrorDto("Id_Juego", ErrorType.REQUERIDO));
         }
         //TODO Validaciones Recomendacion
 
 
         //Validaciones Texto Reseña
-        if (textoResenha == null || textoResenha.isBlank()){
+        if (textoResenha == null || textoResenha.isBlank()) {
             errores.add(new ErrorDto("texto_reseña", ErrorType.REQUERIDO));
         }
 
-        if (textoResenha != null && textoResenha.length() < RESENHA_LENGTH_MIN){
+        if (textoResenha != null && textoResenha.length() < RESENHA_LENGTH_MIN) {
             errores.add(new ErrorDto("texto_reseña", ErrorType.DEMASIADO_CORTO));
         }
 
-        if (textoResenha != null && textoResenha.length() > RESENHA_LENGTH_MAX){
+        if (textoResenha != null && textoResenha.length() > RESENHA_LENGTH_MAX) {
             errores.add(new ErrorDto("texto_reseña", ErrorType.DEMASIADO_LARGO));
         }
 

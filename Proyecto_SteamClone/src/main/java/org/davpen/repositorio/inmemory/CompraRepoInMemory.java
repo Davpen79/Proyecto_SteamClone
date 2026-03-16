@@ -16,8 +16,9 @@ public class CompraRepoInMemory implements ICompraRepo {
     @Override
     public Optional<CompraEntity> crear(CompraForm form) {
 
-        var compraNueva = new CompraEntity(idCounter++, form.getIdUsuarioCompra(), form.getIdJuegoCompra(), form.getFechaCompra(),
-                form.getTipoPagoCompra(), form.getPrecioBaseCompra(), form.getDescuentoEnCompra(), form.getEstadoCompra());
+        var compraNueva = new CompraEntity(idCounter++, form.getIdUsuarioCompra(), form.getIdJuegoCompra(),
+                form.getFechaCompra(), form.getTipoPagoCompra(), form.getPrecioBaseCompra(),
+                form.getDescuentoEnCompra(), form.getEstadoCompra());
         LISTA_COMPRAS.add(compraNueva);
 
         return Optional.of(compraNueva);
@@ -26,25 +27,25 @@ public class CompraRepoInMemory implements ICompraRepo {
     @Override
     public Optional<CompraEntity> obtenerPorId(Long id) {
 
-        return LISTA_COMPRAS.stream()
-                .filter(c -> c.getIdCompra().equals(id))
-                .findFirst();
+        return LISTA_COMPRAS.stream().filter(c -> c.getIdCompra().equals(id)).findFirst();
     }
 
     @Override
     public List<CompraEntity> obtenerTodos() {
         return new ArrayList<>(LISTA_COMPRAS);
     }
+
     //Como Actualizas una compra
     @Override
     public Optional<CompraEntity> actualizar(Long id, CompraForm form) {
 
         var compraInicial = obtenerPorId(id);
-        if (compraInicial.isEmpty()){
+        if (compraInicial.isEmpty()) {
             throw new IllegalArgumentException("No se encuentra esta compra");
         }
-        var compraActualizada = new CompraEntity(id, form.getIdUsuarioCompra(), form.getIdJuegoCompra(), form.getFechaCompra(),
-                form.getTipoPagoCompra(), form.getPrecioBaseCompra(), form.getDescuentoEnCompra(), form.getEstadoCompra());
+        var compraActualizada = new CompraEntity(id, form.getIdUsuarioCompra(), form.getIdJuegoCompra(),
+                form.getFechaCompra(), form.getTipoPagoCompra(), form.getPrecioBaseCompra(),
+                form.getDescuentoEnCompra(), form.getEstadoCompra());
         LISTA_COMPRAS.removeIf(c -> c.getIdCompra().equals(id));
         LISTA_COMPRAS.add(compraActualizada);
 

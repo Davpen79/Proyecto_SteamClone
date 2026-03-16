@@ -26,9 +26,7 @@ public class ResenhaInRepoMemory implements IResenhaRepo {
 
     @Override
     public Optional<ResenhaEntity> obtenerPorId(Long id) {
-        return LISTA_RESENHAS.stream()
-                .filter(r -> r.getIdResenha().equals(id))
-                .findFirst();
+        return LISTA_RESENHAS.stream().filter(r -> r.getIdResenha().equals(id)).findFirst();
     }
 
     @Override
@@ -40,7 +38,7 @@ public class ResenhaInRepoMemory implements IResenhaRepo {
     public Optional<ResenhaEntity> actualizar(Long id, ResenhaForm form) {
 
         var resenhaInicial = obtenerPorId(id);
-        if (resenhaInicial.isEmpty()){
+        if (resenhaInicial.isEmpty()) {
             throw new IllegalArgumentException("Reseña no encontrada");
         }
         var resenhaActualizada = new ResenhaEntity(id, form.getIdUsuarioResenha(), form.getIdJuegoResenha(),
@@ -60,15 +58,11 @@ public class ResenhaInRepoMemory implements IResenhaRepo {
     @Override
     public List<ResenhaEntity> obtenerTodasPorIdUsuario(Long idUsuario, List<ResenhaEntity> listaResenhas) {
 
-        return listaResenhas.stream()
-                .filter(r -> r.getIdUsuarioResenha().equals(idUsuario))
-                .toList();
+        return listaResenhas.stream().filter(r -> r.getIdUsuarioResenha().equals(idUsuario)).toList();
     }
 
     @Override
     public List<ResenhaEntity> obtenerTodasPorIdJuego(Long idJuego, List<ResenhaEntity> listaResenhas) {
-        return listaResenhas.stream()
-                .filter(r -> r.getIdJuegoResenha().equals(idJuego))
-                .toList();
+        return listaResenhas.stream().filter(r -> r.getIdJuegoResenha().equals(idJuego)).toList();
     }
 }

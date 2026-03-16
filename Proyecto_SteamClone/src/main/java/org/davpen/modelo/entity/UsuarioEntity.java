@@ -20,8 +20,10 @@ public class UsuarioEntity {
     private TipoEstadoCuenta estadoCuentaUsuario;
 
     //Constructor
-    public UsuarioEntity(Long idUsuario, String nombreCuentaUsuario, String emailUsuario, String passwordUsuario, String nombreRealUsuario,
-                         String paisUsuario, LocalDate fechaNacUsuario, LocalDate fechaRegUsuario, String avatarUsuario, double saldoUsuario, TipoEstadoCuenta estadoCuentaUsuario) {
+    public UsuarioEntity(Long idUsuario, String nombreCuentaUsuario, String emailUsuario, String passwordUsuario,
+                         String nombreRealUsuario, String paisUsuario, LocalDate fechaNacUsuario,
+                         LocalDate fechaRegUsuario, String avatarUsuario, double saldoUsuario,
+                         TipoEstadoCuenta estadoCuentaUsuario) {
         this.idUsuario = idUsuario;
         this.nombreCuentaUsuario = nombreCuentaUsuario;
         this.emailUsuario = emailUsuario;
@@ -85,8 +87,7 @@ public class UsuarioEntity {
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         UsuarioEntity that = (UsuarioEntity) o;
-        return Double.compare(saldoUsuario, that.saldoUsuario) == 0
-                && Objects.equals(idUsuario, that.idUsuario)
+        return Double.compare(saldoUsuario, that.saldoUsuario) == 0 && Objects.equals(idUsuario, that.idUsuario)
                 && Objects.equals(nombreCuentaUsuario, that.nombreCuentaUsuario)
                 && Objects.equals(emailUsuario, that.emailUsuario)
                 && Objects.equals(passwordUsuario, that.passwordUsuario)

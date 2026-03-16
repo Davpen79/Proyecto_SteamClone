@@ -18,7 +18,9 @@ public class BibliotecaForm {
     private TipoEstadoInstalacion estadoInstJuegoBiblio;
 
     //Constructor
-    public BibliotecaForm(Long idUsuarioBiblio, Long idJuegoBiblio, LocalDate fechaAdquisicionJuegoBiblio, double tiempoJuegoBiblio, LocalDateTime ultiFechaJuegoBiblio, TipoEstadoInstalacion estadoInstJuegoBiblio) {
+    public BibliotecaForm(Long idUsuarioBiblio, Long idJuegoBiblio, LocalDate fechaAdquisicionJuegoBiblio,
+                          double tiempoJuegoBiblio, LocalDateTime ultiFechaJuegoBiblio,
+                          TipoEstadoInstalacion estadoInstJuegoBiblio) {
         this.idUsuarioBiblio = idUsuarioBiblio;
         this.idJuegoBiblio = idJuegoBiblio;
         this.fechaAdquisicionJuegoBiblio = fechaAdquisicionJuegoBiblio;
@@ -63,12 +65,12 @@ public class BibliotecaForm {
         }
 
         //Validaciones Id Juego
-        if (idJuegoBiblio == null){
+        if (idJuegoBiblio == null) {
             errores.add(new ErrorDto("Id_juego", ErrorType.REQUERIDO));
         }
 
         //Validaciones Fecha adquisicion
-        if (fechaAdquisicionJuegoBiblio == null){
+        if (fechaAdquisicionJuegoBiblio == null) {
             errores.add(new ErrorDto("fecha_adquisicion", ErrorType.REQUERIDO));
         }
 

@@ -18,7 +18,9 @@ public class CompraDto {
     private TipoEstadoCompra estadoCompra;
 
     //Constructor
-    public CompraDto(Long idCompra, Long idUsuarioCompra, Long idJuegoCompra, LocalDate fechaCompra, TipoMetodoPago tipoPagoCompra, double precioBaseCompra, int descuentoEnCompra, TipoEstadoCompra estadoCompra) {
+    public CompraDto(Long idCompra, Long idUsuarioCompra, Long idJuegoCompra, LocalDate fechaCompra,
+                     TipoMetodoPago tipoPagoCompra, double precioBaseCompra, int descuentoEnCompra,
+                     TipoEstadoCompra estadoCompra) {
         this.idCompra = idCompra;
         this.idUsuarioCompra = idUsuarioCompra;
         this.idJuegoCompra = idJuegoCompra;

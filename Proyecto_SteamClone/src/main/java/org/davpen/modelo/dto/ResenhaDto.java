@@ -18,7 +18,9 @@ public class ResenhaDto {
     private TipoEstadoResenha estadoResenha;
 
     //Constructor
-    public ResenhaDto(Long idResenha, Long idUsuarioResenha, Long idJuegoResenha, boolean recomendacionResenha, String textoResenha, double tiempoJugadoResenha, LocalDate fechaPublicacionResenha, LocalDate fechaUltiEdicResenha, TipoEstadoResenha estadoResenha) {
+    public ResenhaDto(Long idResenha, Long idUsuarioResenha, Long idJuegoResenha, boolean recomendacionResenha,
+                      String textoResenha, double tiempoJugadoResenha, LocalDate fechaPublicacionResenha,
+                      LocalDate fechaUltiEdicResenha, TipoEstadoResenha estadoResenha) {
         this.idResenha = idResenha;
         this.idUsuarioResenha = idUsuarioResenha;
         this.idJuegoResenha = idJuegoResenha;

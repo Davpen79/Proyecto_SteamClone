@@ -56,9 +56,39 @@ public class UsuarioController {
         return Mapper.mapaUsuarioCompleto(usuario);
     }
 
+    //Consultar perfil por ID?? - ¿Estadisticas??
+    public UsuarioDto consultarPerfil(Long id) throws ValidationException {
+        //Comprobamos si el usuario existe
+        var errores = new ArrayList<ErrorDto>();
+        if (!usuarioRepo.obtenerPorId(id).isPresent()) {
+            errores.add(new ErrorDto("id", ErrorType.NO_ENCONTRADO));
+        }
+        if (!errores.isEmpty()) {
+            throw new ValidationException(errores);
+        }
 
-    //Consultar perfil?? - Estadisticas??
+        var usuarioConsultado = usuarioRepo.obtenerPorId(id);
+        var usuarioEncontrado = usuarioConsultado.orElse(null);
 
+        return Mapper.mapaUsuarioCompleto(usuarioEncontrado);
+    }
+
+    //Consultar perfil por Nombre?? - ¿Estadisticas??
+    public UsuarioDto consultarPerfil(String nombreCuentaUsuario) throws ValidationException {
+        //Comprobamos si el usuario existe
+        var errores = new ArrayList<ErrorDto>();
+        if (!usuarioRepo.obtenerPorNombre(nombreCuentaUsuario).isPresent()) {
+            errores.add(new ErrorDto("id", ErrorType.NO_ENCONTRADO));
+        }
+        if (!errores.isEmpty()) {
+            throw new ValidationException(errores);
+        }
+
+        var usuarioConsultado = usuarioRepo.obtenerPorNombre(nombreCuentaUsuario);
+        var usuarioEncontrado = usuarioConsultado.orElse(null);
+
+        return Mapper.mapaUsuarioCompleto(usuarioEncontrado);
+    }
 
     //Consultar saldo
 

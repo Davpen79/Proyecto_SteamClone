@@ -16,9 +16,10 @@ public class JuegoRepoInMemory implements IJuegoRepo {
     @Override
     public Optional<JuegoEntity> crear(JuegoForm form) {
 
-        var juegoNuevo = new JuegoEntity(idCounter++, form.getTituloJuego(), form.getDescripcionJuego(), form.getDesarrolladorJuego(),
-                form.getFechaLanzaJuego(), form.getPrecioBaseJuego(), form.getDescuentoActualJuego(), form.getCategoriaJuego(),
-                form.getClasEdadJuego(), form.getIdiomasJuego(), form.getEstadoJuego());
+        var juegoNuevo = new JuegoEntity(idCounter++, form.getTituloJuego(), form.getDescripcionJuego(),
+                form.getDesarrolladorJuego(), form.getFechaLanzaJuego(), form.getPrecioBaseJuego(),
+                form.getDescuentoActualJuego(), form.getCategoriaJuego(), form.getClasEdadJuego(),
+                form.getIdiomasJuego(), form.getEstadoJuego());
         LISTA_JUEGOS.add(juegoNuevo);
 
         return Optional.of(juegoNuevo);
@@ -27,9 +28,7 @@ public class JuegoRepoInMemory implements IJuegoRepo {
     @Override
     public Optional<JuegoEntity> obtenerPorId(Long id) {
 
-        return LISTA_JUEGOS.stream()
-                .filter(j -> j.getIdJuego().equals(id))
-                .findFirst();
+        return LISTA_JUEGOS.stream().filter(j -> j.getIdJuego().equals(id)).findFirst();
     }
 
     @Override
@@ -45,9 +44,10 @@ public class JuegoRepoInMemory implements IJuegoRepo {
         if (juegoInicial.isEmpty()) {
             throw new IllegalArgumentException("Juego no encontrado");
         }
-        var juegoActualizado = new JuegoEntity(id, form.getTituloJuego(), form.getDescripcionJuego(), form.getDesarrolladorJuego(),
-                form.getFechaLanzaJuego(), form.getPrecioBaseJuego(), form.getDescuentoActualJuego(), form.getCategoriaJuego(),
-                form.getClasEdadJuego(), form.getIdiomasJuego(), form.getEstadoJuego());
+        var juegoActualizado = new JuegoEntity(id, form.getTituloJuego(), form.getDescripcionJuego(),
+                form.getDesarrolladorJuego(), form.getFechaLanzaJuego(), form.getPrecioBaseJuego(),
+                form.getDescuentoActualJuego(), form.getCategoriaJuego(), form.getClasEdadJuego(),
+                form.getIdiomasJuego(), form.getEstadoJuego());
         LISTA_JUEGOS.removeIf(j -> j.getIdJuego().equals(id));
         LISTA_JUEGOS.add(juegoActualizado);
 

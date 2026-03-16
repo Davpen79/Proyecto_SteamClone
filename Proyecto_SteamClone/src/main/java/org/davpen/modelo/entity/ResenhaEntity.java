@@ -18,7 +18,9 @@ public class ResenhaEntity {
     private TipoEstadoResenha estadoResenha;
 
     //Constructor
-    public ResenhaEntity(Long idResenha, Long idUsuarioResenha, Long idJuegoResenha, boolean recomendacionResenha, String textoResenha, double tiempoJugadoResenha, LocalDate fechaPublicacionResenha, LocalDate fechaUltiEdicResenha, TipoEstadoResenha estadoResenha) {
+    public ResenhaEntity(Long idResenha, Long idUsuarioResenha, Long idJuegoResenha, boolean recomendacionResenha,
+                         String textoResenha, double tiempoJugadoResenha, LocalDate fechaPublicacionResenha,
+                         LocalDate fechaUltiEdicResenha, TipoEstadoResenha estadoResenha) {
         this.idResenha = idResenha;
         this.idUsuarioResenha = idUsuarioResenha;
         this.idJuegoResenha = idJuegoResenha;

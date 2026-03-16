@@ -18,7 +18,9 @@ public class CompraEntity {
     private TipoEstadoCompra estadoCompra;
 
     //Constructor
-    public CompraEntity(Long idCompra, Long idUsuarioCompra, Long idJuegoCompra, LocalDate fechaCompra, TipoMetodoPago tipoPagoCompra, double precioBaseCompra, int descuentoEnCompra, TipoEstadoCompra estadoCompra) {
+    public CompraEntity(Long idCompra, Long idUsuarioCompra, Long idJuegoCompra, LocalDate fechaCompra,
+                        TipoMetodoPago tipoPagoCompra, double precioBaseCompra, int descuentoEnCompra,
+                        TipoEstadoCompra estadoCompra) {
         this.idCompra = idCompra;
         this.idUsuarioCompra = idUsuarioCompra;
         this.idJuegoCompra = idJuegoCompra;

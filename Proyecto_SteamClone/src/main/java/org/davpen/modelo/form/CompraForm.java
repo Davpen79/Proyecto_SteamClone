@@ -21,7 +21,8 @@ public class CompraForm {
     private TipoEstadoCompra estadoCompra;
 
     //Constructor
-    public CompraForm(Long idUsuarioCompra, Long idJuegoCompra, LocalDate fechaCompra, TipoMetodoPago tipoPagoCompra, double precioBaseCompra, int descuentoEnCompra, TipoEstadoCompra estadoCompra) {
+    public CompraForm(Long idUsuarioCompra, Long idJuegoCompra, LocalDate fechaCompra, TipoMetodoPago tipoPagoCompra,
+                      double precioBaseCompra, int descuentoEnCompra, TipoEstadoCompra estadoCompra) {
         this.idUsuarioCompra = idUsuarioCompra;
         this.idJuegoCompra = idJuegoCompra;
         this.fechaCompra = fechaCompra;
@@ -71,25 +72,25 @@ public class CompraForm {
         }
 
         //Validar Juego
-        if (idJuegoCompra == null){
+        if (idJuegoCompra == null) {
             errores.add(new ErrorDto("Id_juego", ErrorType.REQUERIDO));
         }
 
         //Validar Metodo de Pago
-        if (tipoPagoCompra == null){
+        if (tipoPagoCompra == null) {
             errores.add(new ErrorDto("tipo_pago", ErrorType.REQUERIDO));
         }
 
-        if (tipoPagoCompra != null && !Arrays.stream(TipoMetodoPago.values()).anyMatch(e -> e.equals(tipoPagoCompra))){
+        if (tipoPagoCompra != null && !Arrays.stream(TipoMetodoPago.values()).anyMatch(e -> e.equals(tipoPagoCompra))) {
             errores.add(new ErrorDto("tipo_pago", ErrorType.NO_ENCONTRADO));
         }
 
         //Validar Precio
-        if (Objects.isNull(precioBaseCompra) || Double.isNaN(precioBaseCompra)){
+        if (Objects.isNull(precioBaseCompra) || Double.isNaN(precioBaseCompra)) {
             errores.add(new ErrorDto("precio", ErrorType.REQUERIDO));
         }
 
-        if (!Objects.isNull(precioBaseCompra) && !Double.isNaN(precioBaseCompra) && precioBaseCompra < 0){
+        if (!Objects.isNull(precioBaseCompra) && !Double.isNaN(precioBaseCompra) && precioBaseCompra < 0) {
             errores.add(new ErrorDto("precio", ErrorType.VALOR_NEGATIVO));
         }
 

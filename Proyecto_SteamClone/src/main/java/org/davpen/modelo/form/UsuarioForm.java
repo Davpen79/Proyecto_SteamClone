@@ -27,7 +27,10 @@ public class UsuarioForm {
     private TipoEstadoCuenta estadoCuentaUsuario;
 
     //Constructor
-    public UsuarioForm(String nombreCuentaUsuario, String emailUsuario, String passwordUsuario, String nombreRealUsuario, String paisUsuario, LocalDate fechaNacUsuario, LocalDate fechaRegUsuario, String avatarUsuario, double saldoUsuario, TipoEstadoCuenta estadoCuentaUsuario) {
+    public UsuarioForm(String nombreCuentaUsuario, String emailUsuario, String passwordUsuario,
+                       String nombreRealUsuario, String paisUsuario, LocalDate fechaNacUsuario,
+                       LocalDate fechaRegUsuario, String avatarUsuario, double saldoUsuario,
+                       TipoEstadoCuenta estadoCuentaUsuario) {
         this.nombreCuentaUsuario = nombreCuentaUsuario;
         this.emailUsuario = emailUsuario;
         this.passwordUsuario = passwordUsuario;
@@ -104,7 +107,7 @@ public class UsuarioForm {
             errores.add(new ErrorDto("Nombre_Cuenta", ErrorType.FORMATO_INVALIDO));
         }
 
-        if (nombreCuentaUsuario != null && !nombreCuentaUsuario.matches("[A-Za-z0-9_-]+")){
+        if (nombreCuentaUsuario != null && !nombreCuentaUsuario.matches("[A-Za-z0-9_-]+")) {
             errores.add(new ErrorDto("Nombre_Cuenta", ErrorType.FORMATO_INVALIDO));
         }
 
@@ -113,57 +116,58 @@ public class UsuarioForm {
             errores.add(new ErrorDto("email_Cuenta", ErrorType.REQUERIDO));
         }
 
-        if (emailUsuario != null && !emailUsuario.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$")){
+        if (emailUsuario != null && !emailUsuario.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$")) {
             errores.add(new ErrorDto("email_Cuenta", ErrorType.FORMATO_INVALIDO));
         }
 
         //Validaciones contraseña usuario
-        if (passwordUsuario == null || passwordUsuario.isBlank()){
+        if (passwordUsuario == null || passwordUsuario.isBlank()) {
             errores.add(new ErrorDto("password", ErrorType.REQUERIDO));
         }
 
-        if (passwordUsuario !=null && !passwordUsuario.matches("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)[A-Za-z\\d\\p{Punct}]+$")){
+        if (passwordUsuario != null && !passwordUsuario.matches("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)" + "[A-Za-z\\d\\p" +
+                "{Punct}]+$")) {
             errores.add(new ErrorDto("password", ErrorType.FORMATO_INVALIDO));
         }
 
-        if (passwordUsuario !=null && passwordUsuario.length() < PASS_LENGTH_MIN){
+        if (passwordUsuario != null && passwordUsuario.length() < PASS_LENGTH_MIN) {
             errores.add(new ErrorDto("password", ErrorType.DEMASIADO_CORTO));
         }
 
         //Validaciones nombre Real de usuario
-        if (nombreRealUsuario == null || nombreRealUsuario.isBlank()){
+        if (nombreRealUsuario == null || nombreRealUsuario.isBlank()) {
             errores.add(new ErrorDto("nombre_real", ErrorType.REQUERIDO));
         }
 
-        if (nombreRealUsuario != null && nombreRealUsuario.length() < NOMBRE_LENGTH_MIN){
+        if (nombreRealUsuario != null && nombreRealUsuario.length() < NOMBRE_LENGTH_MIN) {
             errores.add(new ErrorDto("nombre_real", ErrorType.DEMASIADO_CORTO));
         }
 
-        if (nombreRealUsuario != null && nombreRealUsuario.length() > NOMBRE_LENGTH_MAX){
+        if (nombreRealUsuario != null && nombreRealUsuario.length() > NOMBRE_LENGTH_MAX) {
             errores.add(new ErrorDto("nombre_real", ErrorType.DEMASIADO_LARGO));
         }
 
         //Validaciones del Pais
-        if (paisUsuario == null || paisUsuario.isBlank()){
+        if (paisUsuario == null || paisUsuario.isBlank()) {
             errores.add(new ErrorDto("pais", ErrorType.REQUERIDO));
         }
 
         //Validaciones Fecha nacimiento
-        if (fechaNacUsuario == null || fechaNacUsuario.toString().isBlank()){
+        if (fechaNacUsuario == null || fechaNacUsuario.toString().isBlank()) {
             errores.add(new ErrorDto("fecha_nacimiento", ErrorType.REQUERIDO));
         }
 
-        if (fechaNacUsuario != null && fechaNacUsuario.isAfter(LocalDate.now())){
+        if (fechaNacUsuario != null && fechaNacUsuario.isAfter(LocalDate.now())) {
             errores.add(new ErrorDto("fecha_nacimiento", ErrorType.FECHA_FUTURA));
         }
 
-        if (fechaNacUsuario != null && Period.between(fechaNacUsuario,fechaRegUsuario).getYears() < EDAD_MIN){
+        if (fechaNacUsuario != null && Period.between(fechaNacUsuario, fechaRegUsuario).getYears() < EDAD_MIN) {
             errores.add(new ErrorDto("fecha_nacimiento", ErrorType.MENOR_DE_EDAD));
         }
 
         //Validaciones Avatar
 
-        if (avatarUsuario != null && avatarUsuario.length() > 100){
+        if (avatarUsuario != null && avatarUsuario.length() > 100) {
             errores.add(new ErrorDto("avatar", ErrorType.DEMASIADO_LARGO));
         }
 

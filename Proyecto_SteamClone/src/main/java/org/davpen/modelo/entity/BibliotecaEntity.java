@@ -17,7 +17,9 @@ public class BibliotecaEntity {
     private TipoEstadoInstalacion estadoInstJuegoBiblio;
 
     //Constructor
-    public BibliotecaEntity(Long idBiblio, Long idUsuarioBiblio, Long idJuegoBiblio, LocalDate fechaCompraJuegoBiblio, double tiempoJuegoBiblio, LocalDateTime ultiFechaJuegoBiblio, TipoEstadoInstalacion estadoInstJuegoBiblio) {
+    public BibliotecaEntity(Long idBiblio, Long idUsuarioBiblio, Long idJuegoBiblio, LocalDate fechaCompraJuegoBiblio
+            , double tiempoJuegoBiblio, LocalDateTime ultiFechaJuegoBiblio,
+                            TipoEstadoInstalacion estadoInstJuegoBiblio) {
         this.idBiblio = idBiblio;
         this.idUsuarioBiblio = idUsuarioBiblio;
         this.idJuegoBiblio = idJuegoBiblio;
