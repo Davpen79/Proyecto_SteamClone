@@ -8,7 +8,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class JuegoForm {
 
@@ -36,7 +35,7 @@ public class JuegoForm {
 
     //Constructor
     public JuegoForm(String tituloJuego, String descripcionJuego, String desarrolladorJuego,
-                     LocalDate fechaLanzaJuego, double precioBaseJuego, int descuentoActualJuego,
+                     LocalDate fechaLanzaJuego, Double precioBaseJuego, int descuentoActualJuego,
                      TipoCategoriaJuego categoriaJuego, TipoClasificacionEdades clasEdadJuego, ArrayList idiomasJuego
             , TipoEstadoJuego estadoJuego) {
         this.tituloJuego = tituloJuego;
@@ -102,7 +101,7 @@ public class JuegoForm {
             errores.add(new ErrorDto("titulo", ErrorType.REQUERIDO));
         }
 
-        if (tituloJuego != null && tituloJuego.length() < TITULO_LENGTH_MIN) {
+        if (tituloJuego != null && tituloJuego.length() <= TITULO_LENGTH_MIN) {
             errores.add(new ErrorDto("titulo", ErrorType.DEMASIADO_CORTO));
         }
 
@@ -169,7 +168,8 @@ public class JuegoForm {
             errores.add(new ErrorDto("edad", ErrorType.REQUERIDO));
         }
         //
-        if (clasEdadJuego != null && !Arrays.stream(TipoClasificacionEdades.values()).anyMatch(e -> e.equals(clasEdadJuego))) {
+        if (Arrays.stream(TipoClasificacionEdades.values())
+                .noneMatch(edad -> edad.equals(clasEdadJuego))) {
             errores.add(new ErrorDto("edad", ErrorType.NO_ENCONTRADO));
         }
 

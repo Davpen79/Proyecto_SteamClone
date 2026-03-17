@@ -81,16 +81,17 @@ public class CompraForm {
             errores.add(new ErrorDto("tipo_pago", ErrorType.REQUERIDO));
         }
 
-        if (tipoPagoCompra != null && !Arrays.stream(TipoMetodoPago.values()).anyMatch(e -> e.equals(tipoPagoCompra))) {
+        if (Arrays.stream(TipoMetodoPago.values())
+                .noneMatch(e -> e.equals(tipoPagoCompra))) {
             errores.add(new ErrorDto("tipo_pago", ErrorType.NO_ENCONTRADO));
         }
 
         //Validar Precio
-        if (Objects.isNull(precioBaseCompra) || Double.isNaN(precioBaseCompra)) {
+        if (Double.isNaN(precioBaseCompra)) {
             errores.add(new ErrorDto("precio", ErrorType.REQUERIDO));
         }
 
-        if (!Objects.isNull(precioBaseCompra) && !Double.isNaN(precioBaseCompra) && precioBaseCompra < 0) {
+        if (!Double.isNaN(precioBaseCompra) && precioBaseCompra < 0) {
             errores.add(new ErrorDto("precio", ErrorType.VALOR_NEGATIVO));
         }
 

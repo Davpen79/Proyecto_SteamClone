@@ -14,6 +14,7 @@ public class UsuarioForm {
     public static final int NOMBRE_LENGTH_MIN = 2;
     public static final int NOMBRE_LENGTH_MAX = 50;
     public static final int EDAD_MIN = 14;
+    public static final int AVATAR_MAX = 100;
     //Atributos
     private String nombreCuentaUsuario;
     private String emailUsuario;
@@ -167,10 +168,9 @@ public class UsuarioForm {
 
         //Validaciones Avatar
 
-        if (avatarUsuario != null && avatarUsuario.length() > 100) {
+        if (avatarUsuario != null && avatarUsuario.length() > AVATAR_MAX) {
             errores.add(new ErrorDto("avatar", ErrorType.DEMASIADO_LARGO));
         }
-
 
         return errores;
     }

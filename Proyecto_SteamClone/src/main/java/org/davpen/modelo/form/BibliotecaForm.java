@@ -75,9 +75,9 @@ public class BibliotecaForm {
         }
 
         // ESTO NO ES AQUI VA A CONTROLADOR
-        if (fechaAdquisicionJuegoBiblio.isAfter(LocalDate.now())) {
-            errores.add(new ErrorDto("fecha_compra", ErrorType.FECHA_FUTURA));
-        }
+        //  if (fechaAdquisicionJuegoBiblio.isAfter(LocalDate.now())) {
+        //      errores.add(new ErrorDto("fecha_compra", ErrorType.FECHA_FUTURA));
+        //  }
 
         return errores;
     }
