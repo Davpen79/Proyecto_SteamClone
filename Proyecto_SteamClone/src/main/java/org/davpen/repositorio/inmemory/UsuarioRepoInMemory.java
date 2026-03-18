@@ -67,4 +67,9 @@ public class UsuarioRepoInMemory implements IUsuarioRepo {
         return LISTA_USUARIOS.stream().filter(u -> u.getNombreCuentaUsuario()
                 .equals(nombreCuentaUsuario)).findFirst();
     }
+
+    public static void reset(){
+        LISTA_USUARIOS.removeIf((a) -> true);
+        idCounter = 1L;
+    }
 }

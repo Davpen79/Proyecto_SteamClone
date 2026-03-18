@@ -4,6 +4,7 @@ import org.davpen.enums.TipoEstadoInstalacion;
 import org.davpen.excepciones.ValidationException;
 import org.davpen.mapper.Mapper;
 import org.davpen.modelo.dto.BibliotecaDto;
+import org.davpen.modelo.dto.EstadisticasBibliotecaDto;
 import org.davpen.modelo.form.BibliotecaForm;
 import org.davpen.modelo.form.ErrorDto;
 import org.davpen.modelo.form.ErrorType;
@@ -178,7 +179,15 @@ public class BibliotecaController {
     }
 
     //TODO: Ver estadísticas de biblioteca => NUEVO OBJETO?
+    public EstadisticasBibliotecaDto foo(Long idUsuario){
 
+        var biblioteca = bibliotecaRepo.obtenerTodos().stream().filter(b -> b.getIdUsuarioBiblio().equals(idUsuario)).toList();
+        var totalHoras = biblioteca.stream()
+                .map(b -> b.getTiempoJuegoBiblio())
+                .reduce((a, b) ->  a + b)
+                .orElse(0d);
+        return new EstadisticasBibliotecaDto(1, biblioteca.size(), totalHoras, );
+    }
 
     //TODO: Filtrar biblioteca (Ficheros)
 

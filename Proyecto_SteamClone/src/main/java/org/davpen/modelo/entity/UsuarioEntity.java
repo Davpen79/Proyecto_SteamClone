@@ -105,5 +105,20 @@ public class UsuarioEntity {
                 paisUsuario, fechaNacUsuario, fechaRegUsuario, avatarUsuario, saldoUsuario, estadoCuentaUsuario);
     }
 
-
+    @Override
+    public String toString() {
+        return "UsuarioEntity{" +
+                "idUsuario=" + idUsuario +
+                ", nombreCuentaUsuario='" + nombreCuentaUsuario + '\'' +
+                ", emailUsuario='" + emailUsuario + '\'' +
+                ", passwordUsuario='" + passwordUsuario + '\'' +
+                ", nombreRealUsuario='" + nombreRealUsuario + '\'' +
+                ", paisUsuario='" + paisUsuario + '\'' +
+                ", fechaNacUsuario=" + fechaNacUsuario +
+                ", fechaRegUsuario=" + fechaRegUsuario +
+                ", avatarUsuario='" + avatarUsuario + '\'' +
+                ", saldoUsuario=" + saldoUsuario +
+                ", estadoCuentaUsuario=" + estadoCuentaUsuario +
+                '}';
+    }
 }

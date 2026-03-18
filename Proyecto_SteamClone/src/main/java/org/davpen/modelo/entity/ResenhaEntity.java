@@ -91,4 +91,19 @@ public class ResenhaEntity {
         return Objects.hash(idResenha, idUsuarioResenha, idJuegoResenha, recomendacionResenha, textoResenha,
                 tiempoJugadoResenha, fechaPublicacionResenha, fechaUltiEdicResenha, estadoResenha);
     }
+
+    @Override
+    public String toString() {
+        return "ResenhaEntity{" +
+                "idResenha=" + idResenha +
+                ", idUsuarioResenha=" + idUsuarioResenha +
+                ", idJuegoResenha=" + idJuegoResenha +
+                ", recomendacionResenha=" + recomendacionResenha +
+                ", textoResenha='" + textoResenha + '\'' +
+                ", tiempoJugadoResenha=" + tiempoJugadoResenha +
+                ", fechaPublicacionResenha=" + fechaPublicacionResenha +
+                ", fechaUltiEdicResenha=" + fechaUltiEdicResenha +
+                ", estadoResenha=" + estadoResenha +
+                '}';
+    }
 }

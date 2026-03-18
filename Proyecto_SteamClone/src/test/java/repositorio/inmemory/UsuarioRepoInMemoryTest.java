@@ -4,6 +4,7 @@ import org.davpen.enums.TipoEstadoCuenta;
 import org.davpen.modelo.entity.UsuarioEntity;
 import org.davpen.modelo.form.UsuarioForm;
 import org.davpen.repositorio.inmemory.UsuarioRepoInMemory;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
@@ -14,6 +15,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class UsuarioRepoInMemoryTest {
 
+    @BeforeEach
+    public void setUp(){
+        UsuarioRepoInMemory.reset();
+    }
 
     @Test
     public void testCrear_UsuarioFormValido_OptionalOfUsuarioEntity() {

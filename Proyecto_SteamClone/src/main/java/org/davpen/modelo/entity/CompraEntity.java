@@ -85,4 +85,18 @@ public class CompraEntity {
         return Objects.hash(idCompra, idUsuarioCompra, idJuegoCompra, fechaCompra, tipoPagoCompra, precioBaseCompra,
                 descuentoEnCompra, estadoCompra);
     }
+
+    @Override
+    public String toString() {
+        return "CompraEntity{" +
+                "idCompra=" + idCompra +
+                ", idUsuarioCompra=" + idUsuarioCompra +
+                ", idJuegoCompra=" + idJuegoCompra +
+                ", fechaCompra=" + fechaCompra +
+                ", tipoPagoCompra=" + tipoPagoCompra +
+                ", precioBaseCompra=" + precioBaseCompra +
+                ", descuentoEnCompra=" + descuentoEnCompra +
+                ", estadoCompra=" + estadoCompra +
+                '}';
+    }
 }

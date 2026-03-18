@@ -78,4 +78,17 @@ public class BibliotecaEntity {
         return Objects.hash(idBiblio, idUsuarioBiblio, idJuegoBiblio, fechaCompraJuegoBiblio, tiempoJuegoBiblio,
                 ultiFechaJuegoBiblio, estadoInstJuegoBiblio);
     }
+
+    @Override
+    public String toString() {
+        return "BibliotecaEntity{" +
+                "idBiblio=" + idBiblio +
+                ", idUsuarioBiblio=" + idUsuarioBiblio +
+                ", idJuegoBiblio=" + idJuegoBiblio +
+                ", fechaCompraJuegoBiblio=" + fechaCompraJuegoBiblio +
+                ", tiempoJuegoBiblio=" + tiempoJuegoBiblio +
+                ", ultiFechaJuegoBiblio=" + ultiFechaJuegoBiblio +
+                ", estadoInstJuegoBiblio=" + estadoInstJuegoBiblio +
+                '}';
+    }
 }
