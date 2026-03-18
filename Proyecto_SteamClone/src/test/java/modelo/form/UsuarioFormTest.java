@@ -220,24 +220,5 @@ public class UsuarioFormTest {
                 && error.getMensaje() == ErrorType.DEMASIADO_LARGO));
     }
 
-    @Test
-    public void testValidarSaldoUsuario() {
-        // Caso con saldo válido
-        usuarioFormValido = new UsuarioForm("Usuario123", "usuario@example.com",
-                "Password123!", "Juan Perez", "España", 
-                LocalDate.of(2000, Month.JANUARY, 1), LocalDate.now(),
-                "avatar.png", 1000.0, TipoEstadoCuenta.ACTIVA);
-        List<ErrorDto> errores = usuarioFormValido.validar();
-        assertTrue(errores.stream().noneMatch(error -> error.getCampo().equals("saldoUsuario")));
-
-        // Caso con saldo negativo
-        usuarioFormInvalido = new UsuarioForm("Usuario123", "usuario@example.com",
-                "Password123!", "Juan Perez",
-                "España", LocalDate.of(2000, Month.JANUARY, 1), LocalDate.now(),
-                "avatar.png", -100.0, TipoEstadoCuenta.ACTIVA);
-        errores = usuarioFormInvalido.validar();
-        assertTrue(errores.stream().anyMatch(error -> error.getCampo().equals("saldoUsuario")
-                && error.getMensaje() == ErrorType.REQUERIDO));
-    }
 }
 

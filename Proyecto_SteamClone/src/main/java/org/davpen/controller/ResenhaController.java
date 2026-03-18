@@ -22,7 +22,8 @@ public class ResenhaController {
     private final IJuegoRepo juegoRepo;
     private final IBibliotecaRepo bibliotecaRepo;
 
-    public ResenhaController(IResenhaRepo resenhaRepo, IUsuarioRepo usuarioRepo, IJuegoRepo juegoRepo, IBibliotecaRepo bibliotecaRepo) {
+    public ResenhaController(IResenhaRepo resenhaRepo, IUsuarioRepo usuarioRepo, IJuegoRepo juegoRepo,
+                             IBibliotecaRepo bibliotecaRepo) {
         this.resenhaRepo = resenhaRepo;
         this.usuarioRepo = usuarioRepo;
         this.juegoRepo = juegoRepo;
@@ -37,34 +38,34 @@ public class ResenhaController {
         //Validaciones modelo
         //usuario y juego existen
         var idUsuarioResenha = resenhaForm.getIdUsuarioResenha();
-        if (!usuarioRepo.obtenerPorId(idUsuarioResenha).isPresent()){
+        if (!usuarioRepo.obtenerPorId(idUsuarioResenha).isPresent()) {
             errores.add(new ErrorDto("id_usuario", ErrorType.NO_ENCONTRADO));
         }
         var idJuegoResenha = resenhaForm.getIdJuegoResenha();
-        if (!juegoRepo.obtenerPorId(idJuegoResenha).isPresent()){
+        if (!juegoRepo.obtenerPorId(idJuegoResenha).isPresent()) {
             errores.add(new ErrorDto("id_juego", ErrorType.NO_ENCONTRADO));
         }
-        if (!errores.isEmpty()){
+        if (!errores.isEmpty()) {
             throw new ValidationException(errores);
         }
         //validar juego en biblioteca = usuario es propietario
 
         var juegoEnBiblioteca = bibliotecaRepo.obtenerTodos().stream()
-                                .filter(b -> b.getIdUsuarioBiblio().equals(idUsuarioResenha))
-                                .anyMatch(b -> b.getIdJuegoBiblio().equals(idJuegoResenha));
-        if (!juegoEnBiblioteca){
+                .filter(b -> b.getIdUsuarioBiblio().equals(idUsuarioResenha))
+                .anyMatch(b -> b.getIdJuegoBiblio().equals(idJuegoResenha));
+        if (!juegoEnBiblioteca) {
             errores.add(new ErrorDto("id_juego", ErrorType.NO_ENCONTRADO));
         }
         //validar reseña no duplicada
         var listaResenhas = resenhaRepo.obtenerTodos();
         var resenhaExistente = listaResenhas.stream()
-                            .filter(r -> r.getIdUsuarioResenha().equals(idUsuarioResenha))
-                            .anyMatch(r -> r.getIdJuegoResenha().equals(idJuegoResenha));
-        if (resenhaExistente){
+                .filter(r -> r.getIdUsuarioResenha().equals(idUsuarioResenha))
+                .anyMatch(r -> r.getIdJuegoResenha().equals(idJuegoResenha));
+        if (resenhaExistente) {
             errores.add(new ErrorDto("resenha", ErrorType.DUPLICADO));
         }
 
-        if (!errores.isEmpty()){
+        if (!errores.isEmpty()) {
             throw new ValidationException(errores);
         }
 
@@ -80,29 +81,32 @@ public class ResenhaController {
 
         var errores = new ArrayList<ErrorDto>();
         //validar reseña existe
-        if (!resenhaRepo.obtenerPorId(idResenha).isPresent()){
+        if (!resenhaRepo.obtenerPorId(idResenha).isPresent()) {
             errores.add(new ErrorDto("id_resenha", ErrorType.NO_ENCONTRADO));
         }
         //validar reseña es de usuario
         var listaResenhas = resenhaRepo.obtenerTodos();
-        var resenhasAUsuario = resenhaRepo.obtenerTodasPorIdUsuario(idUsuario,listaResenhas);
-        var resenhaAEliminarEsDeUsuario = resenhasAUsuario.stream().anyMatch(r -> r.getIdResenha().equals(idResenha));
-        if (!resenhaAEliminarEsDeUsuario){
+        var resenhasAUsuario = resenhaRepo.obtenerTodasPorIdUsuario(idUsuario, listaResenhas);
+        var resenhaAEliminarEsDeUsuario = resenhasAUsuario.stream()
+                .anyMatch(r -> r.getIdResenha().equals(idResenha));
+        if (!resenhaAEliminarEsDeUsuario) {
             errores.add(new ErrorDto("id_resenha", ErrorType.NO_ENCONTRADO));
         }
         //validar reseña está publicada
         var resenhaAOcultar = resenhaRepo.obtenerPorId(idResenha);
         var estadoResenhaAOcultar = resenhaAOcultar.get().getEstadoResenha();
-        if (estadoResenhaAOcultar != TipoEstadoResenha.PUBLICADA){
+        if (estadoResenhaAOcultar != TipoEstadoResenha.PUBLICADA) {
             errores.add(new ErrorDto("estado_resenha", ErrorType.RESENHA_NO_PUBLICADA));
         }
-        if (!errores.isEmpty()){
+        if (!errores.isEmpty()) {
             throw new ValidationException(errores);
         }
 
-        var resenhaForm = new ResenhaForm(idUsuario,resenhaAOcultar.get().getIdJuegoResenha(), resenhaAOcultar.get().isRecomendacionResenha(),
-                            resenhaAOcultar.get().getTextoResenha(), resenhaAOcultar.get().getTiempoJugadoResenha(),resenhaAOcultar.get().getFechaPublicacionResenha(),
-                            resenhaAOcultar.get().getFechaUltiEdicResenha(), TipoEstadoResenha.OCULTA);
+        var resenhaForm = new ResenhaForm(idUsuario, resenhaAOcultar.get().getIdJuegoResenha(),
+                resenhaAOcultar.get().isRecomendacionResenha(),
+                resenhaAOcultar.get().getTextoResenha(), resenhaAOcultar.get().getTiempoJugadoResenha(),
+                resenhaAOcultar.get().getFechaPublicacionResenha(),
+                resenhaAOcultar.get().getFechaUltiEdicResenha(), TipoEstadoResenha.OCULTA);
         var resenhaActualizada = resenhaRepo.actualizar(idResenha, resenhaForm).orElse(null);
         return Mapper.mapaSimple(resenhaActualizada);
     }
@@ -115,17 +119,17 @@ public class ResenhaController {
 
         //validar modelo
         //validar reseña existe
-        if (!resenhaRepo.obtenerPorId(idResenha).isPresent()){
+        if (!resenhaRepo.obtenerPorId(idResenha).isPresent()) {
             errores.add(new ErrorDto("id_resenha", ErrorType.NO_ENCONTRADO));
         }
         //validar reseña es de usuario
         var listaResenhas = resenhaRepo.obtenerTodos();
-        var resenhasAUsuario = resenhaRepo.obtenerTodasPorIdUsuario(idUsuario,listaResenhas);
+        var resenhasAUsuario = resenhaRepo.obtenerTodasPorIdUsuario(idUsuario, listaResenhas);
         var resenhaAEliminarEsDeUsuario = resenhasAUsuario.stream().anyMatch(r -> r.getIdResenha().equals(idResenha));
-        if (!resenhaAEliminarEsDeUsuario){
+        if (!resenhaAEliminarEsDeUsuario) {
             errores.add(new ErrorDto("id_resenha", ErrorType.NO_ENCONTRADO));
         }
-        if (!errores.isEmpty()){
+        if (!errores.isEmpty()) {
             throw new ValidationException(errores);
         }
 
@@ -140,16 +144,17 @@ public class ResenhaController {
         //Validar juego existe
         var listaJuegos = juegoRepo.obtenerTodos();
         var juegoExiste = listaJuegos.stream().anyMatch(j -> j.getIdJuego().equals(idJuego));
-        if (!juegoExiste){
+        if (!juegoExiste) {
             errores.add(new ErrorDto("id_juego", ErrorType.NO_ENCONTRADO));
         }
-        if (!errores.isEmpty()){
+        if (!errores.isEmpty()) {
             throw new ValidationException(errores);
         }
         var listaResenhas = resenhaRepo.obtenerTodos();
-        var listaResenhasJuego = resenhaRepo.obtenerTodasPorIdJuego(idJuego,listaResenhas);
+        var listaResenhasJuego = resenhaRepo.obtenerTodasPorIdJuego(idJuego, listaResenhas);
 
-        var listaResenhasDtoJuego = listaResenhasJuego.stream().map(resenha -> Mapper.mapaSimple(resenha)).toList();
+        var listaResenhasDtoJuego = listaResenhasJuego.stream()
+                .map(resenha -> Mapper.mapaSimple(resenha)).toList();
         return listaResenhasDtoJuego;
     }
 
@@ -160,16 +165,17 @@ public class ResenhaController {
         //Validar usuario existe
         var listaUsuarios = usuarioRepo.obtenerTodos();
         var usuarioExiste = listaUsuarios.stream().anyMatch(u -> u.getIdUsuario().equals(idUsuario));
-        if (!usuarioExiste){
+        if (!usuarioExiste) {
             errores.add(new ErrorDto("id_usuario", ErrorType.NO_ENCONTRADO));
         }
-        if (!errores.isEmpty()){
+        if (!errores.isEmpty()) {
             throw new ValidationException(errores);
         }
         var listaResenhas = resenhaRepo.obtenerTodos();
-        var listaResenhasUsuario = resenhaRepo.obtenerTodasPorIdUsuario(idUsuario,listaResenhas);
+        var listaResenhasUsuario = resenhaRepo.obtenerTodasPorIdUsuario(idUsuario, listaResenhas);
 
-        var listaResenhasDtoUsuario = listaResenhasUsuario.stream().map(resenha -> Mapper.mapaSimple(resenha)).toList();
+        var listaResenhasDtoUsuario = listaResenhasUsuario.stream()
+                .map(resenha -> Mapper.mapaSimple(resenha)).toList();
         return listaResenhasDtoUsuario;
     }
 

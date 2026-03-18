@@ -104,4 +104,6 @@ public class UsuarioEntity {
         return Objects.hash(idUsuario, nombreCuentaUsuario, emailUsuario, passwordUsuario, nombreRealUsuario,
                 paisUsuario, fechaNacUsuario, fechaRegUsuario, avatarUsuario, saldoUsuario, estadoCuentaUsuario);
     }
+
+
 }

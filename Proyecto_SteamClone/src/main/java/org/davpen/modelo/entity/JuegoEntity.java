@@ -6,6 +6,7 @@ import org.davpen.enums.TipoEstadoJuego;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class JuegoEntity {
 
@@ -84,5 +85,28 @@ public class JuegoEntity {
 
     public TipoEstadoJuego getEstadoJuego() {
         return estadoJuego;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        JuegoEntity that = (JuegoEntity) o;
+        return Double.compare(precioBaseJuego, that.precioBaseJuego) == 0
+                && descuentoActualJuego == that.descuentoActualJuego
+                && Objects.equals(idJuego, that.idJuego)
+                && Objects.equals(tituloJuego, that.tituloJuego)
+                && Objects.equals(descripcionJuego, that.descripcionJuego)
+                && Objects.equals(desarrolladorJuego, that.desarrolladorJuego)
+                && Objects.equals(fechaLanzaJuego, that.fechaLanzaJuego)
+                && categoriaJuego == that.categoriaJuego
+                && clasEdadJuego == that.clasEdadJuego
+                && Objects.equals(idiomasJuego, that.idiomasJuego)
+                && estadoJuego == that.estadoJuego;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(idJuego, tituloJuego, descripcionJuego, desarrolladorJuego, fechaLanzaJuego,
+                precioBaseJuego, descuentoActualJuego, categoriaJuego, clasEdadJuego, idiomasJuego, estadoJuego);
     }
 }

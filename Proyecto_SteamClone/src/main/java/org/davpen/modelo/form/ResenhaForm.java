@@ -13,7 +13,7 @@ public class ResenhaForm {
     //Atributos
     private Long idUsuarioResenha;
     private Long idJuegoResenha;
-    private boolean recomendacionResenha;
+    private Boolean recomendacionResenha;
     private String textoResenha;
     private double tiempoJugadoResenha;
     private LocalDate fechaPublicacionResenha;
@@ -21,7 +21,7 @@ public class ResenhaForm {
     private TipoEstadoResenha estadoResenha;
 
     //Constructor
-    public ResenhaForm(Long idUsuarioResenha, Long idJuegoResenha, boolean recomendacionResenha, String textoResenha,
+    public ResenhaForm(Long idUsuarioResenha, Long idJuegoResenha, Boolean recomendacionResenha, String textoResenha,
                        double tiempoJugadoResenha, LocalDate fechaPublicacionResenha, LocalDate fechaUltiEdicResenha,
                        TipoEstadoResenha estadoResenha) {
         this.idUsuarioResenha = idUsuarioResenha;
@@ -80,11 +80,13 @@ public class ResenhaForm {
         if (idJuegoResenha == null) {
             errores.add(new ErrorDto("Id_Juego", ErrorType.REQUERIDO));
         }
-        //TODO Validaciones Recomendacion
 
+        if (recomendacionResenha == null){
+            errores.add(new ErrorDto("recomendacion", ErrorType.REQUERIDO));
+        }
 
         //Validaciones Texto Reseña
-        if (textoResenha == null || textoResenha.isBlank()) {
+        if (textoResenha == null || textoResenha.isEmpty()) {
             errores.add(new ErrorDto("texto_reseña", ErrorType.REQUERIDO));
         }
 

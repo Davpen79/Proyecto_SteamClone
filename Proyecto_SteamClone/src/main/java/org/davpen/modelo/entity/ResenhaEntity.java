@@ -3,6 +3,7 @@ package org.davpen.modelo.entity;
 import org.davpen.enums.TipoEstadoResenha;
 
 import java.time.LocalDate;
+import java.util.Objects;
 
 public class ResenhaEntity {
 
@@ -68,5 +69,26 @@ public class ResenhaEntity {
 
     public TipoEstadoResenha getEstadoResenha() {
         return estadoResenha;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        ResenhaEntity that = (ResenhaEntity) o;
+        return recomendacionResenha == that.recomendacionResenha
+                && Double.compare(tiempoJugadoResenha, that.tiempoJugadoResenha) == 0
+                && Objects.equals(idResenha, that.idResenha)
+                && Objects.equals(idUsuarioResenha, that.idUsuarioResenha)
+                && Objects.equals(idJuegoResenha, that.idJuegoResenha)
+                && Objects.equals(textoResenha, that.textoResenha)
+                && Objects.equals(fechaPublicacionResenha, that.fechaPublicacionResenha)
+                && Objects.equals(fechaUltiEdicResenha, that.fechaUltiEdicResenha)
+                && estadoResenha == that.estadoResenha;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(idResenha, idUsuarioResenha, idJuegoResenha, recomendacionResenha, textoResenha,
+                tiempoJugadoResenha, fechaPublicacionResenha, fechaUltiEdicResenha, estadoResenha);
     }
 }

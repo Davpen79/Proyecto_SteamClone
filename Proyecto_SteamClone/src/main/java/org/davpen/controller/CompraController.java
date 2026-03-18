@@ -53,7 +53,7 @@ public class CompraController {
                 .anyMatch(b -> b.getIdJuegoBiblio().equals(idJuego))) {
             errores.add(new ErrorDto("id_juego", ErrorType.DUPLICADO));
         }
-        //saldo suficiente ¿¿SI USA CARTERA??
+        //saldo suficiente ¿¿SI USA CARTERA?? - Convertir en Procesar Pago
         var saldoCartera = usuarioRepo.obtenerPorId(idUsuario).get().getSaldoUsuario();
         var precioCompra = juegoRepo.obtenerPorId(idJuego).get().getPrecioBaseJuego();
         var descuentoCompra = juegoRepo.obtenerPorId(idJuego).get().getDescuentoActualJuego();
@@ -61,7 +61,7 @@ public class CompraController {
         if (metodoPago == TipoMetodoPago.CARTERA_STEAM && saldoCartera < precioFinal) {
             errores.add(new ErrorDto("saldo_cartera", ErrorType.VALOR_DEMASIADO_BAJO));
         }
-
+        //¿¿¿OTROS METODOS DE PAGO???
         CompraForm compraForm = new CompraForm(idUsuario, idJuego, LocalDate.now(), metodoPago, precioCompra,
                 descuentoCompra, TipoEstadoCompra.COMPLETADA);
         var compraEfectuada = compraRepo.crear(compraForm).orElse(null);

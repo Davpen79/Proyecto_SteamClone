@@ -54,7 +54,7 @@ public class BibliotecaController {
         return bibliotecaRepo.obtenerTodos().stream().filter(b -> b.getIdUsuarioBiblio().equals(idUsuario)).map(Mapper::mapaSimple).toList();
     }
 
-    //Añadir juego a biblioteca - Compra Verificada?? == Crear Biblioteca
+    //Añadir juego a biblioteca - ¿Compra Verificada?? == Crear Biblioteca
     public BibliotecaDto anhadirJuegoABiblioteca(Long idUsuario, Long idJuego) throws ValidationException {
         //Validar modelo
         var errores = new ArrayList<ErrorDto>();
@@ -66,15 +66,16 @@ public class BibliotecaController {
         if (!juegoRepo.obtenerPorId(idJuego).isPresent()) {
             errores.add(new ErrorDto("id_juego", ErrorType.NO_ENCONTRADO));
         }
-        if (bibliotecaRepo.obtenerTodos().stream().filter(b -> b.getIdUsuarioBiblio().equals(idUsuario)).anyMatch(b -> b.getIdJuegoBiblio().equals(idJuego))) {
+        if (bibliotecaRepo.obtenerTodos().stream().filter(b -> b.getIdUsuarioBiblio().equals(idUsuario))
+                .anyMatch(b -> b.getIdJuegoBiblio().equals(idJuego))) {
             errores.add(new ErrorDto("id_juego", ErrorType.DUPLICADO));
         }
         if (!errores.isEmpty()) {
             throw new ValidationException(errores);
         }
 
-        var bibliotecaNuevaEntrada = new BibliotecaForm(idUsuario, idJuego, LocalDate.now(), 0.00, null,
-                TipoEstadoInstalacion.NO_INSTALADO);
+        var bibliotecaNuevaEntrada = new BibliotecaForm(idUsuario, idJuego, LocalDate.now(),
+                0.00, null, TipoEstadoInstalacion.NO_INSTALADO);
         var bibliotecaOpt = bibliotecaRepo.crear(bibliotecaNuevaEntrada);
         var biblioteca = bibliotecaOpt.orElse(null);
 
@@ -92,7 +93,10 @@ public class BibliotecaController {
         }
         //Validar entrada en Biblioteca existe
         var entradaBiblioteca =
-                bibliotecaRepo.obtenerTodos().stream().filter(u -> u.getIdUsuarioBiblio().equals(idUsuario)).filter(j -> j.getIdJuegoBiblio().equals(idJuego)).findFirst();
+                bibliotecaRepo.obtenerTodos().stream()
+                        .filter(u -> u.getIdUsuarioBiblio().equals(idUsuario))
+                        .filter(j -> j.getIdJuegoBiblio().equals(idJuego))
+                        .findFirst();
         if (entradaBiblioteca.isEmpty()) {
             errores.add(new ErrorDto("entrada", ErrorType.NO_ENCONTRADO));
         }
@@ -116,7 +120,10 @@ public class BibliotecaController {
         }
         //Validar entrada en Biblioteca existe
         var entradaBiblioteca =
-                bibliotecaRepo.obtenerTodos().stream().filter(u -> u.getIdUsuarioBiblio().equals(idUsuario)).filter(j -> j.getIdJuegoBiblio().equals(idJuego)).findFirst();
+                bibliotecaRepo.obtenerTodos().stream()
+                        .filter(u -> u.getIdUsuarioBiblio().equals(idUsuario))
+                        .filter(j -> j.getIdJuegoBiblio().equals(idJuego))
+                        .findFirst();
         if (entradaBiblioteca.isEmpty()) {
             errores.add(new ErrorDto("entrada", ErrorType.NO_ENCONTRADO));
         }
@@ -148,7 +155,10 @@ public class BibliotecaController {
         }
         //Validar entrada en Biblioteca existe
         var entradaBiblioteca =
-                bibliotecaRepo.obtenerTodos().stream().filter(u -> u.getIdUsuarioBiblio().equals(idUsuario)).filter(j -> j.getIdJuegoBiblio().equals(idJuego)).findFirst();
+                bibliotecaRepo.obtenerTodos().stream()
+                        .filter(u -> u.getIdUsuarioBiblio().equals(idUsuario))
+                        .filter(j -> j.getIdJuegoBiblio().equals(idJuego))
+                        .findFirst();
         if (entradaBiblioteca.isEmpty()) {
             errores.add(new ErrorDto("entrada", ErrorType.NO_ENCONTRADO));
         }

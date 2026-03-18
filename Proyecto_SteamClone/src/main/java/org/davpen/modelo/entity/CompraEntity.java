@@ -4,6 +4,7 @@ import org.davpen.enums.TipoEstadoCompra;
 import org.davpen.enums.TipoMetodoPago;
 
 import java.time.LocalDate;
+import java.util.Objects;
 
 public class CompraEntity {
 
@@ -63,5 +64,25 @@ public class CompraEntity {
 
     public TipoEstadoCompra getEstadoCompra() {
         return estadoCompra;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        CompraEntity that = (CompraEntity) o;
+        return Double.compare(precioBaseCompra, that.precioBaseCompra) == 0
+                && descuentoEnCompra == that.descuentoEnCompra
+                && Objects.equals(idCompra, that.idCompra)
+                && Objects.equals(idUsuarioCompra, that.idUsuarioCompra)
+                && Objects.equals(idJuegoCompra, that.idJuegoCompra)
+                && Objects.equals(fechaCompra, that.fechaCompra)
+                && tipoPagoCompra == that.tipoPagoCompra
+                && estadoCompra == that.estadoCompra;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(idCompra, idUsuarioCompra, idJuegoCompra, fechaCompra, tipoPagoCompra, precioBaseCompra,
+                descuentoEnCompra, estadoCompra);
     }
 }
