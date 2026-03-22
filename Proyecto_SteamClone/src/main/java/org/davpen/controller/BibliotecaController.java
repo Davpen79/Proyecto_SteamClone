@@ -1,10 +1,12 @@
 package org.davpen.controller;
 
 import org.davpen.enums.TipoEstadoInstalacion;
+import org.davpen.enums.TipoOrden;
 import org.davpen.excepciones.ValidationException;
 import org.davpen.mapper.Mapper;
 import org.davpen.modelo.dto.BibliotecaDto;
 import org.davpen.modelo.dto.EstadisticasBibliotecaDto;
+import org.davpen.modelo.entity.BibliotecaEntity;
 import org.davpen.modelo.form.BibliotecaForm;
 import org.davpen.modelo.form.ErrorDto;
 import org.davpen.modelo.form.ErrorType;
@@ -15,6 +17,7 @@ import org.davpen.repositorio.intefaces.IUsuarioRepo;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 public class BibliotecaController {
@@ -50,9 +53,53 @@ public class BibliotecaController {
     }
 
     //Ver biblioteca personal
-    public List<BibliotecaDto> verBibliotecaPersonal(Long idUsuario) {
+    public List<BibliotecaDto> verBibliotecaPersonal(Long idUsuario, TipoOrden tipoOrden) throws ValidationException {
+        //Validar usuario
+        var errores = new ArrayList<ErrorDto>();
+        if (!usuarioRepo.obtenerPorId(idUsuario).isPresent()) {
+            errores.add(new ErrorDto("id_usuario", ErrorType.NO_ENCONTRADO));
+        }
+        if (!errores.isEmpty()) {
+            throw new ValidationException(errores);
+        }
 
-        return bibliotecaRepo.obtenerTodos().stream().filter(b -> b.getIdUsuarioBiblio().equals(idUsuario)).map(Mapper::mapaSimple).toList();
+        List<BibliotecaDto> bibliotecaOrdenada = new ArrayList<>();
+
+        //TODO lista ordenada alfabeticamente
+        if (tipoOrden == TipoOrden.ALFABETICO) {
+            var listaDesordenada = bibliotecaRepo.obtenerTodos().stream()
+                    .filter(b -> b.getIdUsuarioBiblio().equals(idUsuario))
+                    .map(Mapper::mapaSimple)
+                    .toList();
+        }
+
+        //lista ordenada por tiempo de juego
+        else if (tipoOrden == TipoOrden.TIEMPO_JUEGO) {
+            bibliotecaOrdenada = bibliotecaRepo.obtenerTodos().stream()
+                    .filter(b -> b.getIdUsuarioBiblio().equals(idUsuario))
+                    .sorted(Comparator.comparingDouble(BibliotecaEntity::getTiempoJuegoBiblio).reversed())
+                    .map(Mapper::mapaSimple)
+                    .toList();
+
+        }
+        //lista ordenada por
+        else if (tipoOrden == TipoOrden.ULTIMA_SESION) {
+            bibliotecaOrdenada = bibliotecaRepo.obtenerTodos().stream()
+                    .filter(b -> b.getIdUsuarioBiblio().equals(idUsuario))
+                    .sorted(Comparator.comparing(BibliotecaEntity::getUltiFechaJuegoBiblio).reversed())
+                    .map(Mapper::mapaSimple)
+                    .toList();
+        }
+        //lista ordenada por fecha adquisicion
+        else if (tipoOrden == TipoOrden.FECHA_ADQUISICION) {
+            bibliotecaOrdenada = bibliotecaRepo.obtenerTodos().stream()
+                    .filter(b -> b.getIdUsuarioBiblio().equals(idUsuario))
+                    .sorted(Comparator.comparing(BibliotecaEntity::getFechaCompraJuegoBiblio).reversed())
+                    .map(Mapper::mapaSimple)
+                    .toList();
+        }
+
+        return bibliotecaOrdenada;
     }
 
     //Añadir juego a biblioteca - ¿Compra Verificada?? == Crear Biblioteca
@@ -83,7 +130,7 @@ public class BibliotecaController {
         return Mapper.mapaSimple(biblioteca);
     }
 
-    //Eliminar juego de biblioteca
+    //Eliminar juego de biblioteca - Como devuelve algo que elimina?
     public boolean eliminarJuegoDeBiblioteca(Long idUsuario, Long idJuego) throws ValidationException {
         var errores = new ArrayList<ErrorDto>();
         //Validar Usuario && Juego existen
@@ -128,6 +175,10 @@ public class BibliotecaController {
         if (entradaBiblioteca.isEmpty()) {
             errores.add(new ErrorDto("entrada", ErrorType.NO_ENCONTRADO));
         }
+        //validar horas jugadas positivas - Deberia ser en Formulario??
+        if (horasParaAnhadir < 0){
+            errores.add(new ErrorDto("horas", ErrorType.VALOR_NEGATIVO));
+        }
 
         if (!errores.isEmpty()) {
             throw new ValidationException(errores);
@@ -146,7 +197,7 @@ public class BibliotecaController {
     }
 
     //Consultar ultima sesion
-    public LocalDateTime consultarUltimaSesion(Long idUsuario, Long idJuego) throws ValidationException {
+    public BibliotecaDto consultarUltimaSesion(Long idUsuario, Long idJuego) throws ValidationException {
         var errores = new ArrayList<ErrorDto>();
         //Validar Usuario && Juego existen
         var usuarioExiste = usuarioRepo.obtenerPorId(idUsuario).isPresent();
@@ -175,16 +226,19 @@ public class BibliotecaController {
         if (!errores.isEmpty()) {
             throw new ValidationException(errores);
         }
-        return ultimaPartida;
+
+        var bibliotecaUltimaSesion = Mapper.mapaSimple(entradaBibEntity);
+        return bibliotecaUltimaSesion;
     }
 
     //TODO: Ver estadísticas de biblioteca => NUEVO OBJETO?
-    public EstadisticasBibliotecaDto foo(Long idUsuario){
+    public EstadisticasBibliotecaDto foo(Long idUsuario) {
 
-        var biblioteca = bibliotecaRepo.obtenerTodos().stream().filter(b -> b.getIdUsuarioBiblio().equals(idUsuario)).toList();
+        var biblioteca =
+                bibliotecaRepo.obtenerTodos().stream().filter(b -> b.getIdUsuarioBiblio().equals(idUsuario)).toList();
         var totalHoras = biblioteca.stream()
                 .map(b -> b.getTiempoJuegoBiblio())
-                .reduce((a, b) ->  a + b)
+                .reduce((a, b) -> a + b)
                 .orElse(0d);
         return new EstadisticasBibliotecaDto(1, biblioteca.size(), totalHoras, );
     }

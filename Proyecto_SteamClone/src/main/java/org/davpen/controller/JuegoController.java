@@ -1,6 +1,7 @@
 package org.davpen.controller;
 
 import org.davpen.enums.TipoCategoriaJuego;
+import org.davpen.enums.TipoClasificacionEdades;
 import org.davpen.enums.TipoConsultaCatalogo;
 import org.davpen.enums.TipoEstadoJuego;
 import org.davpen.excepciones.ValidationException;
@@ -50,7 +51,8 @@ public class JuegoController {
     }
 
 
-    //TODO: Buscar juegos por distintos criterios
+    //TODO: Buscar juegos por distintos criterios simultaneos
+    //Buscar juegos por Categoria
     public List<JuegoDto> listaJuegosPorCategoria(TipoCategoriaJuego categoria) {
         return juegoRepo.obtenerTodos().stream()
                 .filter(j -> j.getCategoriaJuego().equals(categoria))
@@ -58,9 +60,50 @@ public class JuegoController {
                 .toList();
     }
 
+    //Buscar juego por Rango de Precio
+    public List<JuegoDto> listaJuegosPorRangoPrecio(double precio_Min, double precio_Max) {
 
-    //TODO: Consultar catalogo completo - Metadatos Paginacion??
-    public List<JuegoDto> listaCatalogoComleto(TipoConsultaCatalogo consulta) {
+        if (precio_Min > precio_Max) {
+            throw new IllegalArgumentException("El precio minimo no puede ser mayor que el precio máximo");
+        }
+
+        var resultadoBusqueda = juegoRepo.obtenerTodos().stream()
+                .filter(j -> j.getPrecioBaseJuego() <= precio_Max)
+                .filter(j -> j.getPrecioBaseJuego() >= precio_Min)
+                .map(Mapper::mapaJuegoCompleto)
+                .toList();
+
+        return resultadoBusqueda;
+    }
+
+    //Buscar juego por Clasificacion
+    public List<JuegoDto> listaJuegosPorClasificacion(TipoClasificacionEdades clasificacionEdades) {
+        return juegoRepo.obtenerTodos().stream()
+                .filter(j -> j.getClasEdadJuego().equals(clasificacionEdades))
+                .map(Mapper::mapaJuegoCompleto)
+                .toList();
+    }
+
+    //Buscar juego por Estado
+    public List<JuegoDto> listaJuegosPorEstado(TipoEstadoJuego estadoJuego) {
+        return juegoRepo.obtenerTodos().stream()
+                .filter(j -> j.getEstadoJuego().equals(estadoJuego))
+                .map(Mapper::mapaJuegoCompleto)
+                .toList();
+    }
+
+    //TODO Buscar juego por Texto/Descripcion
+    public List<JuegoDto> listaJuegosPorPalabraEnDescripcion(String palabraBuscada) {
+        return juegoRepo.obtenerTodos().stream()
+                .filter(j -> j.getDescripcionJuego().contains(palabraBuscada))
+                .map(Mapper::mapaJuegoCompleto)
+                .toList();
+
+    }
+
+
+    //Consultar catalogo completo
+    public List<JuegoDto> listaCatalogoCompleto(TipoConsultaCatalogo consulta) {
 
         List<JuegoDto> listaConsultaDto = new ArrayList<>(List.of());
 
@@ -91,7 +134,7 @@ public class JuegoController {
         return listaConsultaDto;
     }
 
-    //TODO: Consultar detalles de juego + estadísticas y reseñas destacadas
+    //Consultar detalles de juego
     public JuegoDto detalleJuego(Long id) throws ValidationException {
 
         var errores = new ArrayList<ErrorDto>();
@@ -135,10 +178,11 @@ public class JuegoController {
         var nuevoPrecio = juegoRepo.obtenerPorId(id).get().getPrecioBaseJuego()
                 - (juegoRepo.obtenerPorId(id).get().getPrecioBaseJuego() * descuento / 100);
 
-        var juegoActualizadoForm = new JuegoForm(juegoActual.get().getTituloJuego(), juegoActual.get().getDescripcionJuego(),
-                juegoActual.get().getDesarrolladorJuego(), juegoActual.get().getFechaLanzaJuego(),
-                nuevoPrecio, descuento, juegoActual.get().getCategoriaJuego(), juegoActual.get().getClasEdadJuego(),
-                juegoActual.get().getIdiomasJuego(), juegoActual.get().getEstadoJuego());
+        var juegoActualizadoForm = new JuegoForm(juegoActual.get().getTituloJuego(),
+                juegoActual.get().getDescripcionJuego(), juegoActual.get().getDesarrolladorJuego(),
+                juegoActual.get().getFechaLanzaJuego(), nuevoPrecio, descuento, juegoActual.get().getCategoriaJuego(),
+                juegoActual.get().getClasEdadJuego(), juegoActual.get().getIdiomasJuego(),
+                juegoActual.get().getEstadoJuego());
 
         var juegoActualizado = juegoRepo.actualizar(id, juegoActualizadoForm).orElse(null);
 
@@ -160,9 +204,10 @@ public class JuegoController {
             throw new ValidationException(errores);
         }
         var juegoActual = juegoRepo.obtenerPorId(id);
-        var juegoActualizadoForm = new JuegoForm(juegoActual.get().getTituloJuego(), juegoActual.get().getDescripcionJuego(),
-                juegoActual.get().getDesarrolladorJuego(), juegoActual.get().getFechaLanzaJuego(),
-                juegoActual.get().getPrecioBaseJuego(), juegoActual.get().getDescuentoActualJuego(), juegoActual.get().getCategoriaJuego(),
+        var juegoActualizadoForm = new JuegoForm(juegoActual.get().getTituloJuego(),
+                juegoActual.get().getDescripcionJuego(), juegoActual.get().getDesarrolladorJuego(),
+                juegoActual.get().getFechaLanzaJuego(), juegoActual.get().getPrecioBaseJuego(),
+                juegoActual.get().getDescuentoActualJuego(), juegoActual.get().getCategoriaJuego(),
                 juegoActual.get().getClasEdadJuego(), juegoActual.get().getIdiomasJuego(), nuevoEstado);
 
         var juegoActualizado = juegoRepo.actualizar(id, juegoActualizadoForm).orElse(null);

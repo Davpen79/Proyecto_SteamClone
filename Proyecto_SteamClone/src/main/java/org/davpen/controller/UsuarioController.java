@@ -56,7 +56,7 @@ public class UsuarioController {
         return Mapper.mapaUsuarioCompleto(usuario);
     }
 
-    //Consultar perfil por ID?? - ¿Estadisticas??
+    //Consultar perfil por ID
     public UsuarioDto consultarPerfil(Long id) throws ValidationException {
         //Comprobamos si el usuario existe
         var errores = new ArrayList<ErrorDto>();
@@ -73,7 +73,7 @@ public class UsuarioController {
         return Mapper.mapaUsuarioCompleto(usuarioEncontrado);
     }
 
-    //Consultar perfil por Nombre?? - ¿Estadisticas??
+    //Consultar perfil por Nombre
     public UsuarioDto consultarPerfil(String nombreCuentaUsuario) throws ValidationException {
         //Comprobamos si el usuario existe
         var errores = new ArrayList<ErrorDto>();
