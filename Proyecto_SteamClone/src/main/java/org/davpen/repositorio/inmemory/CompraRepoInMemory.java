@@ -56,4 +56,10 @@ public class CompraRepoInMemory implements ICompraRepo {
     public boolean eliminar(Long id) {
         return LISTA_COMPRAS.removeIf(c -> c.getIdCompra().equals(id));
     }
+
+    @Override
+    public Optional<CompraEntity> obtenerPorIdUsuario(Long idUsuario) {
+        return LISTA_COMPRAS.stream().filter(c -> c.getIdUsuarioCompra()
+                .equals(idUsuario)).findFirst();
+    }
 }

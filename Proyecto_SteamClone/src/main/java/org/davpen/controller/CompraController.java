@@ -77,7 +77,7 @@ public class CompraController {
     //TODO Procesar pago ¿¿Datos según metodo de pago??
 
 
-    //Consultar detalles de compra - TODO Factura + INFO detallada
+    //Consultar detalles de compra
     public CompraDto consultarHistorialCompras(Long idCompra, Long idUsuario) throws ValidationException {
         //Validaciones
         var errores = new ArrayList<ErrorDto>();

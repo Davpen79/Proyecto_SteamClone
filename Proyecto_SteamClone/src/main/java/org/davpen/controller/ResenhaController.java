@@ -4,6 +4,7 @@ import org.davpen.enums.TipoEstadoResenha;
 import org.davpen.excepciones.ValidationException;
 import org.davpen.mapper.Mapper;
 import org.davpen.modelo.dto.ResenhaDto;
+import org.davpen.modelo.entity.ResenhaEntity;
 import org.davpen.modelo.form.ErrorDto;
 import org.davpen.modelo.form.ErrorType;
 import org.davpen.modelo.form.ResenhaForm;
@@ -13,6 +14,7 @@ import org.davpen.repositorio.intefaces.IResenhaRepo;
 import org.davpen.repositorio.intefaces.IUsuarioRepo;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 public class ResenhaController {
@@ -138,7 +140,7 @@ public class ResenhaController {
 
     }
 
-    //Ver reseñas de un juego - Faltan Filtros/Orden como pasan por parametro + Estadisticas
+    //Ver reseñas de un juego - Faltan Filtros/Orden
     public List<ResenhaDto> verReseñasJuego(Long idJuego) throws ValidationException {
         var errores = new ArrayList<ErrorDto>();
         //Validar juego existe
@@ -154,12 +156,15 @@ public class ResenhaController {
         var listaResenhasJuego = resenhaRepo.obtenerTodasPorIdJuego(idJuego, listaResenhas);
 
         var listaResenhasDtoJuego = listaResenhasJuego.stream()
-                .map(resenha -> Mapper.mapaSimple(resenha)).toList();
+                //Ordenamos priorizando las reseñas mas recientes como mas utiles
+                .sorted(Comparator.comparing(ResenhaEntity::getFechaPublicacionResenha).reversed())
+                .map(resenha -> Mapper.mapaSimple(resenha))
+                .toList();
         return listaResenhasDtoJuego;
     }
 
 
-    //Ver reseñas de un usuario - Faltan Filtros + Estadisticas
+    //Ver reseñas de un usuario - Faltan Filtros
     public List<ResenhaDto> verReseñasUsuario(Long idUsuario) throws ValidationException {
         var errores = new ArrayList<ErrorDto>();
         //Validar usuario existe
@@ -175,7 +180,10 @@ public class ResenhaController {
         var listaResenhasUsuario = resenhaRepo.obtenerTodasPorIdUsuario(idUsuario, listaResenhas);
 
         var listaResenhasDtoUsuario = listaResenhasUsuario.stream()
-                .map(resenha -> Mapper.mapaSimple(resenha)).toList();
+                //Filtramos para mostrar solo las reseñas publicadas
+                .filter(r -> r.getEstadoResenha().equals(TipoEstadoResenha.PUBLICADA))
+                .map(resenha -> Mapper.mapaSimple(resenha))
+                .toList();
         return listaResenhasDtoUsuario;
     }
 

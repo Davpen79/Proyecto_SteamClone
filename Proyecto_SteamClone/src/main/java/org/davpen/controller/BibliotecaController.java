@@ -11,11 +11,11 @@ import org.davpen.modelo.form.BibliotecaForm;
 import org.davpen.modelo.form.ErrorDto;
 import org.davpen.modelo.form.ErrorType;
 import org.davpen.repositorio.intefaces.IBibliotecaRepo;
+import org.davpen.repositorio.intefaces.ICompraRepo;
 import org.davpen.repositorio.intefaces.IJuegoRepo;
 import org.davpen.repositorio.intefaces.IUsuarioRepo;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -25,11 +25,14 @@ public class BibliotecaController {
     private final IBibliotecaRepo bibliotecaRepo;
     private final IUsuarioRepo usuarioRepo;
     private final IJuegoRepo juegoRepo;
+    private final ICompraRepo compraRepo;
 
-    public BibliotecaController(IBibliotecaRepo bibliotecaRepo, IUsuarioRepo usuarioRepo, IJuegoRepo juegoRepo) {
+    public BibliotecaController(IBibliotecaRepo bibliotecaRepo, IUsuarioRepo usuarioRepo, IJuegoRepo juegoRepo,
+                                ICompraRepo compraRepo) {
         this.bibliotecaRepo = bibliotecaRepo;
         this.usuarioRepo = usuarioRepo;
         this.juegoRepo = juegoRepo;
+        this.compraRepo = compraRepo;
     }
 
     //CREAR BIBLIOTECA???? INNECESARIO
@@ -176,7 +179,7 @@ public class BibliotecaController {
             errores.add(new ErrorDto("entrada", ErrorType.NO_ENCONTRADO));
         }
         //validar horas jugadas positivas - Deberia ser en Formulario??
-        if (horasParaAnhadir < 0){
+        if (horasParaAnhadir < 0) {
             errores.add(new ErrorDto("horas", ErrorType.VALOR_NEGATIVO));
         }
 
@@ -231,19 +234,46 @@ public class BibliotecaController {
         return bibliotecaUltimaSesion;
     }
 
-    //TODO: Ver estadísticas de biblioteca => NUEVO OBJETO?
-    public EstadisticasBibliotecaDto foo(Long idUsuario) {
+    //Ver estadísticas de biblioteca
+    public EstadisticasBibliotecaDto verEstadisticasBiblioteca(Long idUsuario) {
 
-        var biblioteca =
-                bibliotecaRepo.obtenerTodos().stream().filter(b -> b.getIdUsuarioBiblio().equals(idUsuario)).toList();
-        var totalHoras = biblioteca.stream()
+        var bibliotecaUsuario = bibliotecaRepo.obtenerTodos().stream()
+                .filter(b -> b.getIdUsuarioBiblio().equals(idUsuario))
+                .toList();
+        var totalHoras = bibliotecaUsuario.stream()
                 .map(b -> b.getTiempoJuegoBiblio())
                 .reduce((a, b) -> a + b)
                 .orElse(0d);
-        return new EstadisticasBibliotecaDto(1, biblioteca.size(), totalHoras, );
+        var listaJuegosEnBibliotecaInstalados = bibliotecaUsuario.stream()
+                .filter(b -> b.getEstadoInstJuegoBiblio().equals(TipoEstadoInstalacion.INSTALADO))
+                .toList();
+        var listaJuegosInstalados = listaJuegosEnBibliotecaInstalados.stream()
+                .map(b -> juegoRepo.obtenerPorId(b.getIdJuegoBiblio()).get())
+                .toList();
+        var bibliotecaJuegoMasJugado = bibliotecaUsuario.stream()
+                .max(Comparator.comparing(BibliotecaEntity::getTiempoJuegoBiblio));
+        var juegoMasJugado = juegoRepo.obtenerPorId(bibliotecaJuegoMasJugado.get().getIdJuegoBiblio()).get();
+        var listComprasBiblioteca = bibliotecaUsuario.stream()
+                .map(b -> compraRepo.obtenerPorIdUsuario(b.getIdUsuarioBiblio()))
+                .toList();
+        var valorTotalBiblioteca = listComprasBiblioteca.stream()
+                .map(c -> c.get().getPrecioBaseCompra())
+                .reduce((a, b) -> a + b)
+                .orElse(0d);
+        var listaJuegosNoJugados = bibliotecaUsuario.stream()
+                .filter(b -> b.getTiempoJuegoBiblio() == 0d)
+                .map(b -> juegoRepo.obtenerPorId(b.getIdJuegoBiblio()).get())
+                .toList();
+
+        return new EstadisticasBibliotecaDto(idUsuario, bibliotecaUsuario.size(), totalHoras, listaJuegosInstalados,
+                juegoMasJugado, valorTotalBiblioteca, listaJuegosNoJugados);
     }
 
     //TODO: Filtrar biblioteca (Ficheros)
 
-
 }
+
+
+
+
+
