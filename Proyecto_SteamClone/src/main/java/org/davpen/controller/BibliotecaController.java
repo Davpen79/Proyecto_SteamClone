@@ -133,8 +133,8 @@ public class BibliotecaController {
         return Mapper.mapaSimple(biblioteca);
     }
 
-    //Eliminar juego de biblioteca - Como devuelve algo que elimina?
-    public boolean eliminarJuegoDeBiblioteca(Long idUsuario, Long idJuego) throws ValidationException {
+    //Eliminar juego de biblioteca - ¿Como devuelve algo que elimina?
+    public BibliotecaDto eliminarJuegoDeBiblioteca(Long idUsuario, Long idJuego) throws ValidationException {
         var errores = new ArrayList<ErrorDto>();
         //Validar Usuario && Juego existen
         var usuarioExiste = usuarioRepo.obtenerPorId(idUsuario).isPresent();
@@ -143,11 +143,10 @@ public class BibliotecaController {
             errores.add(new ErrorDto("id", ErrorType.NO_ENCONTRADO));
         }
         //Validar entrada en Biblioteca existe
-        var entradaBiblioteca =
-                bibliotecaRepo.obtenerTodos().stream()
-                        .filter(u -> u.getIdUsuarioBiblio().equals(idUsuario))
-                        .filter(j -> j.getIdJuegoBiblio().equals(idJuego))
-                        .findFirst();
+        var entradaBiblioteca = bibliotecaRepo.obtenerTodos().stream()
+                .filter(u -> u.getIdUsuarioBiblio().equals(idUsuario))
+                .filter(j -> j.getIdJuegoBiblio().equals(idJuego))
+                .findFirst();
         if (entradaBiblioteca.isEmpty()) {
             errores.add(new ErrorDto("entrada", ErrorType.NO_ENCONTRADO));
         }
@@ -157,7 +156,9 @@ public class BibliotecaController {
         }
         var idEntradaEncontrada = entradaBiblioteca.get().getIdBiblio();
 
-        return bibliotecaRepo.eliminar(idEntradaEncontrada);
+        bibliotecaRepo.eliminar(idEntradaEncontrada);
+
+        return Mapper.mapaSimple(entradaBiblioteca.orElseThrow());
     }
 
     //Actualizar tiempo de juego
@@ -252,7 +253,11 @@ public class BibliotecaController {
                 .toList();
         var bibliotecaJuegoMasJugado = bibliotecaUsuario.stream()
                 .max(Comparator.comparing(BibliotecaEntity::getTiempoJuegoBiblio));
-        var juegoMasJugado = juegoRepo.obtenerPorId(bibliotecaJuegoMasJugado.get().getIdJuegoBiblio()).get();
+        //codigo antiguo
+        //var juegoMasJugado = juegoRepo.obtenerPorId(bibliotecaJuegoMasJugado.get().getIdJuegoBiblio()).get();
+        //nuevo codigo corregido
+        var juegoMasJugado = bibliotecaJuegoMasJugado.flatMap(b -> juegoRepo.obtenerPorId(b.getIdJuegoBiblio()));
+
         var listComprasBiblioteca = bibliotecaUsuario.stream()
                 .map(b -> compraRepo.obtenerPorIdUsuario(b.getIdUsuarioBiblio()))
                 .toList();

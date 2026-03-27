@@ -1,4 +1,4 @@
-package org.davpen.utiles;
+package org.davpen.pagos;
 
 public class PagoTransferencia implements IMetodoPago{
 

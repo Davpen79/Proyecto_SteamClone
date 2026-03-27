@@ -3,6 +3,7 @@ package org.davpen.modelo.dto;
 import org.davpen.modelo.entity.JuegoEntity;
 
 import java.util.List;
+import java.util.Optional;
 
 public class EstadisticasBibliotecaDto {
     //Atributos
@@ -10,14 +11,14 @@ public class EstadisticasBibliotecaDto {
     private int totalJuegos;
     private double horasTotales;
     private List<JuegoEntity> juegosInstalados;
-    private JuegoEntity juegoMasJugado;
+    private Optional<JuegoEntity> juegoMasJugado;
     private double valorTotalBiblioteca;
     private List<JuegoEntity> juegosNoJugados;
 
     //Constructor
     public EstadisticasBibliotecaDto(Long idUsuario, int totalJuegos, double horasTotales,
                                      List<JuegoEntity> juegosInstalados,
-                                     JuegoEntity juegoMasJugado, double valorTotalBiblioteca,
+                                     Optional<JuegoEntity> juegoMasJugado, double valorTotalBiblioteca,
                                      List<JuegoEntity> juegosNoJugados) {
         this.idUsuario = idUsuario;
         this.totalJuegos = totalJuegos;
@@ -41,7 +42,7 @@ public class EstadisticasBibliotecaDto {
         return juegosInstalados;
     }
 
-    public JuegoEntity getJuegoMasJugado() {
+    public Optional<JuegoEntity> getJuegoMasJugado() {
         return juegoMasJugado;
     }
 

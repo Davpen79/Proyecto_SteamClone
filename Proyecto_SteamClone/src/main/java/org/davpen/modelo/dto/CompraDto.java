@@ -4,13 +4,16 @@ import org.davpen.enums.TipoEstadoCompra;
 import org.davpen.enums.TipoMetodoPago;
 
 import java.time.LocalDate;
+import java.util.Optional;
 
 public class CompraDto {
 
     //Atributos
     private Long idCompra;
     private Long idUsuarioCompra;
+    private Optional<UsuarioDto> usuarioDto;
     private Long idJuegoCompra;
+    private Optional<JuegoDto> juegoDto;
     private LocalDate fechaCompra;
     private TipoMetodoPago tipoPagoCompra;
     private double precioBaseCompra;
@@ -18,12 +21,15 @@ public class CompraDto {
     private TipoEstadoCompra estadoCompra;
 
     //Constructor
-    public CompraDto(Long idCompra, Long idUsuarioCompra, Long idJuegoCompra, LocalDate fechaCompra,
-                     TipoMetodoPago tipoPagoCompra, double precioBaseCompra, int descuentoEnCompra,
-                     TipoEstadoCompra estadoCompra) {
+
+    public CompraDto(Long idCompra, Long idUsuarioCompra, Optional<UsuarioDto> usuarioDto, Long idJuegoCompra,
+                     Optional<JuegoDto> juegoDto, LocalDate fechaCompra, TipoMetodoPago tipoPagoCompra,
+                     double precioBaseCompra, int descuentoEnCompra, TipoEstadoCompra estadoCompra) {
         this.idCompra = idCompra;
         this.idUsuarioCompra = idUsuarioCompra;
+        this.usuarioDto = usuarioDto;
         this.idJuegoCompra = idJuegoCompra;
+        this.juegoDto = juegoDto;
         this.fechaCompra = fechaCompra;
         this.tipoPagoCompra = tipoPagoCompra;
         this.precioBaseCompra = precioBaseCompra;
@@ -31,7 +37,16 @@ public class CompraDto {
         this.estadoCompra = estadoCompra;
     }
 
+
     //Getters
+
+    public Optional<UsuarioDto> getUsuarioDto() {
+        return usuarioDto;
+    }
+
+    public Optional<JuegoDto> getJuegoDto() {
+        return juegoDto;
+    }
 
     public Long getIdCompra() {
         return idCompra;

@@ -64,7 +64,7 @@ public class Mapper {
                 biblioteca.getEstadoInstJuegoBiblio());
     }
 
-    public static CompraDto mapaSimple(CompraEntity compra) {
+    public static CompraDto mapaCompraSimple(CompraEntity compra) {
 
         if (compra == null) {
             return null;
@@ -73,7 +73,9 @@ public class Mapper {
         return new CompraDto(
                 compra.getIdCompra(),
                 compra.getIdUsuarioCompra(),
+                Optional.empty(),
                 compra.getIdJuegoCompra(),
+                Optional.empty(),
                 compra.getFechaCompra(),
                 compra.getTipoPagoCompra(),
                 compra.getPrecioBaseCompra(),
@@ -81,22 +83,64 @@ public class Mapper {
                 compra.getEstadoCompra());
     }
 
-    public static ResenhaDto mapaSimple(ResenhaEntity resenha){
+    public static CompraDto mapaCompraCompleto(CompraEntity compra, UsuarioEntity usuario, JuegoEntity juego) {
 
-        if (resenha == null){
+        if (compra == null) {
+            return null;
+        }
+
+        return new CompraDto(
+                compra.getIdCompra(),
+                compra.getIdUsuarioCompra(),
+                Optional.of(mapaUsuarioCompleto(usuario)),
+                compra.getIdJuegoCompra(),
+                Optional.of(mapaJuegoCompleto(juego)),
+                compra.getFechaCompra(),
+                compra.getTipoPagoCompra(),
+                compra.getPrecioBaseCompra(),
+                compra.getDescuentoEnCompra(),
+                compra.getEstadoCompra());
+    }
+
+    public static ResenhaDto mapaSimple(ResenhaEntity resenha) {
+
+        if (resenha == null) {
             return null;
         }
 
         return new ResenhaDto(
                 resenha.getIdResenha(),
                 resenha.getIdUsuarioResenha(),
+                Optional.empty(),
                 resenha.getIdJuegoResenha(),
+                Optional.empty(),
                 resenha.isRecomendacionResenha(),
                 resenha.getTextoResenha(),
                 resenha.getTiempoJugadoResenha(),
                 resenha.getFechaPublicacionResenha(),
                 resenha.getFechaUltiEdicResenha(),
                 resenha.getEstadoResenha());
+    }
+
+    public static ResenhaDto mapaCompleto(ResenhaEntity resenha, UsuarioEntity usuario, JuegoEntity juego) {
+
+        if (resenha == null) {
+            return null;
+        }
+        return new ResenhaDto(
+                resenha.getIdResenha(),
+                resenha.getIdUsuarioResenha(),
+                Optional.of(mapaUsuarioCompleto(usuario)),
+                resenha.getIdJuegoResenha(),
+                Optional.of(mapaJuegoCompleto(juego)),
+                resenha.isRecomendacionResenha(),
+                resenha.getTextoResenha(),
+                resenha.getTiempoJugadoResenha(),
+                resenha.getFechaPublicacionResenha(),
+                resenha.getFechaUltiEdicResenha(),
+                resenha.getEstadoResenha()
+        );
+
     }
 
 }

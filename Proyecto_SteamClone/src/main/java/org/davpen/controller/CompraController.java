@@ -70,7 +70,7 @@ public class CompraController {
                 .filter(c -> c.getIdJuegoCompra().equals(idJuego)).findFirst()
                 .get().getIdCompra();
 
-        return Mapper.mapaSimple(compraEfectuada);
+        return Mapper.mapaCompraSimple(compraEfectuada);
     }
 
 
@@ -97,7 +97,7 @@ public class CompraController {
         }
 
         var compra = compraConsultada.orElse(null);
-        return Mapper.mapaSimple(compra);
+        return Mapper.mapaCompraSimple(compra);
 
     }
 
