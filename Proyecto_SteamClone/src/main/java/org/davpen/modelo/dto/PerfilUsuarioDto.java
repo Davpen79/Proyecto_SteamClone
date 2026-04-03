@@ -1,7 +1,5 @@
 package org.davpen.modelo.dto;
 
-import org.davpen.modelo.entity.BibliotecaEntity;
-
 import java.time.LocalDate;
 import java.util.List;
 
@@ -12,18 +10,18 @@ public class PerfilUsuarioDto {
     private String avatarUsuario;
     private String paisUsuario;
     private LocalDate fechaFechaRegUsuario;
-    private List<BibliotecaEntity> bibliotecaUsuario;
+    private List<BibliotecaDto> bibliotecasUsuario;
     private EstadisticasBibliotecaDto estadisticasBibliotecaUsuario;
 
     //Constructor
     public PerfilUsuarioDto(String nombreUsuario, String avatarUsuario, String paisUsuario,
-                            LocalDate fechaFechaRegUsuario, List<BibliotecaEntity> bibliotecaUsuario,
+                            LocalDate fechaFechaRegUsuario, List<BibliotecaDto> bibliotecaUsuario,
                             EstadisticasBibliotecaDto estadisticasBibliotecaUsuario) {
         this.nombreUsuario = nombreUsuario;
         this.avatarUsuario = avatarUsuario;
         this.paisUsuario = paisUsuario;
         this.fechaFechaRegUsuario = fechaFechaRegUsuario;
-        this.bibliotecaUsuario = bibliotecaUsuario;
+        this.bibliotecasUsuario = bibliotecaUsuario;
         this.estadisticasBibliotecaUsuario = estadisticasBibliotecaUsuario;
     }
 
@@ -45,8 +43,8 @@ public class PerfilUsuarioDto {
         return fechaFechaRegUsuario;
     }
 
-    public List<BibliotecaEntity> getBibliotecaUsuario() {
-        return bibliotecaUsuario;
+    public List<BibliotecaDto> getBibliotecasUsuario() {
+        return bibliotecasUsuario;
     }
 
     public EstadisticasBibliotecaDto getEstadisticasBibliotecaUsuario() {

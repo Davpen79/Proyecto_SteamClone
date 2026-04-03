@@ -17,7 +17,7 @@ public class UsuarioRepoInMemoryTest {
 
     @BeforeEach
     public void setUp(){
-        UsuarioRepoInMemory.reset();
+        // Ya no necesitamos reset() porque cada instancia tiene su propia lista
     }
 
     @Test
@@ -93,8 +93,13 @@ public class UsuarioRepoInMemoryTest {
                 "España", LocalDate.of(1980, 5, 5), LocalDate.now(),
                 "avatarUsuario1", 0.00d, TipoEstadoCuenta.ACTIVA);
 
+        UsuarioForm usuarioForm = new UsuarioForm("usuario1", "usuario1@mail.com",
+                "passUsuario1", "nombreUsuario1", "España",
+                LocalDate.of(1980, 5, 5), LocalDate.now(),
+                "avatarUsuario1", 0.00d, TipoEstadoCuenta.ACTIVA);
+
         UsuarioRepoInMemory usuarioRepoInMemory = new UsuarioRepoInMemory();
-        List<UsuarioEntity> listaUsuarios = List.of(usuarioEntity1);
+        usuarioRepoInMemory.crear(usuarioForm);
 
         assertEquals(usuarioOptional, usuarioRepoInMemory.obtenerPorId(idValida));
     }

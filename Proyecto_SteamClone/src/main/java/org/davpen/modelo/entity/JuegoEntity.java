@@ -20,14 +20,14 @@ public class JuegoEntity {
     private int descuentoActualJuego;
     private TipoCategoriaJuego categoriaJuego;
     private TipoClasificacionEdades clasEdadJuego;
-    private ArrayList idiomasJuego;
+    private ArrayList<String> idiomasJuego;
     private TipoEstadoJuego estadoJuego;
 
     //Constructor
     public JuegoEntity(Long idJuego, String tituloJuego, String descripcionJuego, String desarrolladorJuego,
                        LocalDate fechaLanzaJuego, double precioBaseJuego, int descuentoActualJuego,
                        TipoCategoriaJuego categoriaJuego, TipoClasificacionEdades clasEdadJuego,
-                       ArrayList idiomasJuego, TipoEstadoJuego estadoJuego) {
+                       ArrayList<String> idiomasJuego, TipoEstadoJuego estadoJuego) {
         this.idJuego = idJuego;
         this.tituloJuego = tituloJuego;
         this.descripcionJuego = descripcionJuego;
@@ -79,7 +79,7 @@ public class JuegoEntity {
         return clasEdadJuego;
     }
 
-    public ArrayList getIdiomasJuego() {
+    public ArrayList<String> getIdiomasJuego() {
         return idiomasJuego;
     }
 

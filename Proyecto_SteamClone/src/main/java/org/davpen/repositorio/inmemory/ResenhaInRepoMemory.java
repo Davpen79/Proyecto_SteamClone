@@ -10,8 +10,8 @@ import java.util.Optional;
 
 public class ResenhaInRepoMemory implements IResenhaRepo {
 
-    private static final List<ResenhaEntity> LISTA_RESENHAS = new ArrayList<>();
-    private static Long idCounter = 1L;
+    private final List<ResenhaEntity> LISTA_RESENHAS = new ArrayList<>();
+    private Long idCounter = 1L;
 
     @Override
     public Optional<ResenhaEntity> crear(ResenhaForm form) {

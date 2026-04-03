@@ -4,6 +4,7 @@ import org.davpen.enums.TipoEstadoCuenta;
 import org.davpen.excepciones.ValidationException;
 import org.davpen.mapper.Mapper;
 import org.davpen.modelo.dto.UsuarioDto;
+import org.davpen.modelo.entity.UsuarioEntity;
 import org.davpen.modelo.form.ErrorDto;
 import org.davpen.modelo.form.ErrorType;
 import org.davpen.modelo.form.UsuarioForm;
@@ -12,6 +13,7 @@ import org.davpen.repositorio.intefaces.IUsuarioRepo;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Optional;
 
 
 public class UsuarioController {
@@ -60,14 +62,14 @@ public class UsuarioController {
     public UsuarioDto consultarPerfil(Long id) throws ValidationException {
         //Comprobamos si el usuario existe
         var errores = new ArrayList<ErrorDto>();
-        if (!usuarioRepo.obtenerPorId(id).isPresent()) {
+        var usuarioConsultado = usuarioRepo.obtenerPorId(id);
+        if (!usuarioConsultado.isPresent()) {
             errores.add(new ErrorDto("id", ErrorType.NO_ENCONTRADO));
         }
         if (!errores.isEmpty()) {
             throw new ValidationException(errores);
         }
 
-        var usuarioConsultado = usuarioRepo.obtenerPorId(id);
         var usuarioEncontrado = usuarioConsultado.orElse(null);
 
         return Mapper.mapaUsuarioCompleto(usuarioEncontrado);
@@ -77,14 +79,14 @@ public class UsuarioController {
     public UsuarioDto consultarPerfil(String nombreCuentaUsuario) throws ValidationException {
         //Comprobamos si el usuario existe
         var errores = new ArrayList<ErrorDto>();
-        if (!usuarioRepo.obtenerPorNombre(nombreCuentaUsuario).isPresent()) {
+        var usuarioConsultado = usuarioRepo.obtenerPorNombre(nombreCuentaUsuario);
+        if (!usuarioConsultado.isPresent()) {
             errores.add(new ErrorDto("id", ErrorType.NO_ENCONTRADO));
         }
         if (!errores.isEmpty()) {
             throw new ValidationException(errores);
         }
 
-        var usuarioConsultado = usuarioRepo.obtenerPorNombre(nombreCuentaUsuario);
         var usuarioEncontrado = usuarioConsultado.orElse(null);
 
         return Mapper.mapaUsuarioCompleto(usuarioEncontrado);
@@ -95,7 +97,8 @@ public class UsuarioController {
     public UsuarioDto consultarSaldo(Long id) throws ValidationException {
 
         var errores = new ArrayList<ErrorDto>();
-        if (!usuarioRepo.obtenerPorId(id).isPresent()) {
+        var usuarioEntityOpt = usuarioRepo.obtenerPorId(id);
+        if (!usuarioEntityOpt.isPresent()) {
             errores.add(new ErrorDto("id", ErrorType.NO_ENCONTRADO));
         }
         if (!errores.isEmpty()) {
@@ -103,7 +106,7 @@ public class UsuarioController {
         }
 
         //return usuarioRepo.obtenerPorId(id).get().getSaldoUsuario();
-        var usuarioEntity = usuarioRepo.obtenerPorId(id).get();
+        var usuarioEntity = usuarioEntityOpt.get();
         return Mapper.mapaUsuarioCompleto(usuarioEntity);
 
     }

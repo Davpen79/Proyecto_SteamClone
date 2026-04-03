@@ -19,13 +19,13 @@ public class JuegoDto {
     private int descuentoActualJuego;
     private TipoCategoriaJuego categoriaJuego;
     private TipoClasificacionEdades clasEdadJuego;
-    private ArrayList idiomasJuego;
+    private ArrayList<String> idiomasJuego;
     private TipoEstadoJuego estadoJuego;
 
     //Constructor
     public JuegoDto(Long idJuego, String tituloJuego, String descripcionJuego, String desarrolladorJuego,
                     LocalDate fechaLanzaJuego, double precioBaseJuego, int descuentoActualJuego,
-                    TipoCategoriaJuego categoriaJuego, TipoClasificacionEdades clasEdadJuego, ArrayList idiomasJuego,
+                    TipoCategoriaJuego categoriaJuego, TipoClasificacionEdades clasEdadJuego, ArrayList<String> idiomasJuego,
                     TipoEstadoJuego estadoJuego) {
         this.idJuego = idJuego;
         this.tituloJuego = tituloJuego;
@@ -78,7 +78,7 @@ public class JuegoDto {
         return clasEdadJuego;
     }
 
-    public ArrayList getIdiomasJuego() {
+    public ArrayList<String> getIdiomasJuego() {
         return idiomasJuego;
     }
 

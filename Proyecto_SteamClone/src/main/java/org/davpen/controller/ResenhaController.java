@@ -82,8 +82,9 @@ public class ResenhaController {
     public ResenhaDto ocultarResenha(Long idResenha, Long idUsuario) throws ValidationException {
 
         var errores = new ArrayList<ErrorDto>();
+        var resenhaAOcultar = resenhaRepo.obtenerPorId(idResenha);
         //validar reseña existe
-        if (!resenhaRepo.obtenerPorId(idResenha).isPresent()) {
+        if (!resenhaAOcultar.isPresent()) {
             errores.add(new ErrorDto("id_resenha", ErrorType.NO_ENCONTRADO));
         }
         //validar reseña es de usuario
@@ -95,7 +96,7 @@ public class ResenhaController {
             errores.add(new ErrorDto("id_resenha", ErrorType.NO_ENCONTRADO));
         }
         //validar reseña está publicada
-        var resenhaAOcultar = resenhaRepo.obtenerPorId(idResenha);
+        
         var estadoResenhaAOcultar = resenhaAOcultar.get().getEstadoResenha();
         if (estadoResenhaAOcultar != TipoEstadoResenha.PUBLICADA) {
             errores.add(new ErrorDto("estado_resenha", ErrorType.RESENHA_NO_PUBLICADA));
@@ -141,7 +142,7 @@ public class ResenhaController {
     }
 
     //Ver reseñas de un juego - Faltan Filtros/Orden
-    public List<ResenhaDto> verReseñasJuego(Long idJuego) throws ValidationException {
+    public List<ResenhaDto> verResenhasJuego(Long idJuego) throws ValidationException {
         var errores = new ArrayList<ErrorDto>();
         //Validar juego existe
         var listaJuegos = juegoRepo.obtenerTodos();
@@ -165,7 +166,7 @@ public class ResenhaController {
 
 
     //Ver reseñas de un usuario - Faltan Filtros
-    public List<ResenhaDto> verReseñasUsuario(Long idUsuario) throws ValidationException {
+    public List<ResenhaDto> verResenhasUsuario(Long idUsuario) throws ValidationException {
         var errores = new ArrayList<ErrorDto>();
         //Validar usuario existe
         var listaUsuarios = usuarioRepo.obtenerTodos();

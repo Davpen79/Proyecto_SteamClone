@@ -10,8 +10,8 @@ import java.util.Optional;
 
 public class JuegoRepoInMemory implements IJuegoRepo {
 
-    private static final List<JuegoEntity> LISTA_JUEGOS = new ArrayList<>();
-    private static Long idCounter = 1L;
+    private final List<JuegoEntity> LISTA_JUEGOS = new ArrayList<>();
+    private Long idCounter = 1L;
 
     @Override
     public Optional<JuegoEntity> crear(JuegoForm form) {

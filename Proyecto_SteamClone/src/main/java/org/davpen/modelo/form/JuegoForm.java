@@ -10,7 +10,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class JuegoForm {
-
+    
     public static final int DESCRIPCION_MAX = 2000;
     public static final int TITULO_LENGTH_MAX = 100;
     public static final int TITULO_LENGTH_MIN = 1;
@@ -30,159 +30,160 @@ public class JuegoForm {
     private Integer descuentoActualJuego;
     private TipoCategoriaJuego categoriaJuego;
     private TipoClasificacionEdades clasEdadJuego;
-    private ArrayList idiomasJuego;
+    private ArrayList<String> idiomasJuego;
     private TipoEstadoJuego estadoJuego;
-
+    
     //Constructor
     public JuegoForm(String tituloJuego, String descripcionJuego, String desarrolladorJuego,
-                     LocalDate fechaLanzaJuego, Double precioBaseJuego, int descuentoActualJuego,
-                     TipoCategoriaJuego categoriaJuego, TipoClasificacionEdades clasEdadJuego, ArrayList idiomasJuego
-            , TipoEstadoJuego estadoJuego) {
-        this.tituloJuego = tituloJuego;
-        this.descripcionJuego = descripcionJuego;
-        this.desarrolladorJuego = desarrolladorJuego;
-        this.fechaLanzaJuego = fechaLanzaJuego;
-        this.precioBaseJuego = precioBaseJuego;
-        this.descuentoActualJuego = descuentoActualJuego;
-        this.categoriaJuego = categoriaJuego;
-        this.clasEdadJuego = clasEdadJuego;
-        this.idiomasJuego = idiomasJuego;
-        this.estadoJuego = estadoJuego;
-    }
-
-    //Getters
-
-    public String getTituloJuego() {
-        return tituloJuego;
-    }
-
-    public String getDescripcionJuego() {
-        return descripcionJuego;
-    }
-
-    public String getDesarrolladorJuego() {
-        return desarrolladorJuego;
-    }
-
-    public LocalDate getFechaLanzaJuego() {
-        return fechaLanzaJuego;
-    }
-
-    public Double getPrecioBaseJuego() {
-        return precioBaseJuego;
-    }
-
-    public Integer getDescuentoActualJuego() {
-        return descuentoActualJuego;
-    }
-
-    public TipoCategoriaJuego getCategoriaJuego() {
-        return categoriaJuego;
-    }
-
-    public TipoClasificacionEdades getClasEdadJuego() {
-        return clasEdadJuego;
-    }
-
-    public ArrayList getIdiomasJuego() {
-        return idiomasJuego;
-    }
-
-    public TipoEstadoJuego getEstadoJuego() {
-        return estadoJuego;
-    }
-
-    //Funciones Validacion
-    public List<ErrorDto> validar() {
-        List<ErrorDto> errores = new ArrayList<>();
-
-        //Validaciones Titulo
-        if (tituloJuego == null || tituloJuego.isBlank()) {
-            errores.add(new ErrorDto("titulo", ErrorType.REQUERIDO));
+        LocalDate fechaLanzaJuego, Double precioBaseJuego, int descuentoActualJuego,
+        TipoCategoriaJuego categoriaJuego, TipoClasificacionEdades clasEdadJuego, ArrayList<String> idiomasJuego,
+        TipoEstadoJuego estadoJuego) {
+            this.tituloJuego = tituloJuego;
+            this.descripcionJuego = descripcionJuego;
+            this.desarrolladorJuego = desarrolladorJuego;
+            this.fechaLanzaJuego = fechaLanzaJuego;
+            this.precioBaseJuego = precioBaseJuego;
+            this.descuentoActualJuego = descuentoActualJuego;
+            this.categoriaJuego = categoriaJuego;
+            this.clasEdadJuego = clasEdadJuego;
+            this.idiomasJuego = idiomasJuego;
+            this.estadoJuego = estadoJuego;
         }
-
-        if (tituloJuego != null && tituloJuego.length() <= TITULO_LENGTH_MIN) {
-            errores.add(new ErrorDto("titulo", ErrorType.DEMASIADO_CORTO));
+        
+        //Getters
+        
+        public String getTituloJuego() {
+            return tituloJuego;
         }
-
-        if (tituloJuego != null && tituloJuego.length() > TITULO_LENGTH_MAX) {
-            errores.add(new ErrorDto("titulo", ErrorType.DEMASIADO_LARGO));
+        
+        public String getDescripcionJuego() {
+            return descripcionJuego;
         }
-
-        //Validaciones Descripcion
-        if (descripcionJuego != null && descripcionJuego.length() > DESCRIPCION_MAX) {
-            errores.add(new ErrorDto("descripcion", ErrorType.DEMASIADO_LARGO));
+        
+        public String getDesarrolladorJuego() {
+            return desarrolladorJuego;
         }
-
-        //Validaciones Desarrollador
-        if (desarrolladorJuego == null || desarrolladorJuego.isBlank()) {
-            errores.add(new ErrorDto("desarrollador", ErrorType.REQUERIDO));
+        
+        public LocalDate getFechaLanzaJuego() {
+            return fechaLanzaJuego;
         }
-
-        if (desarrolladorJuego != null && desarrolladorJuego.length() < DESARROLLADOR_LENGTH_MIN) {
-            errores.add(new ErrorDto("desarrollador", ErrorType.DEMASIADO_CORTO));
+        
+        public Double getPrecioBaseJuego() {
+            return precioBaseJuego;
         }
-
-        if (desarrolladorJuego != null && desarrolladorJuego.length() > DESARROLLADOR_LENGTH_MAX) {
-            errores.add(new ErrorDto("desarrollador", ErrorType.DEMASIADO_LARGO));
+        
+        public Integer getDescuentoActualJuego() {
+            return descuentoActualJuego;
         }
-
-        //Validaciones Fecha Lanzamiento - Puede ser fecha pasada¿?
-        if (fechaLanzaJuego == null) {
-            errores.add(new ErrorDto("fecha_lanzamiento", ErrorType.REQUERIDO));
+        
+        public TipoCategoriaJuego getCategoriaJuego() {
+            return categoriaJuego;
         }
-
-        //Validaciones Precio base
-        if (precioBaseJuego == null) {
-            errores.add(new ErrorDto("precio_base", ErrorType.REQUERIDO));
+        
+        public TipoClasificacionEdades getClasEdadJuego() {
+            return clasEdadJuego;
         }
-
-        if (precioBaseJuego != null && precioBaseJuego < PRECIO_MIN) {
-            errores.add(new ErrorDto("precio_base", ErrorType.VALOR_NEGATIVO));
+        
+        public ArrayList<String> getIdiomasJuego() {
+            return idiomasJuego;
         }
-
-        if (precioBaseJuego != null && precioBaseJuego > PRECIO_MAX) {
-            errores.add(new ErrorDto("precio_base", ErrorType.VALOR_DEMASIADO_ALTO));
+        
+        public TipoEstadoJuego getEstadoJuego() {
+            return estadoJuego;
         }
-
-        if (precioBaseJuego != null && !precioBaseJuego.toString().matches("\\d+(\\.\\d{0,2})?")) {
-            errores.add(new ErrorDto("precio_base", ErrorType.DEMASIADOS_DECIMALES));
-        }
-
-        //Validaciones Precio descuento
-        if (descuentoActualJuego != null && descuentoActualJuego < DESCUENTO_MIN) {
-            errores.add(new ErrorDto("descuento", ErrorType.VALOR_NEGATIVO));
-        }
-
-        if (descuentoActualJuego > DESCUENTO_MAX) {
-            errores.add(new ErrorDto("descuento", ErrorType.VALOR_DEMASIADO_ALTO));
-        }
-
-        boolean descuentoEsEntero = descuentoActualJuego instanceof Integer;
-        if (descuentoActualJuego != null && !descuentoEsEntero) {
-            errores.add(new ErrorDto("descuento", ErrorType.SOLO_ENTEROS));
-        }
-
-        //Validaciones de Edad
-        if (clasEdadJuego == null) {
-            errores.add(new ErrorDto("edad", ErrorType.REQUERIDO));
-        }
-        //
-        if (Arrays.stream(TipoClasificacionEdades.values())
+        
+        //Funciones Validacion
+        public List<ErrorDto> validar() {
+            List<ErrorDto> errores = new ArrayList<>();
+            
+            //Validaciones Titulo
+            if (tituloJuego == null || tituloJuego.isBlank()) {
+                errores.add(new ErrorDto("titulo", ErrorType.REQUERIDO));
+            }
+            
+            if (tituloJuego != null && tituloJuego.length() <= TITULO_LENGTH_MIN) {
+                errores.add(new ErrorDto("titulo", ErrorType.DEMASIADO_CORTO));
+            }
+            
+            if (tituloJuego != null && tituloJuego.length() > TITULO_LENGTH_MAX) {
+                errores.add(new ErrorDto("titulo", ErrorType.DEMASIADO_LARGO));
+            }
+            
+            //Validaciones Descripcion
+            if (descripcionJuego != null && descripcionJuego.length() > DESCRIPCION_MAX) {
+                errores.add(new ErrorDto("descripcion", ErrorType.DEMASIADO_LARGO));
+            }
+            
+            //Validaciones Desarrollador
+            if (desarrolladorJuego == null || desarrolladorJuego.isBlank()) {
+                errores.add(new ErrorDto("desarrollador", ErrorType.REQUERIDO));
+            }
+            
+            if (desarrolladorJuego != null && desarrolladorJuego.length() < DESARROLLADOR_LENGTH_MIN) {
+                errores.add(new ErrorDto("desarrollador", ErrorType.DEMASIADO_CORTO));
+            }
+            
+            if (desarrolladorJuego != null && desarrolladorJuego.length() > DESARROLLADOR_LENGTH_MAX) {
+                errores.add(new ErrorDto("desarrollador", ErrorType.DEMASIADO_LARGO));
+            }
+            
+            //Validaciones Fecha Lanzamiento - Puede ser fecha pasada¿?
+            if (fechaLanzaJuego == null) {
+                errores.add(new ErrorDto("fecha_lanzamiento", ErrorType.REQUERIDO));
+            }
+            
+            //Validaciones Precio base
+            if (precioBaseJuego == null) {
+                errores.add(new ErrorDto("precio_base", ErrorType.REQUERIDO));
+            }
+            
+            if (precioBaseJuego != null && precioBaseJuego < PRECIO_MIN) {
+                errores.add(new ErrorDto("precio_base", ErrorType.VALOR_NEGATIVO));
+            }
+            
+            if (precioBaseJuego != null && precioBaseJuego > PRECIO_MAX) {
+                errores.add(new ErrorDto("precio_base", ErrorType.VALOR_DEMASIADO_ALTO));
+            }
+            
+            if (precioBaseJuego != null && !precioBaseJuego.toString().matches("\\d+(\\.\\d{0,2})?")) {
+                errores.add(new ErrorDto("precio_base", ErrorType.DEMASIADOS_DECIMALES));
+            }
+            
+            //Validaciones Precio descuento
+            if (descuentoActualJuego != null && descuentoActualJuego < DESCUENTO_MIN) {
+                errores.add(new ErrorDto("descuento", ErrorType.VALOR_NEGATIVO));
+            }
+            
+            if (descuentoActualJuego > DESCUENTO_MAX) {
+                errores.add(new ErrorDto("descuento", ErrorType.VALOR_DEMASIADO_ALTO));
+            }
+            
+            boolean descuentoEsEntero = descuentoActualJuego instanceof Integer;
+            if (descuentoActualJuego != null && !descuentoEsEntero) {
+                errores.add(new ErrorDto("descuento", ErrorType.SOLO_ENTEROS));
+            }
+            
+            //Validaciones de Edad
+            if (clasEdadJuego == null) {
+                errores.add(new ErrorDto("edad", ErrorType.REQUERIDO));
+            }
+            //
+            if (Arrays.stream(TipoClasificacionEdades.values())
                 .noneMatch(edad -> edad.equals(clasEdadJuego))) {
-            errores.add(new ErrorDto("edad", ErrorType.NO_ENCONTRADO));
+                errores.add(new ErrorDto("edad", ErrorType.NO_ENCONTRADO));
+            }
+            
+            //Validaciones Idiomas - Lista ¿?
+            if (idiomasJuego != null && idiomasJuego.isEmpty()) {
+                errores.add(new ErrorDto("idioma", ErrorType.CAMPO_VACIO));
+            }
+            if (idiomasJuego != null && !idiomasJuego.isEmpty() && idiomasJuego.toString().length() > IDIOMAS_LENGTH_MAX) {
+                errores.add(new ErrorDto("idioma", ErrorType.DEMASIADO_LARGO));
+            }
+            
+            return errores;
         }
-
-        //Validaciones Idiomas - Lista ¿?
-        if (idiomasJuego != null && idiomasJuego.isEmpty()) {
-            errores.add(new ErrorDto("idioma", ErrorType.CAMPO_VACIO));
-        }
-        if (idiomasJuego != null && !idiomasJuego.isEmpty() && idiomasJuego.toString().length() > IDIOMAS_LENGTH_MAX) {
-            errores.add(new ErrorDto("idioma", ErrorType.DEMASIADO_LARGO));
-        }
-
-        return errores;
+        
+        
     }
-
-
-}
+    

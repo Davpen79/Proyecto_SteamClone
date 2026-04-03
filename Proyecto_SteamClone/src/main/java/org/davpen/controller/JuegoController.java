@@ -138,14 +138,14 @@ public class JuegoController {
     public JuegoDto detalleJuego(Long id) throws ValidationException {
 
         var errores = new ArrayList<ErrorDto>();
-        if (!juegoRepo.obtenerPorId(id).isPresent()) {
+        var juegoInfo = juegoRepo.obtenerPorId(id);
+        if (!juegoInfo.isPresent()) {
             errores.add(new ErrorDto("id", ErrorType.NO_ENCONTRADO));
         }
         if (!errores.isEmpty()) {
             throw new ValidationException(errores);
         }
 
-        var juegoInfo = juegoRepo.obtenerPorId(id);
         var juego = juegoInfo.orElse(null);
         return Mapper.mapaJuegoCompleto(juego);
 

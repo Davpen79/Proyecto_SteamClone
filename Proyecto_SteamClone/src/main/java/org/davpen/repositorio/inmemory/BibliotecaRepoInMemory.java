@@ -10,8 +10,8 @@ import java.util.Optional;
 
 public class BibliotecaRepoInMemory implements IBibliotecaRepo {
 
-    private static final List<BibliotecaEntity> LISTA_BIBLIOTECAS = new ArrayList<>();
-    private static Long idCounter = 1L;
+    private final List<BibliotecaEntity> LISTA_BIBLIOTECAS = new ArrayList<>();
+    private Long idCounter = 1L;
 
     @Override
     public Optional<BibliotecaEntity> crear(BibliotecaForm form) {

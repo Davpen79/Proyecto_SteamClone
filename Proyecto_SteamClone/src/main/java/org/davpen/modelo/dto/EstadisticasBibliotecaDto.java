@@ -1,7 +1,5 @@
 package org.davpen.modelo.dto;
 
-import org.davpen.modelo.entity.JuegoEntity;
-
 import java.util.List;
 import java.util.Optional;
 
@@ -10,16 +8,16 @@ public class EstadisticasBibliotecaDto {
     private Long idUsuario;
     private int totalJuegos;
     private double horasTotales;
-    private List<JuegoEntity> juegosInstalados;
-    private Optional<JuegoEntity> juegoMasJugado;
+    private List<JuegoDto> juegosInstalados;
+    private Optional<JuegoDto> juegoMasJugado;
     private double valorTotalBiblioteca;
-    private List<JuegoEntity> juegosNoJugados;
+    private List<JuegoDto> juegosNoJugados;
 
     //Constructor
     public EstadisticasBibliotecaDto(Long idUsuario, int totalJuegos, double horasTotales,
-                                     List<JuegoEntity> juegosInstalados,
-                                     Optional<JuegoEntity> juegoMasJugado, double valorTotalBiblioteca,
-                                     List<JuegoEntity> juegosNoJugados) {
+                                     List<JuegoDto> juegosInstalados,
+                                     Optional<JuegoDto> juegoMasJugado, double valorTotalBiblioteca,
+                                     List<JuegoDto> juegosNoJugados) {
         this.idUsuario = idUsuario;
         this.totalJuegos = totalJuegos;
         this.horasTotales = horasTotales;
@@ -38,11 +36,11 @@ public class EstadisticasBibliotecaDto {
         return horasTotales;
     }
 
-    public List<JuegoEntity> getJuegosInstalados() {
+    public List<JuegoDto> getJuegosInstalados() {
         return juegosInstalados;
     }
 
-    public Optional<JuegoEntity> getJuegoMasJugado() {
+    public Optional<JuegoDto> getJuegoMasJugado() {
         return juegoMasJugado;
     }
 
@@ -50,7 +48,7 @@ public class EstadisticasBibliotecaDto {
         return valorTotalBiblioteca;
     }
 
-    public List<JuegoEntity> getJuegosNoJugados() {
+    public List<JuegoDto> getJuegosNoJugados() {
         return juegosNoJugados;
     }
 }

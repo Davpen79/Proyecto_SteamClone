@@ -81,12 +81,14 @@ public class CompraController {
     public CompraDto consultarHistorialCompras(Long idCompra, Long idUsuario) throws ValidationException {
         //Validaciones
         var errores = new ArrayList<ErrorDto>();
+        var compraConsultada = compraRepo.obtenerPorId(idCompra);
         //Compra existe
-        if (!compraRepo.obtenerPorId(idCompra).isPresent()) {
+        if (!compraConsultada.isPresent()) {
             errores.add(new ErrorDto("id_compra", ErrorType.NO_ENCONTRADO));
+            throw new ValidationException(errores);
         }
         //verificar pertenencia de compra a usuario
-        var compraConsultada = compraRepo.obtenerPorId(idCompra);
+
         var idUsuarioEnCompra = compraConsultada.get().getIdUsuarioCompra();
         if (idUsuarioEnCompra != idUsuario) {
             errores.add(new ErrorDto("id", ErrorType.NO_PERTENECE));
@@ -107,31 +109,43 @@ public class CompraController {
     public UsuarioDto solicitarReembolso(Long idCompra) throws ValidationException {
         //Validaciones
         var errores = new ArrayList<ErrorDto>();
+        //validar compra existe
+        var compraAReembolsar = compraRepo.obtenerPorId(idCompra);
+        if (!compraAReembolsar.isPresent()) {
+            errores.add(new ErrorDto("id_compra", ErrorType.NO_ENCONTRADO));
+            throw new ValidationException(errores);
+        }
         //validar compra completada
-        if (compraRepo.obtenerPorId(idCompra).get().getEstadoCompra() != TipoEstadoCompra.COMPLETADA) {
+        if (compraAReembolsar.get().getEstadoCompra() != TipoEstadoCompra.COMPLETADA) {
             errores.add(new ErrorDto("estado_compra", ErrorType.COMPRA_FALLIDA));
+            throw new ValidationException(errores);
         }
         //Validar Condiciones Devolución 14 dias
-        if (compraRepo.obtenerPorId(idCompra).get().getFechaCompra().isBefore(LocalDate.now().minusDays(14))) {
+        if (compraAReembolsar.get().getFechaCompra().isBefore(LocalDate.now().minusDays(14))) {
             errores.add(new ErrorDto("plazo", ErrorType.PLAZO_SUPERADO));
         }
         //Validar Condiciones de devolución 2 horas
-        var idUsuarioCompra = compraRepo.obtenerPorId(idCompra).get().getIdUsuarioCompra();
-        var idJuegoCompra = compraRepo.obtenerPorId(idCompra).get().getIdJuegoCompra();
+        var idUsuarioCompra = compraAReembolsar.get().getIdUsuarioCompra();
+        var idJuegoCompra = compraAReembolsar.get().getIdJuegoCompra();
         var entradaBiblioteca = bibliotecaRepo.obtenerTodos().stream()
                 .filter(b -> b.getIdUsuarioBiblio().equals(idUsuarioCompra))
                 .filter(b -> b.getIdJuegoBiblio().equals(idJuegoCompra))
                 .findFirst();
-        var tiempoJugado = entradaBiblioteca.get().getTiempoJuegoBiblio();
-        if (tiempoJugado > 2.00) {
-            errores.add(new ErrorDto("tiempo_jugado", ErrorType.TIEMPO_SUPERADO));
+        if (entradaBiblioteca.isPresent()) {
+            var tiempoJugado = entradaBiblioteca.get().getTiempoJuegoBiblio();
+            if (tiempoJugado > 2.00) {
+                errores.add(new ErrorDto("tiempo_jugado", ErrorType.TIEMPO_SUPERADO));
+            }
+        }else {
+            errores.add(new ErrorDto("biblioteca", ErrorType.NO_ENCONTRADO));
         }
+
         if (!errores.isEmpty()) {
             throw new ValidationException(errores);
         }
 
         //Procesar Reembolso
-        var precioAReembolsar = compraRepo.obtenerPorId(idCompra).get().getPrecioBaseCompra();
+        var precioAReembolsar = compraAReembolsar.get().getPrecioBaseCompra();
         var saldoActualUsuario = usuarioRepo.obtenerPorId(idUsuarioCompra).get().getSaldoUsuario();
         var nuevoSaldoUsuario = saldoActualUsuario + precioAReembolsar;
 

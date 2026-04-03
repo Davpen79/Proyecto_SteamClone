@@ -13,8 +13,8 @@ import java.util.Optional;
 
 public class UsuarioRepoInMemory implements IUsuarioRepo {
 
-    private static final List<UsuarioEntity> LISTA_USUARIOS = new ArrayList<>();
-    private static Long idCounter = 1L;
+    private final List<UsuarioEntity> LISTA_USUARIOS = new ArrayList<>();
+    private Long idCounter = 1L;
     public static List<String> listaPaises = List.of("España", "Francia", "Portugal");
 
     @Override
@@ -66,10 +66,5 @@ public class UsuarioRepoInMemory implements IUsuarioRepo {
     public Optional<UsuarioEntity> obtenerPorNombre(String nombreCuentaUsuario) {
         return LISTA_USUARIOS.stream().filter(u -> u.getNombreCuentaUsuario()
                 .equals(nombreCuentaUsuario)).findFirst();
-    }
-
-    public static void reset(){
-        LISTA_USUARIOS.removeIf((a) -> true);
-        idCounter = 1L;
     }
 }

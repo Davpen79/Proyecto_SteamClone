@@ -74,6 +74,9 @@ public class BibliotecaController {
                     .filter(b -> b.getIdUsuarioBiblio().equals(idUsuario))
                     .map(Mapper::mapaSimple)
                     .toList();
+            bibliotecaOrdenada = listaDesordenada.stream()
+                    .sorted(Comparator.comparing(b -> b.getJuegoDto().orElseThrow().getTituloJuego()))
+                    .toList();
         }
 
         //lista ordenada por tiempo de juego
@@ -250,13 +253,15 @@ public class BibliotecaController {
                 .toList();
         var listaJuegosInstalados = listaJuegosEnBibliotecaInstalados.stream()
                 .map(b -> juegoRepo.obtenerPorId(b.getIdJuegoBiblio()).get())
+                .map(Mapper::mapaJuegoCompleto)
                 .toList();
         var bibliotecaJuegoMasJugado = bibliotecaUsuario.stream()
                 .max(Comparator.comparing(BibliotecaEntity::getTiempoJuegoBiblio));
         //codigo antiguo
         //var juegoMasJugado = juegoRepo.obtenerPorId(bibliotecaJuegoMasJugado.get().getIdJuegoBiblio()).get();
         //nuevo codigo corregido
-        var juegoMasJugado = bibliotecaJuegoMasJugado.flatMap(b -> juegoRepo.obtenerPorId(b.getIdJuegoBiblio()));
+        var juegoMasJugado = bibliotecaJuegoMasJugado.flatMap(b -> juegoRepo.obtenerPorId(b.getIdJuegoBiblio()))
+                .map(Mapper::mapaJuegoCompleto);
 
         var listComprasBiblioteca = bibliotecaUsuario.stream()
                 .map(b -> compraRepo.obtenerPorIdUsuario(b.getIdUsuarioBiblio()))
@@ -268,6 +273,7 @@ public class BibliotecaController {
         var listaJuegosNoJugados = bibliotecaUsuario.stream()
                 .filter(b -> b.getTiempoJuegoBiblio() == 0d)
                 .map(b -> juegoRepo.obtenerPorId(b.getIdJuegoBiblio()).get())
+                .map(Mapper::mapaJuegoCompleto)
                 .toList();
 
         return new EstadisticasBibliotecaDto(idUsuario, bibliotecaUsuario.size(), totalHoras, listaJuegosInstalados,

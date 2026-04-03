@@ -10,8 +10,8 @@ import java.util.Optional;
 
 public class CompraRepoInMemory implements ICompraRepo {
 
-    private static final List<CompraEntity> LISTA_COMPRAS = new ArrayList<>();
-    private static Long idCounter = 1L;
+    private final List<CompraEntity> LISTA_COMPRAS = new ArrayList<>();
+    private Long idCounter = 1L;
 
     @Override
     public Optional<CompraEntity> crear(CompraForm form) {
