@@ -22,7 +22,10 @@ public class UsuarioFormTest {
     @BeforeEach
     public void setup() {
         // Usuario válido
-        usuarioFormValido = new UsuarioForm("Usuario123", "usuario@example.com", "Password123!", "Juan Perez", "España", LocalDate.of(2000, Month.JANUARY, 1), LocalDate.of(2022, Month.JANUARY, 1), "avatar123", 1000.0
+        usuarioFormValido = new UsuarioForm("Usuario123", "usuario@example.com",
+                "Password123!", "Juan Perez", "Espa" +
+                "ña", LocalDate.of(2000, Month.JANUARY, 1),
+                LocalDate.of(2022, Month.JANUARY, 1), "avatar123", 1000.0
                 , TipoEstadoCuenta.ACTIVA);
 
         // Usuario inválido con varios errores
@@ -71,14 +74,52 @@ public class UsuarioFormTest {
         // Caso válido
         usuarioFormValido = new UsuarioForm("Usuario123", "email@example.com",
                 "Password123!", "Nombre Real", "España",
-                LocalDate.now(), LocalDate.now(), "avatar.png", 1000.0, TipoEstadoCuenta.ACTIVA);
+                LocalDate.of(2000, Month.JANUARY, 1), LocalDate.now(), "avatar.png",
+                1000.0, TipoEstadoCuenta.ACTIVA);
         List<ErrorDto> errores = usuarioFormValido.validar();
         assertTrue(errores.stream().noneMatch(error -> error.getCampo().equals("Nombre_Cuenta")));
 
-        // Caso con error
+        // Caso con error digito inicial
         usuarioFormInvalido = new UsuarioForm("1Usuario", "email@example.com",
                 "Password123!", "Nombre Real", "España",
-                LocalDate.now(), LocalDate.now(), "avatar.png", 1000.0, TipoEstadoCuenta.ACTIVA);
+                LocalDate.of(2000, Month.JANUARY, 1), LocalDate.now(), "avatar.png",
+                1000.0, TipoEstadoCuenta.ACTIVA);
+        errores = usuarioFormInvalido.validar();
+        assertTrue(errores.stream().anyMatch(error -> error.getCampo().equals("Nombre_Cuenta")
+                && error.getMensaje() == ErrorType.FORMATO_INVALIDO));
+
+        // Caso con nombre nulo
+        usuarioFormInvalido = new UsuarioForm(null, "email@example.com",
+                "Password123!", "Nombre Real", "España",
+                LocalDate.of(2000, Month.JANUARY, 1), LocalDate.now(), "avatar.png",
+                1000.0, TipoEstadoCuenta.ACTIVA);
+        errores = usuarioFormInvalido.validar();
+        assertTrue(errores.stream().anyMatch(error -> error.getCampo().equals("Nombre_Cuenta")
+                && error.getMensaje() == ErrorType.REQUERIDO));
+
+        // Caso con nombre muy corto
+        usuarioFormInvalido = new UsuarioForm("us", "email@example.com",
+                "Password123!", "Nombre Real", "España",
+                LocalDate.of(2000, Month.JANUARY, 1), LocalDate.now(), "avatar.png",
+                1000.0, TipoEstadoCuenta.ACTIVA);
+        errores = usuarioFormInvalido.validar();
+        assertTrue(errores.stream().anyMatch(error -> error.getCampo().equals("Nombre_Cuenta")
+                && error.getMensaje() == ErrorType.DEMASIADO_CORTO));
+
+        // Caso con nombre muy largo
+        usuarioFormInvalido = new UsuarioForm("1UsuarioAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                "email@example.com", "Password123!", "Nombre Real",
+                "España", LocalDate.of(2000, Month.JANUARY, 1), LocalDate.now(),
+                "avatar.png", 1000.0, TipoEstadoCuenta.ACTIVA);
+        errores = usuarioFormInvalido.validar();
+        assertTrue(errores.stream().anyMatch(error -> error.getCampo().equals("Nombre_Cuenta")
+                && error.getMensaje() == ErrorType.DEMASIADO_LARGO));
+
+        // Caso con simbolos
+        usuarioFormInvalido = new UsuarioForm("????????????", "email@example.com",
+                "Password123!", "Nombre Real", "España",
+                LocalDate.of(2000, Month.JANUARY, 1), LocalDate.now(), "avatar.png",
+                1000.0, TipoEstadoCuenta.ACTIVA);
         errores = usuarioFormInvalido.validar();
         assertTrue(errores.stream().anyMatch(error -> error.getCampo().equals("Nombre_Cuenta")
                 && error.getMensaje() == ErrorType.FORMATO_INVALIDO));
@@ -89,14 +130,24 @@ public class UsuarioFormTest {
         // Caso válido
         usuarioFormValido = new UsuarioForm("Usuario123", "usuario@example.com",
                 "Password123!", "Nombre Real", "España"
-                , LocalDate.now(), LocalDate.now(), "avatar.png", 1000.0, TipoEstadoCuenta.ACTIVA);
+                , LocalDate.of(2000, Month.JANUARY, 1), LocalDate.now(), "avatar.png",
+                1000.0, TipoEstadoCuenta.ACTIVA);
         List<ErrorDto> errores = usuarioFormValido.validar();
         assertTrue(errores.stream().noneMatch(error -> error.getCampo().equals("email_Cuenta")));
+        //Caso email nulo
+        usuarioFormInvalido = new UsuarioForm("Usuario123", null,
+                "Password123!", "Nombre Real", "España"
+                , LocalDate.of(2000, Month.JANUARY, 1), LocalDate.now(), "avatar.png",
+                1000.0, TipoEstadoCuenta.ACTIVA);
+        errores = usuarioFormInvalido.validar();
+        assertTrue(errores.stream().anyMatch(e -> e.getCampo().equals("email_Cuenta")
+                && e.getMensaje() == ErrorType.REQUERIDO));
 
         // Caso con error
         usuarioFormInvalido = new UsuarioForm("Usuario123", "usuario@com",
                 "Password123!", "Nombre Real", "España",
-                LocalDate.now(), LocalDate.now(), "avatar.png", 1000.0, TipoEstadoCuenta.ACTIVA);
+                LocalDate.of(2000, Month.JANUARY, 1), LocalDate.now(), "avatar.png",
+                1000.0, TipoEstadoCuenta.ACTIVA);
         errores = usuarioFormInvalido.validar();
         assertTrue(errores.stream().anyMatch(error -> error.getCampo().equals("email_Cuenta")
                 && error.getMensaje() == ErrorType.FORMATO_INVALIDO));
@@ -107,14 +158,24 @@ public class UsuarioFormTest {
         // Caso con contraseña válida
         usuarioFormValido = new UsuarioForm("Usuario123", "usuario@example.com",
                 "Password123!", "Nombre Real", "España"
-                , LocalDate.now(), LocalDate.now(), "avatar.png", 1000.0, TipoEstadoCuenta.ACTIVA);
+                , LocalDate.of(2000, Month.JANUARY, 1), LocalDate.now(), "avatar.png",
+                1000.0, TipoEstadoCuenta.ACTIVA);
         List<ErrorDto> errores = usuarioFormValido.validar();
         assertTrue(errores.stream().noneMatch(error -> error.getCampo().equals("password")));
+        //Caso contraseña nula
+        usuarioFormInvalido = new UsuarioForm("Usuario123", "usuario@example.com",
+                null, "Nombre Real", "España"
+                , LocalDate.of(2000, Month.JANUARY, 1), LocalDate.now(), "avatar.png",
+                1000.0, TipoEstadoCuenta.ACTIVA);
+        errores = usuarioFormInvalido.validar();
+        assertTrue(errores.stream().anyMatch(e -> e.getCampo().equals("password")
+                && e.getMensaje() == ErrorType.REQUERIDO));
 
         // Caso con contraseña demasiado corta
         usuarioFormInvalido = new UsuarioForm("Usuario123", "usuario@example.com",
                 "pass", "Nombre Real", "España",
-                LocalDate.now(), LocalDate.now(), "avatar.png", 1000.0, TipoEstadoCuenta.ACTIVA);
+                LocalDate.of(2000, Month.JANUARY, 1), LocalDate.now(), "avatar.png",
+                1000.0, TipoEstadoCuenta.ACTIVA);
         errores = usuarioFormInvalido.validar();
         assertTrue(errores.stream().anyMatch(error -> error.getCampo().equals("password")
                 && error.getMensaje() == ErrorType.DEMASIADO_CORTO));
@@ -126,16 +187,25 @@ public class UsuarioFormTest {
     public void testValidarNombreRealUsuario() {
         // Caso con nombre real válido
         usuarioFormValido = new UsuarioForm("Usuario123", "usuario@example.com",
-                "Password123!", "Juan Perez",
-                "España", LocalDate.now(), LocalDate.now(), "avatar.png",
+                "Password123!", "Juan Perez", "España",
+                LocalDate.of(2000, Month.JANUARY, 1), LocalDate.now(), "avatar.png",
                 1000.0, TipoEstadoCuenta.ACTIVA);
         List<ErrorDto> errores = usuarioFormValido.validar();
         assertTrue(errores.stream().noneMatch(error -> error.getCampo().equals("nombre_real")));
+        //Caso con nombre nulo
+        usuarioFormInvalido = new UsuarioForm("Usuario123", "usuario@example.com",
+                "Password123!", null, "España",
+                LocalDate.of(2000, Month.JANUARY, 1),
+                LocalDate.now(), "avatar.png", 1000.0, TipoEstadoCuenta.ACTIVA);
+        errores = usuarioFormInvalido.validar();
+        assertTrue(errores.stream().anyMatch(error -> error.getCampo().equals("nombre_real")
+                && error.getMensaje() == ErrorType.REQUERIDO));
 
         // Caso con nombre real demasiado corto
         usuarioFormInvalido = new UsuarioForm("Usuario123", "usuario@example.com",
                 "Password123!", "J", "España",
-                LocalDate.now(), LocalDate.now(), "avatar.png", 1000.0, TipoEstadoCuenta.ACTIVA);
+                LocalDate.of(2000, Month.JANUARY, 1), LocalDate.now(), "avatar.png",
+                1000.0, TipoEstadoCuenta.ACTIVA);
         errores = usuarioFormInvalido.validar();
         assertTrue(errores.stream().anyMatch(error -> error.getCampo().equals("nombre_real")
                 && error.getMensaje() == ErrorType.DEMASIADO_CORTO));
@@ -143,8 +213,8 @@ public class UsuarioFormTest {
         // Caso con nombre real demasiado largo
         usuarioFormInvalido = new UsuarioForm("Usuario123", "usuario@example.com",
                 "Password123!",
-                "Juan Carlos ".repeat(51), "España", LocalDate.now(), LocalDate.now(),
-                "avatar.png", 1000.0,
+                "Juan Carlos ".repeat(51), "España", LocalDate.of(2000, Month.JANUARY, 1),
+                LocalDate.now(), "avatar.png", 1000.0,
                 TipoEstadoCuenta.ACTIVA);
         errores = usuarioFormInvalido.validar();
         assertTrue(errores.stream().anyMatch(error -> error.getCampo().equals("nombre_real")
@@ -155,8 +225,8 @@ public class UsuarioFormTest {
     public void testValidarPaisUsuario() {
         // Caso con país válido
         usuarioFormValido = new UsuarioForm("Usuario123", "usuario@example.com",
-                "Password123!", "Juan Perez",
-                "España", LocalDate.now(), LocalDate.now(), "avatar.png",
+                "Password123!", "Juan Perez", "España",
+                LocalDate.of(2000, Month.JANUARY, 1), LocalDate.now(), "avatar.png",
                 1000.0, TipoEstadoCuenta.ACTIVA);
         List<ErrorDto> errores = usuarioFormValido.validar();
         assertTrue(errores.stream().noneMatch(error -> error.getCampo().equals("España")));
@@ -164,7 +234,8 @@ public class UsuarioFormTest {
         // Caso con país vacío
         usuarioFormInvalido = new UsuarioForm("Usuario123", "usuario@example.com",
                 "Password123!", "Juan Perez", "",
-                LocalDate.now(), LocalDate.now(), "avatar.png", 1000.0, TipoEstadoCuenta.ACTIVA);
+                LocalDate.of(2000, Month.JANUARY, 1), LocalDate.now(), "avatar.png",
+                1000.0, TipoEstadoCuenta.ACTIVA);
         errores = usuarioFormInvalido.validar();
         assertTrue(errores.stream().anyMatch(error -> error.getCampo().equals("pais")
                 && error.getMensaje() == ErrorType.REQUERIDO));
@@ -179,11 +250,18 @@ public class UsuarioFormTest {
                 LocalDate.now(), "avatar.png", 1000.0, TipoEstadoCuenta.ACTIVA);
         List<ErrorDto> errores = usuarioFormValido.validar();
         assertTrue(errores.stream().noneMatch(error -> error.getCampo().equals("fecha_nacimiento")));
+        //Caso con fecha de nacimiento nula
+        usuarioFormInvalido = new UsuarioForm("Usuario123", "usuario@example.com",
+                "Password123!", "Juan Perez", "España", null,
+                LocalDate.now(), "avatar.png", 1000.0, TipoEstadoCuenta.ACTIVA);
+        errores = usuarioFormInvalido.validar();
+        assertTrue(errores.stream().anyMatch(e -> e.getCampo().equals("fecha_nacimiento") && e.getMensaje()
+                == ErrorType.REQUERIDO));
 
         // Caso con fecha de nacimiento futura
         usuarioFormInvalido = new UsuarioForm("Usuario123", "usuario@example.com",
                 "Password123!", "Juan Perez",
-                "España", LocalDate.of(2030, Month.JANUARY, 1), LocalDate.now(),
+                "España", LocalDate.of(3030, Month.JANUARY, 1), LocalDate.now(),
                 "avatar.png", 1000.0,
                 TipoEstadoCuenta.ACTIVA);
         errores = usuarioFormInvalido.validar();

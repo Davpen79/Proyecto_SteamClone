@@ -5,6 +5,7 @@ import org.davpen.enums.*;
 import org.davpen.excepciones.ValidationException;
 import org.davpen.modelo.dto.JuegoDto;
 import org.davpen.modelo.entity.JuegoEntity;
+import org.davpen.modelo.form.ErrorType;
 import org.davpen.modelo.form.JuegoForm;
 import org.davpen.repositorio.intefaces.IJuegoRepo;
 import org.junit.jupiter.api.BeforeEach;
@@ -41,15 +42,18 @@ public class JuegoControllerTest {
     public void setup() {
         juego1 = new JuegoEntity(1L, "Elden Ring", "RPG de acción épico", "FromSoftware",
                 LocalDate.of(2022, 2, 25), 59.99, 0, TipoCategoriaJuego.RPG,
-                TipoClasificacionEdades.PEGI_16, new ArrayList<>(List.of("Español", "Inglés")), TipoEstadoJuego.DISPONIBLE);
+                TipoClasificacionEdades.PEGI_16, new ArrayList<>(List.of("Español", "Inglés")),
+                TipoEstadoJuego.DISPONIBLE);
 
         juego2 = new JuegoEntity(2L, "Hades", "Roguelike indie", "Supergiant Games",
                 LocalDate.of(2020, 9, 17), 24.99, 10, TipoCategoriaJuego.ACCION,
-                TipoClasificacionEdades.PEGI_12, new ArrayList<>(List.of("Español", "Inglés")), TipoEstadoJuego.DISPONIBLE);
+                TipoClasificacionEdades.PEGI_12, new ArrayList<>(List.of("Español", "Inglés")),
+                TipoEstadoJuego.DISPONIBLE);
 
         juego3 = new JuegoEntity(3L, "Chess Game", "Ajedrez online", "Chess Dev",
                 LocalDate.of(2019, 5, 10), 0.00, 0, TipoCategoriaJuego.ESTRATEGIA,
-                TipoClasificacionEdades.PEGI_3, new ArrayList<>(List.of("Español", "Inglés")), TipoEstadoJuego.NO_DISPONIBLE);
+                TipoClasificacionEdades.PEGI_3, new ArrayList<>(List.of("Español", "Inglés")),
+                TipoEstadoJuego.NO_DISPONIBLE);
 
         juegoForm = new JuegoForm("New Game", "Descripcion nueva", "Developer",
                 LocalDate.of(2024, 1, 1), 29.99, 0, TipoCategoriaJuego.AVENTURA,
@@ -81,7 +85,7 @@ public class JuegoControllerTest {
 
         // Act & Assert
         assertThrows(ValidationException.class, () ->
-            juegoController.anhadirJuego(formDuplicado));
+                juegoController.anhadirJuego(formDuplicado));
     }
 
     @Test
@@ -145,7 +149,7 @@ public class JuegoControllerTest {
 
         // Act & Assert
         assertThrows(IllegalArgumentException.class, () ->
-            juegoController.listaJuegosPorRangoPrecio(100.0, 50.0));
+                juegoController.listaJuegosPorRangoPrecio(100.0, 50.0));
     }
 
     @Test
@@ -282,6 +286,44 @@ public class JuegoControllerTest {
 
         // Act & Assert
         assertThrows(ValidationException.class, () ->
-            juegoController.detalleJuego(999L));
+                juegoController.detalleJuego(999L));
+    }
+
+    @Test
+    void cambiarEstadoJuego_lanzaValidationException_siIdNoExiste() {
+        Long id = 1L;
+        when(juegoRepo.obtenerPorId(id)).thenReturn(Optional.empty());
+
+        ValidationException ex = assertThrows(ValidationException.class, () ->
+                juegoController.cambiarEstadoJuego(id, TipoEstadoJuego.DISPONIBLE)
+        );
+
+        // comprobar que el error contiene el campo "id" y ErrorType.NO_ENCONTRADO
+        assertNotNull(ex.getErrores());
+        assertTrue(ex.getErrores().stream()
+                .anyMatch(e -> "id".equals(e.getCampo()) && e.getMensaje() == ErrorType.NO_ENCONTRADO));
+        verify(juegoRepo, never()).actualizar(any(), any());
+    }
+
+    @Test
+    void cambiarEstadoJuego_actualizaYDevuelveJuegoDto_siEntradaValida() throws ValidationException {
+        Long idJuego = 2L;
+        //Juego juegoExistente = crearJuegoEjemplo(idJuego, TipoEstadoJuego.NO_DISPONIBLE);
+        when(juegoRepo.obtenerPorId(idJuego)).thenReturn(Optional.of(juego2));
+
+        // preparar juego actualizado que devolverá el repo
+        JuegoEntity juegoActualizado = new JuegoEntity(2L, "Hades", "Roguelike indie",
+                "Supergiant Games", LocalDate.of(2020, 9, 17), 24.99, 0, TipoCategoriaJuego.ACCION,
+                TipoClasificacionEdades.PEGI_12, new ArrayList<>(List.of("Español", "Inglés")),
+                TipoEstadoJuego.NO_DISPONIBLE);
+
+        when(juegoRepo.actualizar(eq(idJuego), any(JuegoForm.class))).thenReturn(Optional.of(juegoActualizado));
+
+        JuegoDto resultado = juegoController.cambiarEstadoJuego(idJuego, TipoEstadoJuego.NO_DISPONIBLE);
+
+        assertNotNull(resultado);
+        assertEquals(TipoEstadoJuego.NO_DISPONIBLE, resultado.getEstadoJuego());
+        verify(juegoRepo, times(2)).obtenerPorId(idJuego); // el código llama obtenerPorId dos veces
+        verify(juegoRepo).actualizar(eq(idJuego), any(JuegoForm.class));
     }
 }

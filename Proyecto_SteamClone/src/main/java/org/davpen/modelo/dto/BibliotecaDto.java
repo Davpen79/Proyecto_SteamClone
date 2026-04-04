@@ -4,6 +4,7 @@ import org.davpen.enums.TipoEstadoInstalacion;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Objects;
 import java.util.Optional;
 
 public class BibliotecaDto {
@@ -72,5 +73,26 @@ public class BibliotecaDto {
 
     public TipoEstadoInstalacion getEstadoInstJuegoBiblio() {
         return estadoInstJuegoBiblio;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        BibliotecaDto that = (BibliotecaDto) o;
+        return Double.compare(tiempoJuegoBiblio, that.tiempoJuegoBiblio) == 0
+                && Objects.equals(idBiblio, that.idBiblio)
+                && Objects.equals(idUsuarioBiblio, that.idUsuarioBiblio)
+                && Objects.equals(usuarioDto, that.usuarioDto)
+                && Objects.equals(idJuegoBiblio, that.idJuegoBiblio)
+                && Objects.equals(juegoDto, that.juegoDto)
+                && Objects.equals(fechaCompraJuegoBiblio, that.fechaCompraJuegoBiblio)
+                && Objects.equals(ultiFechaJuegoBiblio, that.ultiFechaJuegoBiblio)
+                && estadoInstJuegoBiblio == that.estadoInstJuegoBiblio;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(idBiblio, idUsuarioBiblio, usuarioDto, idJuegoBiblio, juegoDto, fechaCompraJuegoBiblio,
+                tiempoJuegoBiblio, ultiFechaJuegoBiblio, estadoInstJuegoBiblio);
     }
 }

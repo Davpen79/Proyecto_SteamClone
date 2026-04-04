@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class UsuarioRepoInMemoryTest {
 
@@ -102,6 +103,75 @@ public class UsuarioRepoInMemoryTest {
         usuarioRepoInMemory.crear(usuarioForm);
 
         assertEquals(usuarioOptional, usuarioRepoInMemory.obtenerPorId(idValida));
+    }
+
+    @Test // Optional Empty
+    public void testObtenerPorNombre_OptionalOfUsuarioEntity(){
+
+        var idValida = 1L;
+        Optional<UsuarioEntity> usuarioOptional = Optional.of(new UsuarioEntity(idValida, "usuario1",
+                "usuario1@mail.com", "passUsuario1", "nombreUsuario1",
+                "España", LocalDate.of(1980, 5, 5), LocalDate.now(),
+                "avatarUsuario1", 0.00d, TipoEstadoCuenta.ACTIVA));
+
+        UsuarioEntity usuarioEntity1 = new UsuarioEntity(1L, "usuario1",
+                "usuario1@mail.com", "passUsuario1", "nombreUsuario1",
+                "España", LocalDate.of(1980, 5, 5), LocalDate.now(),
+                "avatarUsuario1", 0.00d, TipoEstadoCuenta.ACTIVA);
+
+        UsuarioForm usuarioForm = new UsuarioForm("usuario1", "usuario1@mail.com",
+                "passUsuario1", "nombreUsuario1", "España",
+                LocalDate.of(1980, 5, 5), LocalDate.now(),
+                "avatarUsuario1", 0.00d, TipoEstadoCuenta.ACTIVA);
+
+        UsuarioRepoInMemory usuarioRepoInMemory = new UsuarioRepoInMemory();
+        usuarioRepoInMemory.crear(usuarioForm);
+
+        assertEquals(usuarioOptional, usuarioRepoInMemory.obtenerPorNombre("usuario1"));
+    }
+
+    @Test
+    public void testActualizar_OptionalOfUsuarioEntity(){
+
+        var idValida = 1L;
+        Optional<UsuarioEntity> usuarioOptional = Optional.of(new UsuarioEntity(idValida, "usuario1",
+                "usuario1@mail.com", "passUsuario1new", "nombreUsuario1",
+                "España", LocalDate.of(1980, 5, 5), LocalDate.now(),
+                "avatarUsuario1", 0.00d, TipoEstadoCuenta.ACTIVA));
+
+        UsuarioForm usuarioForm1 = new UsuarioForm("usuario1", "usuario1@mail.com",
+                "passUsuario1", "nombreUsuario1", "España",
+                LocalDate.of(1980, 5, 5), LocalDate.now(),
+                "avatarUsuario1", 0.00d, TipoEstadoCuenta.ACTIVA);
+
+        UsuarioForm usuarioForm2 = new UsuarioForm("usuario1", "usuario1@mail.com",
+                "passUsuario1new", "nombreUsuario1", "España",
+                LocalDate.of(1980, 5, 5), LocalDate.now(),
+                "avatarUsuario1", 0.00d, TipoEstadoCuenta.ACTIVA);
+
+        UsuarioRepoInMemory usuarioRepoInMemory = new UsuarioRepoInMemory();
+        usuarioRepoInMemory.crear(usuarioForm1);
+
+        assertEquals(usuarioOptional, usuarioRepoInMemory.actualizar(idValida,usuarioForm2));
+
+    }
+
+    @Test
+    public void testEliminar_ReturnsTrue(){
+
+        var idValida = 1L;
+        UsuarioForm usuarioForm1 = new UsuarioForm("usuario1", "usuario1@mail.com",
+                "passUsuario1", "nombreUsuario1", "España",
+                LocalDate.of(1980, 5, 5), LocalDate.now(),
+                "avatarUsuario1", 0.00d, TipoEstadoCuenta.ACTIVA);
+
+        UsuarioRepoInMemory usuarioRepoInMemory = new UsuarioRepoInMemory();
+        usuarioRepoInMemory.crear(usuarioForm1);
+        boolean resultado = usuarioRepoInMemory.eliminar(idValida);
+
+        assertTrue(resultado);
+        assertTrue(usuarioRepoInMemory.obtenerPorId(idValida).isEmpty());
+
     }
 
 }

@@ -8,10 +8,12 @@ import org.davpen.excepciones.ValidationException;
 import org.davpen.mapper.Mapper;
 import org.davpen.modelo.dto.CompraDto;
 import org.davpen.modelo.dto.UsuarioDto;
+import org.davpen.modelo.entity.CompraEntity;
 import org.davpen.modelo.form.CompraForm;
 import org.davpen.modelo.form.ErrorDto;
 import org.davpen.modelo.form.ErrorType;
 import org.davpen.modelo.form.UsuarioForm;
+import org.davpen.pagos.*;
 import org.davpen.repositorio.intefaces.IBibliotecaRepo;
 import org.davpen.repositorio.intefaces.ICompraRepo;
 import org.davpen.repositorio.intefaces.IJuegoRepo;
@@ -19,6 +21,7 @@ import org.davpen.repositorio.intefaces.IUsuarioRepo;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Optional;
 
 public class CompraController {
 
@@ -36,10 +39,14 @@ public class CompraController {
     }
 
     //Realizar compra => relacion con añadir juego a biblioteca
-    public CompraDto realizarCompra(Long idUsuario, Long idJuego, TipoMetodoPago metodoPago) {
+    public CompraDto realizarCompra(Long idUsuario, Long idJuego, TipoMetodoPago metodoPago) throws ValidationException {
         //Validar
         var errores = new ArrayList<ErrorDto>();
-        //usuario activo
+        //usuario existe y activo
+        if (!usuarioRepo.obtenerPorId(idUsuario).isPresent()) {
+            errores.add(new ErrorDto("id", ErrorType.NO_ENCONTRADO));
+            throw new ValidationException(errores);
+        }
         if (!usuarioRepo.obtenerPorId(idUsuario).get().getEstadoCuentaUsuario().equals(TipoEstadoCuenta.ACTIVA)) {
             errores.add(new ErrorDto("estado_cuenta", ErrorType.CUENTA_INACTIVA));
         }
@@ -53,15 +60,13 @@ public class CompraController {
                 .anyMatch(b -> b.getIdJuegoBiblio().equals(idJuego))) {
             errores.add(new ErrorDto("id_juego", ErrorType.DUPLICADO));
         }
-        //saldo suficiente ¿¿SI USA CARTERA?? - Convertir en Procesar Pago
-        var saldoCartera = usuarioRepo.obtenerPorId(idUsuario).get().getSaldoUsuario();
+
+        if (!errores.isEmpty()) {
+            throw new ValidationException(errores);
+        }
         var precioCompra = juegoRepo.obtenerPorId(idJuego).get().getPrecioBaseJuego();
         var descuentoCompra = juegoRepo.obtenerPorId(idJuego).get().getDescuentoActualJuego();
-        var precioFinal = precioCompra - (precioCompra * descuentoCompra / 100);
-        if (metodoPago == TipoMetodoPago.CARTERA_STEAM && saldoCartera < precioFinal) {
-            errores.add(new ErrorDto("saldo_cartera", ErrorType.VALOR_DEMASIADO_BAJO));
-        }
-        //¿¿¿OTROS METODOS DE PAGO???
+
         CompraForm compraForm = new CompraForm(idUsuario, idJuego, LocalDate.now(), metodoPago, precioCompra,
                 descuentoCompra, TipoEstadoCompra.COMPLETADA);
         var compraEfectuada = compraRepo.crear(compraForm).orElse(null);
@@ -74,7 +79,46 @@ public class CompraController {
     }
 
 
-    //TODO Procesar pago ¿¿Datos según metodo de pago??
+    //Procesar pago ¿¿Datos según metodo de pago??
+    public CompraDto procesarPago(Long idCompra, TipoMetodoPago metodoPago) throws ValidationException {
+        var errores = new ArrayList<ErrorDto>();
+        Optional<CompraEntity> compraAProcesarOpt = compraRepo.obtenerPorId(idCompra);
+        if (!compraAProcesarOpt.isPresent()) {
+            errores.add(new ErrorDto("id", ErrorType.NO_ENCONTRADO));
+            throw new ValidationException(errores);
+        }
+
+        var compraAProcesar = compraAProcesarOpt.get();
+        var idUsuario = compraAProcesar.getIdUsuarioCompra();
+        var usuarioCompra = usuarioRepo.obtenerPorId(idUsuario).get();
+        var idJuego = compraAProcesar.getIdJuegoCompra();
+        var juegoCompra = juegoRepo.obtenerPorId(idJuego).get();
+        var precioCompra = juegoCompra.getPrecioBaseJuego();
+        var descuentoCompra = juegoCompra.getDescuentoActualJuego();
+        var precioFinal = precioCompra - (precioCompra * descuentoCompra / 100);
+
+        IPlataformaPago plataformaPago;
+        switch (metodoPago) {
+            case CARTERA_STEAM:
+                plataformaPago = new PagoCarteraSteam(idUsuario, usuarioRepo);
+                break;
+            case PAYPAL:
+                plataformaPago = new PagoPayPal();
+                break;
+            case TARJETA_CREDITO:
+                plataformaPago = new PagoTarjetaCredito();
+                break;
+            case TRANSFERENCIA:
+                plataformaPago = new PagoTransferencia();
+                break;
+            default:
+                errores.add(new ErrorDto("metodo_pago", ErrorType.NO_ENCONTRADO));
+                throw new ValidationException(errores);
+        }
+        plataformaPago.procesarPago(compraAProcesar,usuarioCompra,precioFinal);
+
+        return Mapper.mapaCompraSimple(compraAProcesar);
+    }
 
 
     //Consultar detalles de compra
@@ -104,8 +148,7 @@ public class CompraController {
     }
 
 
-    //solicitar reembolso - TODO Motivo reembolso + Plazo devolucion(14 dias) + Horas jugadas(2 horas)
-    //TODO manejar descuento??
+    //solicitar reembolso - Plazo devolucion(14 dias) + Horas jugadas(2 horas)
     public UsuarioDto solicitarReembolso(Long idCompra) throws ValidationException {
         //Validaciones
         var errores = new ArrayList<ErrorDto>();
@@ -136,7 +179,7 @@ public class CompraController {
             if (tiempoJugado > 2.00) {
                 errores.add(new ErrorDto("tiempo_jugado", ErrorType.TIEMPO_SUPERADO));
             }
-        }else {
+        } else {
             errores.add(new ErrorDto("biblioteca", ErrorType.NO_ENCONTRADO));
         }
 

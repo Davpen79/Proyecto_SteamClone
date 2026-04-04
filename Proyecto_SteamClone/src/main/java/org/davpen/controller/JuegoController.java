@@ -50,8 +50,6 @@ public class JuegoController {
         return Mapper.mapaJuegoCompleto(juego);
     }
 
-
-    //TODO: Buscar juegos por distintos criterios simultaneos
     //Buscar juegos por Categoria
     public List<JuegoDto> listaJuegosPorCategoria(TipoCategoriaJuego categoria) {
         return juegoRepo.obtenerTodos().stream()
@@ -92,7 +90,7 @@ public class JuegoController {
                 .toList();
     }
 
-    //TODO Buscar juego por Texto/Descripcion
+    //Buscar juego por Texto/Descripcion
     public List<JuegoDto> listaJuegosPorPalabraEnDescripcion(String palabraBuscada) {
         return juegoRepo.obtenerTodos().stream()
                 .filter(j -> j.getDescripcionJuego().contains(palabraBuscada))
@@ -159,6 +157,7 @@ public class JuegoController {
         var errores = new ArrayList<ErrorDto>();
         if (!juegoRepo.obtenerPorId(id).isPresent()) {
             errores.add(new ErrorDto("id", ErrorType.NO_ENCONTRADO));
+            throw new ValidationException(errores);
         }
         if (juegoRepo.obtenerPorId(id).get().getEstadoJuego() == TipoEstadoJuego.NO_DISPONIBLE) {
             errores.add(new ErrorDto("estado", ErrorType.NO_DISPONIBLE));
@@ -196,6 +195,7 @@ public class JuegoController {
         var errores = new ArrayList<ErrorDto>();
         if (!juegoRepo.obtenerPorId(id).isPresent()) {
             errores.add(new ErrorDto("id", ErrorType.NO_ENCONTRADO));
+            throw new ValidationException(errores);
         }
         if (!Arrays.stream(TipoEstadoJuego.values()).anyMatch(t -> t.equals(nuevoEstado))) {
             errores.add(new ErrorDto("estado", ErrorType.NO_ENCONTRADO));
@@ -214,6 +214,5 @@ public class JuegoController {
 
         return Mapper.mapaJuegoCompleto(juegoActualizado);
     }
-
 
 }

@@ -4,6 +4,7 @@ import org.davpen.enums.TipoEstadoCompra;
 import org.davpen.enums.TipoMetodoPago;
 
 import java.time.LocalDate;
+import java.util.Objects;
 import java.util.Optional;
 
 public class CompraDto {
@@ -78,5 +79,43 @@ public class CompraDto {
 
     public TipoEstadoCompra getEstadoCompra() {
         return estadoCompra;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        CompraDto compraDto = (CompraDto) o;
+        return Double.compare(precioBaseCompra, compraDto.precioBaseCompra) == 0
+                && descuentoEnCompra == compraDto.descuentoEnCompra
+                && Objects.equals(idCompra, compraDto.idCompra)
+                && Objects.equals(idUsuarioCompra, compraDto.idUsuarioCompra)
+                && Objects.equals(usuarioDto, compraDto.usuarioDto)
+                && Objects.equals(idJuegoCompra, compraDto.idJuegoCompra)
+                && Objects.equals(juegoDto, compraDto.juegoDto)
+                && Objects.equals(fechaCompra, compraDto.fechaCompra)
+                && tipoPagoCompra == compraDto.tipoPagoCompra
+                && estadoCompra == compraDto.estadoCompra;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(idCompra, idUsuarioCompra, usuarioDto, idJuegoCompra, juegoDto, fechaCompra,
+                tipoPagoCompra, precioBaseCompra, descuentoEnCompra, estadoCompra);
+    }
+
+    @Override
+    public String toString() {
+        return "CompraDto{" +
+                "idCompra=" + idCompra +
+                ", idUsuarioCompra=" + idUsuarioCompra +
+                ", usuarioDto=" + usuarioDto +
+                ", idJuegoCompra=" + idJuegoCompra +
+                ", juegoDto=" + juegoDto +
+                ", fechaCompra=" + fechaCompra +
+                ", tipoPagoCompra=" + tipoPagoCompra +
+                ", precioBaseCompra=" + precioBaseCompra +
+                ", descuentoEnCompra=" + descuentoEnCompra +
+                ", estadoCompra=" + estadoCompra +
+                '}';
     }
 }

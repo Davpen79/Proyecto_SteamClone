@@ -229,28 +229,6 @@ public class UsuarioControllerTest {
             usuarioController.anhadirSaldo(2L, 10.0));
     }
 
-    //@Test
-    //public void testAnhadirSaldo_IdValido_CantidadValida_RetornaUsuarioDTOConSaldoActualizado() throws ValidationException {
-    //    //Arrange
-    //    var idValido = 1L;
-    //    Double cantidadValida = 5.00d;
-    //    var usuarioDTO = new UsuarioDto(1L, "usuario1", "usuario1@mail.com",
-    //            "nombreUsuario1", "España", LocalDate.of(1980, 5, 5),
-    //            LocalDate.of(2026, 3, 3), "avatarUsuario1",
-    //            15.00d, TipoEstadoCuenta.ACTIVA);
-    //    when(usuarioRepo.obtenerPorId(idValido)).thenReturn(Optional.of(new UsuarioEntity(1L,
-    //            "usuario1", "usuario1@mail.com", "passUsuario1",
-    //            "nombreUsuario1", "España", LocalDate.of(1980, 5, 5),
-    //            LocalDate.of(2026, 3, 3), "avatarUsuario1",
-    //            10.00d, TipoEstadoCuenta.ACTIVA)));
-    //    //Act
-    //    var usuarioActualizado = usuarioController.anhadirSaldo(idValido, cantidadValida);
-//
-    //    //Assert
-    //    assertEquals(usuarioDTO,usuarioActualizado);
-    //    verify(usuarioRepo, atLeast(1)).obtenerPorId(idValido);
-    //}
-
         @Test
     public void testAnhadirSaldo_IdValido_CantidadValida_RetornaUsuarioDTOConSaldoActualizado() throws ValidationException {
         // Arrange

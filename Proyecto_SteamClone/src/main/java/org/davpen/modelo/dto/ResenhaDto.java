@@ -3,6 +3,7 @@ package org.davpen.modelo.dto;
 import org.davpen.enums.TipoEstadoResenha;
 
 import java.time.LocalDate;
+import java.util.Objects;
 import java.util.Optional;
 
 public class ResenhaDto {
@@ -83,5 +84,28 @@ public class ResenhaDto {
 
     public TipoEstadoResenha getEstadoResenha() {
         return estadoResenha;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        ResenhaDto that = (ResenhaDto) o;
+        return recomendacionResenha == that.recomendacionResenha
+                && Double.compare(tiempoJugadoResenha, that.tiempoJugadoResenha) == 0
+                && Objects.equals(idResenha, that.idResenha)
+                && Objects.equals(idUsuarioResenha, that.idUsuarioResenha)
+                && Objects.equals(usuarioDto, that.usuarioDto)
+                && Objects.equals(idJuegoResenha, that.idJuegoResenha)
+                && Objects.equals(juegoDto, that.juegoDto)
+                && Objects.equals(textoResenha, that.textoResenha)
+                && Objects.equals(fechaPublicacionResenha, that.fechaPublicacionResenha)
+                && Objects.equals(fechaUltiEdicResenha, that.fechaUltiEdicResenha)
+                && estadoResenha == that.estadoResenha;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(idResenha, idUsuarioResenha, usuarioDto, idJuegoResenha, juegoDto, recomendacionResenha,
+                textoResenha, tiempoJugadoResenha, fechaPublicacionResenha, fechaUltiEdicResenha, estadoResenha);
     }
 }

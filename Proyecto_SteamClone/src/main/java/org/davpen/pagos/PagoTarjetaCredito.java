@@ -1,15 +1,20 @@
 package org.davpen.pagos;
 
-public class PagoTarjetaCredito implements IMetodoPago{
+import org.davpen.excepciones.ValidationException;
+import org.davpen.modelo.entity.CompraEntity;
+import org.davpen.modelo.entity.UsuarioEntity;
+
+public class PagoTarjetaCredito implements IPlataformaPago {
 
     private String tarjetaCredito;
 
-    public PagoTarjetaCredito(String tarjetaCredito) {
+    public PagoTarjetaCredito() {
         this.tarjetaCredito = tarjetaCredito;
     }
 
-    @Override
-    public boolean procesarPago(double coste) {
-        return false;
+     @Override
+    public boolean procesarPago(CompraEntity compra, UsuarioEntity usuario, Double precioFinal) throws ValidationException {
+         System.out.println("Pago realizado con Tarjeta");
+        return true;
     }
 }

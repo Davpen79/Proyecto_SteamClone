@@ -86,6 +86,7 @@ public class ResenhaController {
         //validar reseña existe
         if (!resenhaAOcultar.isPresent()) {
             errores.add(new ErrorDto("id_resenha", ErrorType.NO_ENCONTRADO));
+            throw new ValidationException(errores);
         }
         //validar reseña es de usuario
         var listaResenhas = resenhaRepo.obtenerTodos();
@@ -124,6 +125,7 @@ public class ResenhaController {
         //validar reseña existe
         if (!resenhaRepo.obtenerPorId(idResenha).isPresent()) {
             errores.add(new ErrorDto("id_resenha", ErrorType.NO_ENCONTRADO));
+            throw new ValidationException(errores);
         }
         //validar reseña es de usuario
         var listaResenhas = resenhaRepo.obtenerTodos();

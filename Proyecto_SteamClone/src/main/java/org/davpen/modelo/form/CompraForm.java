@@ -94,9 +94,6 @@ public class CompraForm {
             errores.add(new ErrorDto("precio", ErrorType.VALOR_NEGATIVO));
         }
 
-        //TODO: Validar Descuento
-
-
         return errores;
     }
 

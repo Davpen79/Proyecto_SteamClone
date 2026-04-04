@@ -28,6 +28,10 @@ public class EstadisticasBibliotecaDto {
     }
 
     //Getters
+    public Long getIdUsuario() {
+        return idUsuario;
+    }
+
     public int getTotalJuegos() {
         return totalJuegos;
     }

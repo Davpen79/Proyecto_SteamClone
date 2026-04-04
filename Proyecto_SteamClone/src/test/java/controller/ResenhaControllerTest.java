@@ -52,8 +52,8 @@ public class ResenhaControllerTest {
 
     private UsuarioEntity usuario;
     private JuegoEntity juego;
-    private ResenhaEntity resenaEntity;
-    private ResenhaForm resenaForm;
+    private ResenhaEntity resenhaEntity;
+    private ResenhaForm resenhaForm;
 
     @BeforeEach
     public void setup() {
@@ -65,11 +65,11 @@ public class ResenhaControllerTest {
                 LocalDate.of(2020, 1, 1), 29.99, 0, TipoCategoriaJuego.ACCION,
                 TipoClasificacionEdades.PEGI_16, new ArrayList<>(List.of("Español")), TipoEstadoJuego.DISPONIBLE);
 
-        resenaEntity = new ResenhaEntity(1L, 1L, 1L, true,
+        resenhaEntity = new ResenhaEntity(1L, 1L, 1L, true,
                 "Excelente juego", 20.5, LocalDate.of(2024, 3, 20),
                 null, TipoEstadoResenha.PUBLICADA);
 
-        resenaForm = new ResenhaForm(1L, 1L, true, "Excelente juego",
+        resenhaForm = new ResenhaForm(1L, 1L, true, "Excelente juego",
                 20.5, LocalDate.of(2024, 3, 20), null, TipoEstadoResenha.PUBLICADA);
     }
 
@@ -80,12 +80,12 @@ public class ResenhaControllerTest {
         when(juegoRepo.obtenerPorId(1L)).thenReturn(Optional.of(juego));
         when(resenhaRepo.obtenerTodos()).thenReturn(new ArrayList<>());
         when(bibliotecaRepo.obtenerTodos()).thenReturn(new ArrayList<>());
-        //when(resenhaRepo.crear(any(ResenhaForm.class))).thenReturn(Optional.of(resenaEntity));
+        //when(resenhaRepo.crear(any(ResenhaForm.class))).thenReturn(Optional.of(resenhaEntity));
 
         // Act & Assert - Verificamos que el comportamiento sea el esperado
         // (aunque probablemente lanzará una excepción por validaciones)
         try {
-            resenhaController.escribirResenha(resenaForm);
+            resenhaController.escribirResenha(resenhaForm);
         } catch (ValidationException e) {
             // Esperado si falta validar que el juego está en la biblioteca
             assertEquals(1, e.getErrores().size());
@@ -122,21 +122,35 @@ public class ResenhaControllerTest {
     @Test
     public void testOcultarResena_DatosValidos_RetornaResenaOculta() throws ValidationException {
         // Arrange
-        ResenhaEntity resenaOculta = new ResenhaEntity(1L, 1L, 1L, true,
-                "Excelente juego", 20.5, LocalDate.of(2024, 3, 20),
-                null, TipoEstadoResenha.OCULTA);
+        var idResenha = 1L;
+        var idUsuario = 1L;
+        ResenhaEntity resenhaOculta = new ResenhaEntity(idResenha, 1L, 1L, true,
+                            "Excelente juego", 20.5, LocalDate.of(2024, 3, 20),
+                            null, TipoEstadoResenha.OCULTA);
+        when(resenhaRepo.obtenerPorId(idResenha)).thenReturn(Optional.of(resenhaEntity));
 
-        when(resenhaRepo.obtenerPorId(1L)).thenReturn(Optional.of(resenaEntity));
-        when(resenhaRepo.obtenerTodos()).thenReturn(List.of(resenaEntity));
-        when(resenhaRepo.obtenerTodasPorIdUsuario(1L, List.of(resenaEntity))).thenReturn(List.of(resenaEntity));
-        when(resenhaRepo.actualizar(1L, any(ResenhaForm.class))).thenReturn(Optional.of(resenaOculta));
+        List<ResenhaEntity> listaResenhas = new ArrayList<>();
+        listaResenhas.add(resenhaEntity);
+        when(resenhaRepo.obtenerTodos()).thenReturn(listaResenhas);
+        when(resenhaRepo.obtenerTodasPorIdUsuario(idUsuario, listaResenhas)).thenReturn(listaResenhas);
+
+        // Se espera que al actualizar devuelva la entidad con estado OCULTA
+        when(resenhaRepo.actualizar(eq(idResenha), any(ResenhaForm.class)))
+                .thenReturn(Optional.of(resenhaOculta));
 
         // Act
-        ResenhaDto resultado = resenhaController.ocultarResenha(1L, 1L);
+        ResenhaDto resultado = resenhaController.ocultarResenha(idResenha, idUsuario);
 
         // Assert
         assertNotNull(resultado);
-        verify(resenhaRepo).actualizar(eq(1L), any(ResenhaForm.class));
+        assertEquals(idResenha, resultado.getIdResenha());
+        assertEquals(TipoEstadoResenha.OCULTA, resultado.getEstadoResenha());
+
+        // Verificaciones de interacción
+        verify(resenhaRepo).obtenerPorId(idResenha);
+        verify(resenhaRepo).obtenerTodos();
+        verify(resenhaRepo).obtenerTodasPorIdUsuario(idUsuario, listaResenhas);
+        verify(resenhaRepo).actualizar(eq(idResenha), any(ResenhaForm.class));
     }
 
     @Test
@@ -152,9 +166,9 @@ public class ResenhaControllerTest {
     @Test
     public void testOcultarResena_ResenaNoPertenece_ThrowsValidationException() {
         // Arrange
-        when(resenhaRepo.obtenerPorId(1L)).thenReturn(Optional.of(resenaEntity));
-        when(resenhaRepo.obtenerTodos()).thenReturn(List.of(resenaEntity));
-        when(resenhaRepo.obtenerTodasPorIdUsuario(999L, List.of(resenaEntity))).thenReturn(new ArrayList<>());
+        when(resenhaRepo.obtenerPorId(1L)).thenReturn(Optional.of(resenhaEntity));
+        when(resenhaRepo.obtenerTodos()).thenReturn(List.of(resenhaEntity));
+        when(resenhaRepo.obtenerTodasPorIdUsuario(999L, List.of(resenhaEntity))).thenReturn(new ArrayList<>());
 
         // Act & Assert
         assertThrows(ValidationException.class, () ->
@@ -164,11 +178,11 @@ public class ResenhaControllerTest {
     @Test
     public void testOcultarResena_ResenaNoPublicada_ThrowsValidationException() {
         // Arrange
-        ResenhaEntity resenaOculta = new ResenhaEntity(1L, 1L, 1L, true,
+        ResenhaEntity resenhaOculta = new ResenhaEntity(1L, 1L, 1L, true,
                 "Excelente juego", 20.5, LocalDate.of(2024, 3, 20),
                 null, TipoEstadoResenha.OCULTA);
 
-        when(resenhaRepo.obtenerPorId(1L)).thenReturn(Optional.of(resenaOculta));
+        when(resenhaRepo.obtenerPorId(1L)).thenReturn(Optional.of(resenhaOculta));
 
         // Act & Assert
         assertThrows(ValidationException.class, () ->
@@ -178,9 +192,9 @@ public class ResenhaControllerTest {
     @Test
     public void testEliminarResena_DatosValidos_RetornaTrue() throws ValidationException {
         // Arrange
-        when(resenhaRepo.obtenerPorId(1L)).thenReturn(Optional.of(resenaEntity));
-        when(resenhaRepo.obtenerTodos()).thenReturn(List.of(resenaEntity));
-        when(resenhaRepo.obtenerTodasPorIdUsuario(1L, List.of(resenaEntity))).thenReturn(List.of(resenaEntity));
+        when(resenhaRepo.obtenerPorId(1L)).thenReturn(Optional.of(resenhaEntity));
+        when(resenhaRepo.obtenerTodos()).thenReturn(List.of(resenhaEntity));
+        when(resenhaRepo.obtenerTodasPorIdUsuario(1L, List.of(resenhaEntity))).thenReturn(List.of(resenhaEntity));
         when(resenhaRepo.eliminar(1L)).thenReturn(true);
 
         // Act
@@ -204,9 +218,9 @@ public class ResenhaControllerTest {
     @Test
     public void testEliminarResena_ResenaNoPertenece_ThrowsValidationException() {
         // Arrange
-        when(resenhaRepo.obtenerPorId(1L)).thenReturn(Optional.of(resenaEntity));
-        when(resenhaRepo.obtenerTodos()).thenReturn(List.of(resenaEntity));
-        when(resenhaRepo.obtenerTodasPorIdUsuario(999L, List.of(resenaEntity))).thenReturn(new ArrayList<>());
+        when(resenhaRepo.obtenerPorId(1L)).thenReturn(Optional.of(resenhaEntity));
+        when(resenhaRepo.obtenerTodos()).thenReturn(List.of(resenhaEntity));
+        when(resenhaRepo.obtenerTodasPorIdUsuario(999L, List.of(resenhaEntity))).thenReturn(new ArrayList<>());
 
         // Act & Assert
         assertThrows(ValidationException.class, () ->
@@ -217,8 +231,8 @@ public class ResenhaControllerTest {
     public void testVerResenasJuego_JuegoExistente_RetornaLista() throws ValidationException {
         // Arrange
         when(juegoRepo.obtenerTodos()).thenReturn(List.of(juego));
-        when(resenhaRepo.obtenerTodos()).thenReturn(List.of(resenaEntity));
-        when(resenhaRepo.obtenerTodasPorIdJuego(1L, List.of(resenaEntity))).thenReturn(List.of(resenaEntity));
+        when(resenhaRepo.obtenerTodos()).thenReturn(List.of(resenhaEntity));
+        when(resenhaRepo.obtenerTodasPorIdJuego(1L, List.of(resenhaEntity))).thenReturn(List.of(resenhaEntity));
 
         // Act
         List<ResenhaDto> resultado = resenhaController.verResenhasJuego(1L);
@@ -258,8 +272,8 @@ public class ResenhaControllerTest {
     public void testVerResenasUsuario_UsuarioExistente_RetornaLista() throws ValidationException {
         // Arrange
         when(usuarioRepo.obtenerTodos()).thenReturn(List.of(usuario));
-        when(resenhaRepo.obtenerTodos()).thenReturn(List.of(resenaEntity));
-        when(resenhaRepo.obtenerTodasPorIdUsuario(1L, List.of(resenaEntity))).thenReturn(List.of(resenaEntity));
+        when(resenhaRepo.obtenerTodos()).thenReturn(List.of(resenhaEntity));
+        when(resenhaRepo.obtenerTodasPorIdUsuario(1L, List.of(resenhaEntity))).thenReturn(List.of(resenhaEntity));
 
         // Act
         List<ResenhaDto> resultado = resenhaController.verResenhasUsuario(1L);
@@ -288,9 +302,9 @@ public class ResenhaControllerTest {
                 null, TipoEstadoResenha.OCULTA);
 
         when(usuarioRepo.obtenerTodos()).thenReturn(List.of(usuario));
-        when(resenhaRepo.obtenerTodos()).thenReturn(List.of(resenaEntity, resenaOculta));
-        when(resenhaRepo.obtenerTodasPorIdUsuario(1L, List.of(resenaEntity, resenaOculta)))
-                .thenReturn(List.of(resenaEntity, resenaOculta));
+        when(resenhaRepo.obtenerTodos()).thenReturn(List.of(resenhaEntity, resenaOculta));
+        when(resenhaRepo.obtenerTodasPorIdUsuario(1L, List.of(resenhaEntity, resenaOculta)))
+                .thenReturn(List.of(resenhaEntity, resenaOculta));
 
         // Act
         List<ResenhaDto> resultado = resenhaController.verResenhasUsuario(1L);

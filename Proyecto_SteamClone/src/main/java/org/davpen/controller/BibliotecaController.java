@@ -35,26 +35,6 @@ public class BibliotecaController {
         this.compraRepo = compraRepo;
     }
 
-    //CREAR BIBLIOTECA???? INNECESARIO
-    public BibliotecaDto crearBiblioteca(BibliotecaForm bibliotecaForm) throws ValidationException {
-        //Validar Formato
-        var errores = bibliotecaForm.validar();
-        //Validar modelo
-        //Validar usuario
-        if (!usuarioRepo.obtenerPorId(bibliotecaForm.getIdUsuarioBiblio()).isPresent()) {
-            errores.add(new ErrorDto("id_usuario", ErrorType.NO_ENCONTRADO));
-        }
-
-        if (!errores.isEmpty()) {
-            throw new ValidationException(errores);
-        }
-
-        var bibliotecaOpt = bibliotecaRepo.crear(bibliotecaForm);
-        var biblioteca = bibliotecaOpt.orElse(null);
-
-        return Mapper.mapaSimple(biblioteca);
-    }
-
     //Ver biblioteca personal
     public List<BibliotecaDto> verBibliotecaPersonal(Long idUsuario, TipoOrden tipoOrden) throws ValidationException {
         //Validar usuario
@@ -68,7 +48,7 @@ public class BibliotecaController {
 
         List<BibliotecaDto> bibliotecaOrdenada = new ArrayList<>();
 
-        //TODO lista ordenada alfabeticamente
+        //lista ordenada alfabeticamente
         if (tipoOrden == TipoOrden.ALFABETICO) {
             var listaDesordenada = bibliotecaRepo.obtenerTodos().stream()
                     .filter(b -> b.getIdUsuarioBiblio().equals(idUsuario))
@@ -115,10 +95,12 @@ public class BibliotecaController {
         //Validar usuario
         if (!usuarioRepo.obtenerPorId(idUsuario).isPresent()) {
             errores.add(new ErrorDto("id_usuario", ErrorType.NO_ENCONTRADO));
+            throw new ValidationException(errores);
         }
         //Validar juego
         if (!juegoRepo.obtenerPorId(idJuego).isPresent()) {
             errores.add(new ErrorDto("id_juego", ErrorType.NO_ENCONTRADO));
+            throw new ValidationException(errores);
         }
         if (bibliotecaRepo.obtenerTodos().stream().filter(b -> b.getIdUsuarioBiblio().equals(idUsuario))
                 .anyMatch(b -> b.getIdJuegoBiblio().equals(idJuego))) {
@@ -144,6 +126,7 @@ public class BibliotecaController {
         var juegoExiste = juegoRepo.obtenerPorId(idJuego).isPresent();
         if (!usuarioExiste || !juegoExiste) {
             errores.add(new ErrorDto("id", ErrorType.NO_ENCONTRADO));
+            throw new ValidationException(errores);
         }
         //Validar entrada en Biblioteca existe
         var entradaBiblioteca = bibliotecaRepo.obtenerTodos().stream()
@@ -172,6 +155,7 @@ public class BibliotecaController {
         var juegoExiste = juegoRepo.obtenerPorId(idJuego).isPresent();
         if (!usuarioExiste || !juegoExiste) {
             errores.add(new ErrorDto("id", ErrorType.NO_ENCONTRADO));
+            throw new ValidationException(errores);
         }
         //Validar entrada en Biblioteca existe
         var entradaBiblioteca =
@@ -211,6 +195,7 @@ public class BibliotecaController {
         var juegoExiste = juegoRepo.obtenerPorId(idJuego).isPresent();
         if (!usuarioExiste || !juegoExiste) {
             errores.add(new ErrorDto("id", ErrorType.NO_ENCONTRADO));
+            throw new ValidationException(errores);
         }
         //Validar entrada en Biblioteca existe
         var entradaBiblioteca =

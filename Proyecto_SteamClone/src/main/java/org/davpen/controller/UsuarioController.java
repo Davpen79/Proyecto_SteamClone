@@ -81,7 +81,7 @@ public class UsuarioController {
         var errores = new ArrayList<ErrorDto>();
         var usuarioConsultado = usuarioRepo.obtenerPorNombre(nombreCuentaUsuario);
         if (!usuarioConsultado.isPresent()) {
-            errores.add(new ErrorDto("id", ErrorType.NO_ENCONTRADO));
+            errores.add(new ErrorDto("nombre", ErrorType.NO_ENCONTRADO));
         }
         if (!errores.isEmpty()) {
             throw new ValidationException(errores);
@@ -116,8 +116,10 @@ public class UsuarioController {
     public UsuarioDto anhadirSaldo(Long id, Double cantidadAnhadida) throws ValidationException {
 
         var errores = new ArrayList<ErrorDto>();
-        if (!usuarioRepo.obtenerPorId(id).isPresent()) {
+        Optional<UsuarioEntity> usuarioEntityOpt = usuarioRepo.obtenerPorId(id);
+        if (!usuarioEntityOpt.isPresent()) {
             errores.add(new ErrorDto("id", ErrorType.NO_ENCONTRADO));
+            throw new ValidationException(errores);
         }
         if (cantidadAnhadida.isNaN()) {
             errores.add(new ErrorDto("cantidad", ErrorType.FORMATO_INVALIDO));
@@ -131,7 +133,7 @@ public class UsuarioController {
         if (cantidadAnhadida > SALDO_MAXIMO) {
             errores.add(new ErrorDto("cantidad", ErrorType.VALOR_DEMASIADO_ALTO));
         }
-        if (usuarioRepo.obtenerPorId(id).get().getEstadoCuentaUsuario() != TipoEstadoCuenta.ACTIVA) {
+        if (usuarioEntityOpt.get().getEstadoCuentaUsuario() != TipoEstadoCuenta.ACTIVA) {
             errores.add(new ErrorDto("id", ErrorType.CUENTA_INACTIVA));
         }
 
@@ -139,13 +141,14 @@ public class UsuarioController {
             throw new ValidationException(errores);
         }
 
-        var nuevoSaldo = usuarioRepo.obtenerPorId(id).get().getSaldoUsuario() + cantidadAnhadida;
-        var usuarioActual = usuarioRepo.obtenerPorId(id);
+        var nuevoSaldo = usuarioEntityOpt.get().getSaldoUsuario() + cantidadAnhadida;
+        var usuarioActual = usuarioEntityOpt.get();
 
-        var usuarioActualizadoForm = new UsuarioForm(usuarioActual.get().getNombreCuentaUsuario(), usuarioActual.get().getEmailUsuario(),
-                usuarioActual.get().getPasswordUsuario(), usuarioActual.get().getNombreRealUsuario(),
-                usuarioActual.get().getPaisUsuario(), usuarioActual.get().getFechaNacUsuario(), usuarioActual.get().getFechaRegUsuario(),
-                usuarioActual.get().getAvatarUsuario(), nuevoSaldo, usuarioActual.get().getEstadoCuentaUsuario());
+        var usuarioActualizadoForm = new UsuarioForm(usuarioActual.getNombreCuentaUsuario(),
+                usuarioActual.getEmailUsuario(),
+                usuarioActual.getPasswordUsuario(), usuarioActual.getNombreRealUsuario(),
+                usuarioActual.getPaisUsuario(), usuarioActual.getFechaNacUsuario(), usuarioActual.getFechaRegUsuario(),
+                usuarioActual.getAvatarUsuario(), nuevoSaldo, usuarioActual.getEstadoCuentaUsuario());
 
         var usuarioActualizado = usuarioRepo.actualizar(id, usuarioActualizadoForm).orElse(null);
 
@@ -157,12 +160,15 @@ public class UsuarioController {
         var c = new UsuarioController(new UsuarioRepoInMemory());
 
         var cuenta1 = c.registrarUsuario(new UsuarioForm("JugadorTotal", "usuario@email.com", "Aa1!nnnnnn", "Pedro",
-                "Portugal", LocalDate.of(1982, 10, 5), LocalDate.of(2024, 4, 6), "avatar", 5.00, TipoEstadoCuenta.ACTIVA));
+                "Portugal", LocalDate.of(1982, 10, 5), LocalDate.of(2024, 4, 6), "avatar", 5.00,
+                TipoEstadoCuenta.ACTIVA));
 
         var salidaNombre1 = cuenta1.getNombreCuentaUsuario();
 
-        var cuentaRepetida = c.registrarUsuario(new UsuarioForm("JugadorBasico", "usuario2@email.com", "Ab1!nnnnnn", "Paco",
-                "Portugal", LocalDate.of(1982, 11, 5), LocalDate.of(2024, 5, 6), "avatar", 5.00, TipoEstadoCuenta.ACTIVA));
+        var cuentaRepetida = c.registrarUsuario(new UsuarioForm("JugadorBasico", "usuario2@email.com", "Ab1!nnnnnn",
+                "Paco",
+                "Portugal", LocalDate.of(1982, 11, 5), LocalDate.of(2024, 5, 6), "avatar", 5.00,
+                TipoEstadoCuenta.ACTIVA));
 
         var salidaNombre2 = cuentaRepetida.getNombreCuentaUsuario();
         System.out.println(salidaNombre1);

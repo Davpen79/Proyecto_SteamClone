@@ -9,6 +9,8 @@ import org.davpen.modelo.entity.BibliotecaEntity;
 import org.davpen.modelo.entity.CompraEntity;
 import org.davpen.modelo.entity.JuegoEntity;
 import org.davpen.modelo.entity.UsuarioEntity;
+import org.davpen.modelo.form.ErrorDto;
+import org.davpen.modelo.form.ErrorType;
 import org.davpen.repositorio.intefaces.IBibliotecaRepo;
 import org.davpen.repositorio.intefaces.ICompraRepo;
 import org.davpen.repositorio.intefaces.IJuegoRepo;
@@ -44,6 +46,7 @@ public class CompraControllerTest {
     @Mock
     private IBibliotecaRepo bibliotecaRepo;
 
+
     @InjectMocks
     private CompraController compraController;
 
@@ -67,7 +70,7 @@ public class CompraControllerTest {
     }
 
     @Test
-    public void testRealizarCompra_DatosValidos_RetornaCompraDto() {
+    public void testRealizarCompra_DatosValidos_RetornaCompraDto() throws ValidationException {
         // Arrange
         when(usuarioRepo.obtenerPorId(1L)).thenReturn(Optional.of(usuarioActivo));
         when(juegoRepo.obtenerPorId(1L)).thenReturn(Optional.of(juegoDisponible));
@@ -96,8 +99,8 @@ public class CompraControllerTest {
         when(bibliotecaRepo.obtenerTodos()).thenReturn(List.of(bibliotecaExistente));
 
         // Act
-        assertThrows(Exception.class, () -> 
-            compraController.realizarCompra(1L, 1L, TipoMetodoPago.CARTERA_STEAM));
+        assertThrows(Exception.class, () ->
+                compraController.realizarCompra(1L, 1L, TipoMetodoPago.CARTERA_STEAM));
     }
 
     @Test
@@ -112,7 +115,7 @@ public class CompraControllerTest {
 
         // Act & Assert
         assertThrows(Exception.class, () ->
-            compraController.realizarCompra(1L, 2L, TipoMetodoPago.CARTERA_STEAM));
+                compraController.realizarCompra(1L, 2L, TipoMetodoPago.CARTERA_STEAM));
     }
 
     @Test
@@ -132,7 +135,7 @@ public class CompraControllerTest {
 
         // Act & Assert
         assertThrows(Exception.class, () ->
-            compraController.realizarCompra(2L, 2L, TipoMetodoPago.CARTERA_STEAM));
+                compraController.realizarCompra(2L, 2L, TipoMetodoPago.CARTERA_STEAM));
     }
 
     @Test
@@ -156,7 +159,7 @@ public class CompraControllerTest {
 
         // Act & Assert
         assertThrows(ValidationException.class, () ->
-            compraController.consultarHistorialCompras(999L, 1L));
+                compraController.consultarHistorialCompras(999L, 1L));
     }
 
     @Test
@@ -166,7 +169,7 @@ public class CompraControllerTest {
 
         // Act & Assert
         assertThrows(ValidationException.class, () ->
-            compraController.consultarHistorialCompras(1L, 999L));
+                compraController.consultarHistorialCompras(1L, 999L));
     }
 
     @Test
@@ -201,7 +204,7 @@ public class CompraControllerTest {
 
         // Act & Assert
         assertThrows(ValidationException.class, () ->
-            compraController.solicitarReembolso(2L));
+                compraController.solicitarReembolso(2L));
     }
 
     @Test
@@ -220,7 +223,7 @@ public class CompraControllerTest {
 
         // Act & Assert
         assertThrows(ValidationException.class, () ->
-            compraController.solicitarReembolso(3L));
+                compraController.solicitarReembolso(3L));
     }
 
     @Test
@@ -235,6 +238,75 @@ public class CompraControllerTest {
 
         // Act & Assert
         assertThrows(ValidationException.class, () ->
-            compraController.solicitarReembolso(1L));
+                compraController.solicitarReembolso(1L));
+    }
+
+    @Test
+    void procesarPago_compraNoEncontrada_lanzaValidationException() {
+        Long idCompra = 1L;
+        when(compraRepo.obtenerPorId(idCompra)).thenReturn(Optional.empty());
+
+        ValidationException ex = assertThrows(ValidationException.class, () -> {
+            compraController.procesarPago(idCompra, TipoMetodoPago.CARTERA_STEAM);
+        });
+
+        List<ErrorDto> errores = ex.getErrores();
+        assertNotNull(errores);
+        assertFalse(errores.isEmpty());
+        assertEquals("id", errores.get(0).getCampo());
+        assertEquals(ErrorType.NO_ENCONTRADO, errores.get(0).getMensaje());
+    }
+
+    @Test
+    void procesarPago_carteraSaldoSuficiente_devuelveDto() throws ValidationException {
+
+        Long idCompra = 1L;
+        when(compraRepo.obtenerPorId(idCompra)).thenReturn(Optional.of(compraEntity));
+        when(juegoRepo.obtenerPorId(1L)).thenReturn(Optional.of(juegoDisponible));
+        when(usuarioRepo.obtenerPorId(1L)).thenReturn(Optional.of(usuarioActivo));
+
+        CompraDto expectedDto = new CompraDto(1L, 1L, Optional.empty(), 1L,
+                Optional.empty(), LocalDate.now().minusDays(10), TipoMetodoPago.CARTERA_STEAM,
+                29.99, 0, TipoEstadoCompra.COMPLETADA);
+
+
+        CompraDto result = compraController.procesarPago(idCompra, TipoMetodoPago.CARTERA_STEAM);
+
+        assertNotNull(result);
+        assertEquals(expectedDto, result);
+
+    }
+
+    @Test
+    void procesarPago_carteraSaldoInsuficiente_lanzaValidationException() {
+        Long idCompra = 2L;
+
+        var usuarioActivo2 = new UsuarioEntity(2L, "usuario1", "usuario@mail.com",
+                "pass123", "Usuario Uno", "España",
+                LocalDate.of(1990, 1, 1), LocalDate.of(2020, 1, 1),
+                "avatar.png", 10.0, TipoEstadoCuenta.ACTIVA);
+
+        var juegoDisponible2 = new JuegoEntity(2L, "Game1", "Descripcion",
+                "Developer", LocalDate.of(2020, 1, 1), 29.99,
+                0, TipoCategoriaJuego.ACCION, TipoClasificacionEdades.PEGI_16,
+                new ArrayList<>(List.of("Español")), TipoEstadoJuego.DISPONIBLE);
+
+        var compraEntity2 = new CompraEntity(2L, 2L, 2L,
+                LocalDate.now().minusDays(10), TipoMetodoPago.CARTERA_STEAM,
+                29.99, 0, TipoEstadoCompra.COMPLETADA);
+
+        when(compraRepo.obtenerPorId(idCompra)).thenReturn(Optional.of(compraEntity2));
+        when(juegoRepo.obtenerPorId(2L)).thenReturn(Optional.of(juegoDisponible2));
+        when(usuarioRepo.obtenerPorId(2L)).thenReturn(Optional.of(usuarioActivo2));
+
+        ValidationException ex = assertThrows(ValidationException.class, () -> {
+            compraController.procesarPago(idCompra, TipoMetodoPago.CARTERA_STEAM);
+        });
+
+        List<ErrorDto> errores = ex.getErrores();
+        assertNotNull(errores);
+        assertFalse(errores.isEmpty());
+        assertEquals("saldo_cartera", errores.get(0).getCampo());
+        assertEquals(ErrorType.SALDO_INSUFICIENTE, errores.get(0).getMensaje());
     }
 }
