@@ -32,7 +32,15 @@ public class ResenhaController {
         this.bibliotecaRepo = bibliotecaRepo;
     }
 
-    //Escribir reseña
+
+    /**
+     * Crea una nueva reseña para un juego tras validar un formulario. En caso de errores lanza ValidationException
+     * con lista de errores. Si tiene éxito, crea la reseña y devuelve una ResenhaDto
+     *
+     * @param resenhaForm Formulario de datos de una reseña
+     * @return ResenhaDto
+     * @throws ValidationException
+     */
     public ResenhaDto escribirResenha(ResenhaForm resenhaForm) throws ValidationException {
         //Validaciones
         var errores = new ArrayList<ErrorDto>();
@@ -77,8 +85,15 @@ public class ResenhaController {
         return Mapper.mapaSimple(resenhaCreada);
     }
 
-
-    //Ocultar reseña
+    /**
+     * Cambia estado a OCULTA una reseña existente tras validar condiciones. En caso de errores lanza
+     * ValidationException con lista de errores. En caso de exito oculta la reseña y devuelve la ResenhaDto modificada.
+     *
+     * @param idResenha Identificador de Reseña
+     * @param idUsuario Identificador de Usuario
+     * @return ResenhaDto
+     * @throws ValidationException
+     */
     public ResenhaDto ocultarResenha(Long idResenha, Long idUsuario) throws ValidationException {
 
         var errores = new ArrayList<ErrorDto>();
@@ -97,7 +112,7 @@ public class ResenhaController {
             errores.add(new ErrorDto("id_resenha", ErrorType.NO_ENCONTRADO));
         }
         //validar reseña está publicada
-        
+
         var estadoResenhaAOcultar = resenhaAOcultar.get().getEstadoResenha();
         if (estadoResenhaAOcultar != TipoEstadoResenha.PUBLICADA) {
             errores.add(new ErrorDto("estado_resenha", ErrorType.RESENHA_NO_PUBLICADA));
@@ -115,8 +130,15 @@ public class ResenhaController {
         return Mapper.mapaSimple(resenhaActualizada);
     }
 
-
-    //Eliminar reseña
+    /**
+     * Elimina una reseña si la reseña existe y pertenece al usuario indicado.
+     * En caso de errores lanza ValidationException con lista de errores.
+     *
+     * @param idResenha Identificador de Resenha
+     * @param idUsuario Identificador de Usuario
+     * @return true si la eliminacion fue exitosa
+     * @throws ValidationException
+     */
     public boolean eliminarResenha(Long idResenha, Long idUsuario) throws ValidationException {
 
         var errores = new ArrayList<ErrorDto>();
@@ -143,7 +165,15 @@ public class ResenhaController {
 
     }
 
-    //Ver reseñas de un juego - Faltan Filtros/Orden
+    /**
+     * Devuelve la lista de reseñas de un juego (por idJuego).Valida que el juego exista; si no, lanza
+     * ValidationException. Recupera todas las reseñas del juego y las ordena por fecha de publicación descendente
+     * (más recientes primero).
+     *
+     * @param idJuego Identificador de Juego
+     * @return Lista ordenada de reseñas de un Juego
+     * @throws ValidationException
+     */
     public List<ResenhaDto> verResenhasJuego(Long idJuego) throws ValidationException {
         var errores = new ArrayList<ErrorDto>();
         //Validar juego existe
@@ -166,8 +196,13 @@ public class ResenhaController {
         return listaResenhasDtoJuego;
     }
 
-
-    //Ver reseñas de un usuario - Faltan Filtros
+    /**
+     * Devuelve la lista de reseñas de un usuario (por idUsuario).Valida que el usuario exista; si no, lanza
+     * ValidationException. Recupera las reseñas del usuario y filtra solo las PUBLICADAS.
+     * @param idUsuario Identificador de Usuario
+     * @return Lista de reseñas publicadas por un Usuario
+     * @throws ValidationException
+     */
     public List<ResenhaDto> verResenhasUsuario(Long idUsuario) throws ValidationException {
         var errores = new ArrayList<ErrorDto>();
         //Validar usuario existe

@@ -38,7 +38,17 @@ public class CompraController {
         this.bibliotecaRepo = bibliotecaRepo;
     }
 
-    //Realizar compra => relacion con añadir juego a biblioteca
+    /**
+     * Realiza una compra: valida usuario, estado de cuenta, disponibilidad del juego y duplicados en la biblioteca,
+     * crea la compra y devuelve un DTO de la compra realizada.
+     * Si encuentra algun error de validacion lanza ValidationException con la lista de errores
+     *
+     * @param idUsuario  Identificador del usuario que realiza la compra.
+     * @param idJuego    Identificador del juego a comprar.
+     * @param metodoPago Metodo de pago seleccionado.
+     * @return CompraDto de la compra creada.
+     * @throws ValidationException Si existen errores de validación; la excepción contiene la lista de errores.
+     */
     public CompraDto realizarCompra(Long idUsuario, Long idJuego, TipoMetodoPago metodoPago) throws ValidationException {
         //Validar
         var errores = new ArrayList<ErrorDto>();
@@ -78,8 +88,21 @@ public class CompraController {
         return Mapper.mapaCompraSimple(compraEfectuada);
     }
 
-
-    //Procesar pago ¿¿Datos según metodo de pago??
+    /**
+     * Procesa el pago de una compra existente usando la plataforma adecuada según el metodo de pago.
+     * <p>
+     * Validaciones:
+     * - La compra debe existir.
+     * - El metodo de pago debe ser conocido.
+     * <p>
+     * - Calcula el precio final aplicando el descuento del juego y delega el procesamiento a la implementación de
+     * IPlataformaPago correspondiente.
+     *
+     * @param idCompra   Identificador de la compra a procesar.
+     * @param metodoPago Metodo de pago a utilizar.
+     * @return CompraDto con la compra procesada.
+     * @throws ValidationException Si la compra no existe o el metodo de pago no es válido.
+     */
     public CompraDto procesarPago(Long idCompra, TipoMetodoPago metodoPago) throws ValidationException {
         var errores = new ArrayList<ErrorDto>();
         Optional<CompraEntity> compraAProcesarOpt = compraRepo.obtenerPorId(idCompra);
@@ -115,13 +138,23 @@ public class CompraController {
                 errores.add(new ErrorDto("metodo_pago", ErrorType.NO_ENCONTRADO));
                 throw new ValidationException(errores);
         }
-        plataformaPago.procesarPago(compraAProcesar,usuarioCompra,precioFinal);
+        plataformaPago.procesarPago(compraAProcesar, usuarioCompra, precioFinal);
 
         return Mapper.mapaCompraSimple(compraAProcesar);
     }
 
-
-    //Consultar detalles de compra
+    /**
+     * Consulta una compra por id comprobando que pertenece al usuario solicitado.
+     * <p>
+     * Validaciones:
+     * - La compra debe existir.
+     * - La compra debe pertenecer al usuario indicado.
+     *
+     * @param idCompra  Identificador de la compra a consultar.
+     * @param idUsuario Identificador del usuario.
+     * @return CompraDto con la información de la compra.
+     * @throws ValidationException Si la compra no existe o no pertenece al usuario.
+     */
     public CompraDto consultarHistorialCompras(Long idCompra, Long idUsuario) throws ValidationException {
         //Validaciones
         var errores = new ArrayList<ErrorDto>();
@@ -147,8 +180,23 @@ public class CompraController {
 
     }
 
-
-    //solicitar reembolso - Plazo devolucion(14 dias) + Horas jugadas(2 horas)
+    /**
+     * Solicita un reembolso para una compra existente si cumple las condiciones de plazo y tiempo jugado.
+     * <p>
+     * Validaciones:
+     * - La compra debe existir.
+     * - La compra debe estar en estado COMPLETADA.
+     * - La fecha de compra no debe superar el plazo de 14 días.
+     * - La entrada en la biblioteca debe existir.
+     * - El tiempo jugado registrado en la biblioteca debe ser <= 2.00 horas.
+     * <p>
+     * - Si las validaciones pasan, actualiza el saldo del usuario sumando el precio base de la compra y devuelve el
+     * UsuarioDto actualizado.
+     *
+     * @param idCompra Identificador de la compra a reembolsar.
+     * @return UsuarioDto con el usuario actualizado tras el reembolso.
+     * @throws ValidationException Si cualquiera de las validaciones falla; la excepción contiene la lista de errores.
+     */
     public UsuarioDto solicitarReembolso(Long idCompra) throws ValidationException {
         //Validaciones
         var errores = new ArrayList<ErrorDto>();

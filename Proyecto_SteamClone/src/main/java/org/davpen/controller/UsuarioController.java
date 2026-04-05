@@ -26,7 +26,14 @@ public class UsuarioController {
         this.usuarioRepo = usuarioRepo;
     }
 
-    //Registrar nuevo usuario
+    /**
+     * Registra un nuevo usuario tras validar el formulario y restricciones de usuario.
+     * Si hay errores, lanza ValidationException con la lista de errores.
+     *
+     * @param usuarioForm Formulario con datos de Usuario
+     * @return UsuarioDto
+     * @throws ValidationException
+     */
     public UsuarioDto registrarUsuario(UsuarioForm usuarioForm) throws ValidationException {
         //validar formato
         var errores = usuarioForm.validar();
@@ -35,9 +42,6 @@ public class UsuarioController {
         if (usuarioRepo.obtenerPorNombre(usuarioForm.getNombreCuentaUsuario()).isPresent()) {
             errores.add(new ErrorDto("nombre", ErrorType.DUPLICADO));
         }
-        //usuarioRepo.obtenerPorNombre(usuarioForm.getNombreCuentaUsuario())
-        //        .ifPresent(u -> errores.add(new ErrorDto("nombre", ErrorType.DUPLICADO)));
-
         //email unico
         if (usuarioRepo.obtenerTodos().stream()
                 .anyMatch(u -> u.getEmailUsuario().equals(usuarioForm.getEmailUsuario()))) {
@@ -58,7 +62,13 @@ public class UsuarioController {
         return Mapper.mapaUsuarioCompleto(usuario);
     }
 
-    //Consultar perfil por ID
+    /**
+     * Obtiene el perfil de usuario por su id. Si no se encuentra el Usuario lanza ValidationException.
+     *
+     * @param id Identificador de Usuario
+     * @return UsuarioDto
+     * @throws ValidationException
+     */
     public UsuarioDto consultarPerfil(Long id) throws ValidationException {
         //Comprobamos si el usuario existe
         var errores = new ArrayList<ErrorDto>();
@@ -75,7 +85,13 @@ public class UsuarioController {
         return Mapper.mapaUsuarioCompleto(usuarioEncontrado);
     }
 
-    //Consultar perfil por Nombre
+    /**
+     * Obtiene el perfil de usuario por nombre de cuenta. Si no se encuentra el Usuario lanza ValidationException.
+     *
+     * @param nombreCuentaUsuario Nombre de la cuenta del Usuario buscado.
+     * @return UsuarioDto
+     * @throws ValidationException
+     */
     public UsuarioDto consultarPerfil(String nombreCuentaUsuario) throws ValidationException {
         //Comprobamos si el usuario existe
         var errores = new ArrayList<ErrorDto>();
@@ -92,8 +108,14 @@ public class UsuarioController {
         return Mapper.mapaUsuarioCompleto(usuarioEncontrado);
     }
 
-    //Consultar saldo
-
+    /**
+     * Obtiene información del usuario incluyendo el saldo de su cuenta. Si no se encuentra el usuario lanza
+     * ValidationException.
+     *
+     * @param id Identificador de Usuario
+     * @return UsuarioDto
+     * @throws ValidationException
+     */
     public UsuarioDto consultarSaldo(Long id) throws ValidationException {
 
         var errores = new ArrayList<ErrorDto>();
@@ -105,14 +127,19 @@ public class UsuarioController {
             throw new ValidationException(errores);
         }
 
-        //return usuarioRepo.obtenerPorId(id).get().getSaldoUsuario();
         var usuarioEntity = usuarioEntityOpt.get();
         return Mapper.mapaUsuarioCompleto(usuarioEntity);
 
     }
 
-    //Añadir saldo
-
+    /**
+     * Añade saldo a la cuenta del usuario aplicando validaciones. Si hay errores, lanza ValidationException con la
+     * lista de errores.
+     * @param id Identificador de Usuario
+     * @param cantidadAnhadida Saldo (double) a añadir a la cuenta
+     * @return UsuarioDto con saldo actualizado
+     * @throws ValidationException
+     */
     public UsuarioDto anhadirSaldo(Long id, Double cantidadAnhadida) throws ValidationException {
 
         var errores = new ArrayList<ErrorDto>();

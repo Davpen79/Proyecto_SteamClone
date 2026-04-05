@@ -35,7 +35,27 @@ public class BibliotecaController {
         this.compraRepo = compraRepo;
     }
 
-    //Ver biblioteca personal
+    /**
+     * Devuelve la biblioteca personal del usuario ordenada según el criterio indicado.
+     * <p>
+     * Validaciones:
+     * - El usuario debe existir.
+     * <p>
+     * Orden disponible (TipoOrden):
+     * <p>
+     * - ALFABETICO: ordena por título del juego.
+     * <p>
+     * - TIEMPO_JUEGO: ordena por tiempo de juego (descendente).
+     * <p>
+     * - ULTIMA_SESION: ordena por fecha de última sesión (descendente).
+     * <p>
+     * - FECHA_ADQUISICION: ordena por fecha de compra (descendente).
+     *
+     * @param idUsuario Identificador del usuario cuya biblioteca se consulta.
+     * @param tipoOrden Criterio de ordenación.
+     * @return Lista de BibliotecaDto ordenada según el criterio; puede ser vacía si no hay entradas.
+     * @throws ValidationException Si el usuario no existe.
+     */
     public List<BibliotecaDto> verBibliotecaPersonal(Long idUsuario, TipoOrden tipoOrden) throws ValidationException {
         //Validar usuario
         var errores = new ArrayList<ErrorDto>();
@@ -88,7 +108,21 @@ public class BibliotecaController {
         return bibliotecaOrdenada;
     }
 
-    //Añadir juego a biblioteca - ¿Compra Verificada?? == Crear Biblioteca
+    /**
+     * Añade un juego a la biblioteca de un usuario.
+     * <p>
+     * Validaciones:
+     * - El usuario debe existir.<p>
+     * - El juego debe existir.<p>
+     * - El juego no debe estar ya en la biblioteca del usuario.
+     * <p>
+     * Crea una entrada en la biblioteca con fecha de compra actual, tiempo jugado 0.00 y estado NO_INSTALADO.
+     *
+     * @param idUsuario Identificador del usuario.
+     * @param idJuego   Identificador del juego a añadir.
+     * @return BibliotecaDto con la entrada creada.
+     * @throws ValidationException Si alguna validación falla; la excepción contiene la lista de errores.
+     */
     public BibliotecaDto anhadirJuegoABiblioteca(Long idUsuario, Long idJuego) throws ValidationException {
         //Validar modelo
         var errores = new ArrayList<ErrorDto>();
@@ -118,7 +152,21 @@ public class BibliotecaController {
         return Mapper.mapaSimple(biblioteca);
     }
 
-    //Eliminar juego de biblioteca - ¿Como devuelve algo que elimina?
+    /**
+     * Elimina un juego de la biblioteca de un usuario.
+     * <p>
+     * Validaciones:<p>
+     * - El usuario y el juego deben existir.<p></p>
+     * - La entrada en la biblioteca debe existir.<p></p>
+     *
+     * <p>
+     * Elimina la entrada encontrada y devuelve el Dto de la entrada eliminada.
+     *
+     * @param idUsuario Identificador del usuario.
+     * @param idJuego   Identificador del juego a eliminar.
+     * @return BibliotecaDto con la entrada eliminada.
+     * @throws ValidationException Si alguna validación falla; la excepción contiene la lista de errores.
+     */
     public BibliotecaDto eliminarJuegoDeBiblioteca(Long idUsuario, Long idJuego) throws ValidationException {
         var errores = new ArrayList<ErrorDto>();
         //Validar Usuario && Juego existen
@@ -147,7 +195,22 @@ public class BibliotecaController {
         return Mapper.mapaSimple(entradaBiblioteca.orElseThrow());
     }
 
-    //Actualizar tiempo de juego
+    /**
+     * Actualiza el tiempo de juego registrado en la biblioteca para una entrada concreta.
+     * <p>
+     * Validaciones:<p>
+     * - El usuario y el juego deben existir.<p>
+     * - La entrada en la biblioteca debe existir.<p>
+     * - Las horas a añadir deben ser >= 0.<p>
+     * <p>
+     * Suma las horas proporcionadas al tiempo existente y actualiza la entrada.
+     *
+     * @param idUsuario        Identificador del usuario.
+     * @param idJuego          Identificador del juego.
+     * @param horasParaAnhadir Horas a sumar al tiempo de juego (double).
+     * @return BibliotecaDto con la entrada actualizada.
+     * @throws ValidationException Si alguna validación falla; la excepción contiene la lista de errores.
+     */
     public BibliotecaDto actualizarTiempoJuego(Long idUsuario, Long idJuego, double horasParaAnhadir) throws ValidationException {
         var errores = new ArrayList<ErrorDto>();
         //Validar Usuario && Juego existen
@@ -187,7 +250,20 @@ public class BibliotecaController {
         return Mapper.mapaSimple(bibliotecaActualizada);
     }
 
-    //Consultar ultima sesion
+    /**
+     * Devuelve la última sesión jugada para una entrada concreta de la biblioteca.
+     * <p>
+     * Validaciones:<p>
+     * - El usuario y el juego deben existir.<p>
+     * - La entrada en la biblioteca debe existir.<p>
+     * - Si la entrada nunca fue jugada.<p>
+     *
+     * @param idUsuario Identificador del usuario.
+     * @param idJuego Identificador del juego.
+     * @return BibliotecaDto con la entrada (incluye la fecha de la última sesión).
+     * @throws ValidationException Si alguna validación falla; la excepción contiene la lista de errores.
+     */
+
     public BibliotecaDto consultarUltimaSesion(Long idUsuario, Long idJuego) throws ValidationException {
         var errores = new ArrayList<ErrorDto>();
         //Validar Usuario && Juego existen
@@ -223,7 +299,20 @@ public class BibliotecaController {
         return bibliotecaUltimaSesion;
     }
 
-    //Ver estadísticas de biblioteca
+    /**
+     * Calcula y devuelve estadísticas de la biblioteca del usuario.
+     * <p>
+     * Estadísticas calculadas:<p>
+     * - Número total de juegos en la biblioteca.<p>
+     * - Total de horas jugadas.<p>
+     * - Lista de juegos instalados (mapeados a JuegoDto).<p>
+     * - Juego más jugado (opcional JuegoDto).<p>
+     * - Valor total de la biblioteca (suma de precios de compras asociadas).<p>
+     * - Lista de juegos no jugados.<p>
+     *
+     * @param idUsuario Identificador del usuario.
+     * @return EstadisticasBibliotecaDto con los datos agregados de la biblioteca.
+     */
     public EstadisticasBibliotecaDto verEstadisticasBiblioteca(Long idUsuario) {
 
         var bibliotecaUsuario = bibliotecaRepo.obtenerTodos().stream()
@@ -242,9 +331,7 @@ public class BibliotecaController {
                 .toList();
         var bibliotecaJuegoMasJugado = bibliotecaUsuario.stream()
                 .max(Comparator.comparing(BibliotecaEntity::getTiempoJuegoBiblio));
-        //codigo antiguo
-        //var juegoMasJugado = juegoRepo.obtenerPorId(bibliotecaJuegoMasJugado.get().getIdJuegoBiblio()).get();
-        //nuevo codigo corregido
+
         var juegoMasJugado = bibliotecaJuegoMasJugado.flatMap(b -> juegoRepo.obtenerPorId(b.getIdJuegoBiblio()))
                 .map(Mapper::mapaJuegoCompleto);
 

@@ -29,7 +29,14 @@ public class JuegoController {
     }
 
 
-    //Añadir juego al catálogo
+    /**
+     * Registra un nuevo Juego tras validar el formulario y restricciones de juego.
+     * Si hay errores, lanza ValidationException con la lista de errores.
+     *
+     * @param juegoForm Identificador de Juego
+     * @return JuegoDto
+     * @throws ValidationException
+     */
     public JuegoDto anhadirJuego(JuegoForm juegoForm) throws ValidationException {
         //validar formato
         var errores = juegoForm.validar();
@@ -50,7 +57,12 @@ public class JuegoController {
         return Mapper.mapaJuegoCompleto(juego);
     }
 
-    //Buscar juegos por Categoria
+    /**
+     * Devuelve los juegos cuyo tipo de categoría coincide con el proporcionado.
+     *
+     * @param categoria TipoCategoriaJuego por el que filtrar.
+     * @return Lista de JuegoDto que pertenecen a la categoría indicada. Puede ser lista vacía si no hay coincidencias.
+     */
     public List<JuegoDto> listaJuegosPorCategoria(TipoCategoriaJuego categoria) {
         return juegoRepo.obtenerTodos().stream()
                 .filter(j -> j.getCategoriaJuego().equals(categoria))
@@ -58,8 +70,15 @@ public class JuegoController {
                 .toList();
     }
 
-    //Buscar juego por Rango de Precio
-    public List<JuegoDto> listaJuegosPorRangoPrecio(double precio_Min, double precio_Max) {
+    /**
+     * Devuelve los juegos cuyo precio base está dentro del rango [precio_Min, precio_Max].
+     *
+     * @param precio_Min Precio mínimo (inclusive).
+     * @param precio_Max Precio máximo (inclusive).
+     * @return Lista de JuegoDto cuyo precio base está dentro del rango.
+     * @throws IllegalArgumentException Si precio_Min > precio_Max.
+     */
+    public List<JuegoDto> listaJuegosPorRangoPrecio(double precio_Min, double precio_Max) throws IllegalArgumentException {
 
         if (precio_Min > precio_Max) {
             throw new IllegalArgumentException("El precio minimo no puede ser mayor que el precio máximo");
@@ -74,7 +93,12 @@ public class JuegoController {
         return resultadoBusqueda;
     }
 
-    //Buscar juego por Clasificacion
+    /**
+     * Devuelve los juegos cuya clasificación por edades coincide con la proporcionada.
+     *
+     * @param clasificacionEdades TipoClasificacionEdades por el que filtrar.
+     * @return Lista de JuegoDto que cumplen la clasificación indicada. Puede ser lista vacía.
+     */
     public List<JuegoDto> listaJuegosPorClasificacion(TipoClasificacionEdades clasificacionEdades) {
         return juegoRepo.obtenerTodos().stream()
                 .filter(j -> j.getClasEdadJuego().equals(clasificacionEdades))
@@ -82,7 +106,12 @@ public class JuegoController {
                 .toList();
     }
 
-    //Buscar juego por Estado
+    /**
+     * Devuelve los juegos cuyo estado coincide con el proporcionado.
+     *
+     * @param estadoJuego TipoEstadoJuego por el que filtrar.
+     * @return Lista de JuegoDto que tienen el estado indicado. Puede ser lista vacía.
+     */
     public List<JuegoDto> listaJuegosPorEstado(TipoEstadoJuego estadoJuego) {
         return juegoRepo.obtenerTodos().stream()
                 .filter(j -> j.getEstadoJuego().equals(estadoJuego))
@@ -90,17 +119,25 @@ public class JuegoController {
                 .toList();
     }
 
-    //Buscar juego por Texto/Descripcion
+    /**
+     * Busca juegos que contienen un texto en su descripción.
+     *
+     * @param palabraBuscada Subcadena a buscar dentro de la descripción del juego.
+     * @return Lista de JuegoDto cuya descripción contiene el texto indicado.
+     */
     public List<JuegoDto> listaJuegosPorPalabraEnDescripcion(String palabraBuscada) {
         return juegoRepo.obtenerTodos().stream()
                 .filter(j -> j.getDescripcionJuego().contains(palabraBuscada))
                 .map(Mapper::mapaJuegoCompleto)
                 .toList();
-
     }
 
-
-    //Consultar catalogo completo
+    /**
+     * Consulta el catálogo completo de Juegos y lo ordena según el criterio indicado.
+     *
+     * @param consulta TipoConsultaCatalogo criterio de orden: ALFABETICO, PRECIO o FECHA.
+     * @return Lista ordenada de JuegoDto según el criterio; lista vacía si no hay juegos.
+     */
     public List<JuegoDto> listaCatalogoCompleto(TipoConsultaCatalogo consulta) {
 
         List<JuegoDto> listaConsultaDto = new ArrayList<>(List.of());
@@ -132,7 +169,13 @@ public class JuegoController {
         return listaConsultaDto;
     }
 
-    //Consultar detalles de juego
+    /**
+     * Devuelve los detalles del juego indicado por su id. Si el juego no se encuentra lanza ValidationException
+     *
+     * @param id Identificador único del juego.
+     * @return JuegoDto con la información completa del juego.
+     * @throws ValidationException Si no existe un juego con el id proporcionado
+     */
     public JuegoDto detalleJuego(Long id) throws ValidationException {
 
         var errores = new ArrayList<ErrorDto>();
@@ -149,9 +192,18 @@ public class JuegoController {
 
     }
 
-
-    //Aplicar descuento
-
+    /**
+     * Aplica un descuento porcentual al precio base del juego indicado.
+     * Valida que:
+     * - El juego exista.
+     * - El juego esté disponible.
+     * - El valor de descuento esté entre DESCUENTO_MIN y DESCUENTO_MAX.
+     *
+     * @param id        Identificador del juego a actualizar.
+     * @param descuento Porcentaje de descuento a aplicar (entero).
+     * @return JuegoDto con el juego actualizado y precio recalculado.
+     * @throws ValidationException Si existen errores de validación; la excepción contiene la lista de errores
+     */
     public JuegoDto aplicarDescuento(Long id, int descuento) throws ValidationException {
 
         var errores = new ArrayList<ErrorDto>();
@@ -188,8 +240,16 @@ public class JuegoController {
         return Mapper.mapaJuegoCompleto(juegoActualizado);
     }
 
-    //Cambiar estado de juego
-
+    /**
+     * Cambia el estado del juego indicado por id al nuevoEstado proporcionado.
+     * Valida que:
+     * - El juego exista.
+     * - El nuevo estado sea un valor válido dentro de TipoEstadoJuego.
+     * @param id Identificador del juego a actualizar.
+     * @param nuevoEstado TipoEstadoJuego a establecer.
+     * @return JuegoDto con el juego actualizado.
+     * @throws ValidationException Si existen errores de validación; la excepción contiene la lista de errores.
+     */
     public JuegoDto cambiarEstadoJuego(Long id, TipoEstadoJuego nuevoEstado) throws ValidationException {
 
         var errores = new ArrayList<ErrorDto>();
