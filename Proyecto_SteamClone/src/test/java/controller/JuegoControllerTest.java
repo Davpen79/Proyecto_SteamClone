@@ -11,6 +11,7 @@ import org.davpen.repositorio.intefaces.IJuegoRepo;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -326,4 +327,63 @@ public class JuegoControllerTest {
         verify(juegoRepo, times(2)).obtenerPorId(idJuego); // el código llama obtenerPorId dos veces
         verify(juegoRepo).actualizar(eq(idJuego), any(JuegoForm.class));
     }
+
+    @Test
+    void aplicarDescuento_DatosValidos_RetornaJuegoDto() throws ValidationException {
+        when(juegoRepo.obtenerPorId(1L)).thenReturn(Optional.of(juego1));
+
+        when(juegoRepo.actualizar(eq(1L), any(JuegoForm.class)))
+                .thenReturn(Optional.of(juego1));
+
+        JuegoDto resultado = juegoController.aplicarDescuento(1L, 10);
+
+        assertNotNull(resultado);
+    }
+
+    @Test
+    void aplicarDescuento_CalculaPrecioCorrectamente() throws ValidationException {
+        juego1 = new JuegoEntity(1L, "Elden Ring", "RPG de acción épico", "FromSoftware",
+                LocalDate.of(2022, 2, 25), 200.0, 0, TipoCategoriaJuego.RPG,
+                TipoClasificacionEdades.PEGI_16, new ArrayList<>(List.of("Español", "Inglés")),
+                TipoEstadoJuego.DISPONIBLE);
+
+        when(juegoRepo.obtenerPorId(1L)).thenReturn(Optional.of(juego1));
+
+        ArgumentCaptor<JuegoForm> captor = ArgumentCaptor.forClass(JuegoForm.class);
+
+        when(juegoRepo.actualizar(eq(1L), captor.capture()))
+                .thenReturn(Optional.of(juego1));
+
+        juegoController.aplicarDescuento(1L, 25);
+
+        JuegoForm form = captor.getValue();
+
+        assertEquals(150.0, form.getPrecioBaseJuego());
+        assertEquals(25, form.getDescuentoActualJuego());
+    }
+
+    @Test
+    void aplicarDescuento_DescuentoMenorMin_LanzaExcepcion() {
+        when(juegoRepo.obtenerPorId(1L)).thenReturn(Optional.of(juego1));
+
+        ValidationException ex = assertThrows(ValidationException.class, () -> {
+            juegoController.aplicarDescuento(1L, -1);
+        });
+
+        assertTrue(ex.getErrores().stream()
+                .anyMatch(e -> e.getCampo().equals("descuento")));
+    }
+
+    @Test
+    void aplicarDescuento_DescuentoMayorMax_LanzaExcepcion() {
+        when(juegoRepo.obtenerPorId(1L)).thenReturn(Optional.of(juego1));
+
+        ValidationException ex = assertThrows(ValidationException.class, () -> {
+            juegoController.aplicarDescuento(1L, 999);
+        });
+
+        assertTrue(ex.getErrores().stream()
+                .anyMatch(e -> e.getCampo().equals("descuento")));
+    }
+
 }

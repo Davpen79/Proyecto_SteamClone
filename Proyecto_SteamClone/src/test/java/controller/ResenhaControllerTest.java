@@ -1,17 +1,14 @@
 package controller;
 
 import org.davpen.controller.ResenhaController;
-import org.davpen.enums.TipoCategoriaJuego;
-import org.davpen.enums.TipoClasificacionEdades;
-import org.davpen.enums.TipoEstadoJuego;
-import org.davpen.enums.TipoEstadoResenha;
+import org.davpen.enums.*;
 import org.davpen.excepciones.ValidationException;
 import org.davpen.modelo.dto.ResenhaDto;
+import org.davpen.modelo.entity.BibliotecaEntity;
 import org.davpen.modelo.entity.JuegoEntity;
 import org.davpen.modelo.entity.ResenhaEntity;
 import org.davpen.modelo.entity.UsuarioEntity;
 import org.davpen.modelo.form.ResenhaForm;
-import org.davpen.enums.TipoEstadoCuenta;
 import org.davpen.repositorio.intefaces.IBibliotecaRepo;
 import org.davpen.repositorio.intefaces.IJuegoRepo;
 import org.davpen.repositorio.intefaces.IResenhaRepo;
@@ -24,6 +21,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -53,6 +51,7 @@ public class ResenhaControllerTest {
     private UsuarioEntity usuario;
     private JuegoEntity juego;
     private ResenhaEntity resenhaEntity;
+    private ResenhaEntity resenhaEntity2;
     private ResenhaForm resenhaForm;
 
     @BeforeEach
@@ -69,27 +68,29 @@ public class ResenhaControllerTest {
                 "Excelente juego", 20.5, LocalDate.of(2024, 3, 20),
                 null, TipoEstadoResenha.PUBLICADA);
 
+        resenhaEntity2 = new ResenhaEntity(2L, 2L, 1L, false,
+                "Mal juego", 20.5, LocalDate.of(2024, 3, 22),
+                null, TipoEstadoResenha.PUBLICADA);
+
         resenhaForm = new ResenhaForm(1L, 1L, true, "Excelente juego",
                 20.5, LocalDate.of(2024, 3, 20), null, TipoEstadoResenha.PUBLICADA);
     }
 
     @Test
     public void testEscribirResena_DatosValidos_RetornaResenaDto() throws ValidationException {
-        // Arrange
+
+        var bibliotecaValida = new BibliotecaEntity(1L, 1L, 1L,
+                LocalDate.of(2023, 1, 1), 10.5,
+                LocalDateTime.of(2023, 1, 1, 0, 0), TipoEstadoInstalacion.INSTALADO);
+
         when(usuarioRepo.obtenerPorId(1L)).thenReturn(Optional.of(usuario));
         when(juegoRepo.obtenerPorId(1L)).thenReturn(Optional.of(juego));
-        when(resenhaRepo.obtenerTodos()).thenReturn(new ArrayList<>());
-        when(bibliotecaRepo.obtenerTodos()).thenReturn(new ArrayList<>());
-        //when(resenhaRepo.crear(any(ResenhaForm.class))).thenReturn(Optional.of(resenhaEntity));
+        when(bibliotecaRepo.obtenerTodos()).thenReturn(List.of(bibliotecaValida));
+        when(resenhaRepo.crear(any())).thenReturn(Optional.of(resenhaEntity));
 
-        // Act & Assert - Verificamos que el comportamiento sea el esperado
-        // (aunque probablemente lanzará una excepción por validaciones)
-        try {
-            resenhaController.escribirResenha(resenhaForm);
-        } catch (ValidationException e) {
-            // Esperado si falta validar que el juego está en la biblioteca
-            assertEquals(1, e.getErrores().size());
-        }
+        ResenhaDto resultado = resenhaController.escribirResenha(resenhaForm);
+
+        assertNotNull(resultado);
     }
 
     @Test
@@ -228,14 +229,14 @@ public class ResenhaControllerTest {
     }
 
     @Test
-    public void testVerResenasJuego_JuegoExistente_RetornaLista() throws ValidationException {
+    public void testVerResenasJuego_JuegoExistenteSinFiltro_RetornaLista() throws ValidationException {
         // Arrange
         when(juegoRepo.obtenerTodos()).thenReturn(List.of(juego));
         when(resenhaRepo.obtenerTodos()).thenReturn(List.of(resenhaEntity));
         when(resenhaRepo.obtenerTodasPorIdJuego(1L, List.of(resenhaEntity))).thenReturn(List.of(resenhaEntity));
 
         // Act
-        List<ResenhaDto> resultado = resenhaController.verResenhasJuego(1L);
+        List<ResenhaDto> resultado = resenhaController.verResenhasJuego(1L, Optional.empty());
 
         // Assert
         assertNotNull(resultado);
@@ -250,7 +251,7 @@ public class ResenhaControllerTest {
 
         // Act & Assert
         assertThrows(ValidationException.class, () ->
-            resenhaController.verResenhasJuego(999L));
+            resenhaController.verResenhasJuego(999L, Optional.empty()));
     }
 
     @Test
@@ -261,11 +262,45 @@ public class ResenhaControllerTest {
         when(resenhaRepo.obtenerTodasPorIdJuego(1L, new ArrayList<>())).thenReturn(new ArrayList<>());
 
         // Act
-        List<ResenhaDto> resultado = resenhaController.verResenhasJuego(1L);
+        List<ResenhaDto> resultado = resenhaController.verResenhasJuego(1L, Optional.empty());
 
         // Assert
         assertNotNull(resultado);
         assertTrue(resultado.isEmpty());
+    }
+
+    @Test
+    void testVerResenhasJuego_JuegoConFiltroRecomendadas_ListaSoloRecomendadas() throws ValidationException {
+
+        when(juegoRepo.obtenerTodos()).thenReturn(List.of(juego));
+        when(resenhaRepo.obtenerTodasPorIdJuego(1L, new ArrayList<>()))
+                .thenReturn(List.of(resenhaEntity, resenhaEntity2));
+
+        List<ResenhaDto> resultado =
+                resenhaController.verResenhasJuego(
+                        1L,
+                        Optional.of(TipoRecomendacionJuego.RECOMENDADO)
+                );
+
+        assertEquals(1, resultado.size());
+        assertTrue(resultado.get(0).isRecomendacionResenha());
+    }
+
+    @Test
+    void testVerResenhasJuego_JuegoConFiltroNoRecomendadas_ListaSoloNoRecomendadas() throws ValidationException {
+
+        when(juegoRepo.obtenerTodos()).thenReturn(List.of(juego));
+        when(resenhaRepo.obtenerTodasPorIdJuego(1L, new ArrayList<>()))
+                .thenReturn(List.of(resenhaEntity, resenhaEntity2));
+
+        List<ResenhaDto> resultado =
+                resenhaController.verResenhasJuego(
+                        1L,
+                        Optional.of(TipoRecomendacionJuego.NO_RECOMENDADO)
+                );
+
+        assertEquals(1, resultado.size());
+        assertFalse(resultado.get(0).isRecomendacionResenha());
     }
 
     @Test
@@ -276,7 +311,7 @@ public class ResenhaControllerTest {
         when(resenhaRepo.obtenerTodasPorIdUsuario(1L, List.of(resenhaEntity))).thenReturn(List.of(resenhaEntity));
 
         // Act
-        List<ResenhaDto> resultado = resenhaController.verResenhasUsuario(1L);
+        List<ResenhaDto> resultado = resenhaController.verResenhasUsuario(1L, Optional.empty());
 
         // Assert
         assertNotNull(resultado);
@@ -291,7 +326,7 @@ public class ResenhaControllerTest {
 
         // Act & Assert
         assertThrows(ValidationException.class, () ->
-            resenhaController.verResenhasUsuario(999L));
+            resenhaController.verResenhasUsuario(999L,Optional.empty()));
     }
 
     @Test
@@ -307,7 +342,27 @@ public class ResenhaControllerTest {
                 .thenReturn(List.of(resenhaEntity, resenaOculta));
 
         // Act
-        List<ResenhaDto> resultado = resenhaController.verResenhasUsuario(1L);
+        List<ResenhaDto> resultado = resenhaController.verResenhasUsuario(1L, Optional.of(TipoEstadoResenha.PUBLICADA));
+
+        // Assert
+        assertNotNull(resultado);
+        assertEquals(1, resultado.size());
+    }
+
+    @Test
+    public void testVerResenasUsuario_SoloResenaOcultas() throws ValidationException {
+        // Arrange
+        ResenhaEntity resenaOculta = new ResenhaEntity(2L, 1L, 1L, false,
+                "Juego malo", 5.0, LocalDate.of(2024, 3, 15),
+                null, TipoEstadoResenha.OCULTA);
+
+        when(usuarioRepo.obtenerTodos()).thenReturn(List.of(usuario));
+        when(resenhaRepo.obtenerTodos()).thenReturn(List.of(resenhaEntity, resenaOculta));
+        when(resenhaRepo.obtenerTodasPorIdUsuario(1L, List.of(resenhaEntity, resenaOculta)))
+                .thenReturn(List.of(resenhaEntity, resenaOculta));
+
+        // Act
+        List<ResenhaDto> resultado = resenhaController.verResenhasUsuario(1L, Optional.of(TipoEstadoResenha.OCULTA));
 
         // Assert
         assertNotNull(resultado);
