@@ -1,6 +1,7 @@
 package org.davpen.controller;
 
 import org.davpen.enums.TipoEstadoResenha;
+import org.davpen.enums.TipoRecomendacionJuego;
 import org.davpen.excepciones.ValidationException;
 import org.davpen.mapper.Mapper;
 import org.davpen.modelo.dto.ResenhaDto;
@@ -16,6 +17,7 @@ import org.davpen.repositorio.intefaces.IUsuarioRepo;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 
 public class ResenhaController {
 
@@ -23,6 +25,7 @@ public class ResenhaController {
     private final IUsuarioRepo usuarioRepo;
     private final IJuegoRepo juegoRepo;
     private final IBibliotecaRepo bibliotecaRepo;
+    private Optional<TipoRecomendacionJuego> tipoRecomendacion;
 
     public ResenhaController(IResenhaRepo resenhaRepo, IUsuarioRepo usuarioRepo, IJuegoRepo juegoRepo,
                              IBibliotecaRepo bibliotecaRepo) {
@@ -167,14 +170,16 @@ public class ResenhaController {
 
     /**
      * Devuelve la lista de reseñas de un juego (por idJuego).Valida que el juego exista; si no, lanza
-     * ValidationException. Recupera todas las reseñas del juego y las ordena por fecha de publicación descendente
-     * (más recientes primero).
+     * ValidationException. Recupera todas las reseñas del juego, las filtra opcionalmente por su estado de
+     * recomendacion y las ordena por fecha de publicación descendente (más recientes primero).
      *
-     * @param idJuego Identificador de Juego
+     * @param idJuego           Identificador de Juego
+     * @param tipoRecomendacion Optional de TipoRecomendacionJuego
      * @return Lista ordenada de reseñas de un Juego
      * @throws ValidationException
      */
-    public List<ResenhaDto> verResenhasJuego(Long idJuego) throws ValidationException {
+    public List<ResenhaDto> verResenhasJuego(Long idJuego, Optional<TipoRecomendacionJuego> tipoRecomendacion) throws ValidationException {
+        this.tipoRecomendacion = tipoRecomendacion;
         var errores = new ArrayList<ErrorDto>();
         //Validar juego existe
         var listaJuegos = juegoRepo.obtenerTodos();
@@ -187,23 +192,44 @@ public class ResenhaController {
         }
         var listaResenhas = resenhaRepo.obtenerTodos();
         var listaResenhasJuego = resenhaRepo.obtenerTodasPorIdJuego(idJuego, listaResenhas);
+        List<ResenhaDto> listaResenhasDtoJuego = List.of();
 
-        var listaResenhasDtoJuego = listaResenhasJuego.stream()
-                //Ordenamos priorizando las reseñas mas recientes como mas utiles
-                .sorted(Comparator.comparing(ResenhaEntity::getFechaPublicacionResenha).reversed())
-                .map(resenha -> Mapper.mapaSimple(resenha))
-                .toList();
+        if (!tipoRecomendacion.isPresent()) {
+
+            listaResenhasDtoJuego = listaResenhasJuego.stream()
+                    //Ordenamos priorizando las reseñas mas recientes como mas utiles
+                    .sorted(Comparator.comparing(ResenhaEntity::getFechaPublicacionResenha).reversed())
+                    .map(resenha -> Mapper.mapaSimple(resenha))
+                    .toList();
+
+        } else if (tipoRecomendacion.get().equals(TipoRecomendacionJuego.RECOMENDADO)) {
+            listaResenhasDtoJuego = listaResenhasJuego.stream()
+                    .filter(r -> r.isRecomendacionResenha())
+                    .sorted(Comparator.comparing(ResenhaEntity::getFechaPublicacionResenha).reversed())
+                    .map(resenha -> Mapper.mapaSimple(resenha))
+                    .toList();
+
+        } else if (tipoRecomendacion.get().equals(TipoRecomendacionJuego.NO_RECOMENDADO)) {
+            listaResenhasDtoJuego = listaResenhasJuego.stream()
+                    .filter(r -> !r.isRecomendacionResenha())
+                    .sorted(Comparator.comparing(ResenhaEntity::getFechaPublicacionResenha).reversed())
+                    .map(resenha -> Mapper.mapaSimple(resenha))
+                    .toList();
+        }
+
         return listaResenhasDtoJuego;
     }
 
     /**
      * Devuelve la lista de reseñas de un usuario (por idUsuario).Valida que el usuario exista; si no, lanza
-     * ValidationException. Recupera las reseñas del usuario y filtra solo las PUBLICADAS.
-     * @param idUsuario Identificador de Usuario
+     * ValidationException. Recupera las reseñas del usuario y las muestra todas o las filtra por PUBLICADAS u OCULTAS.
+     *
+     * @param idUsuario         Identificador de Usuario
+     * @param tipoEstadoResenha Optional de TipoEstadoResenha
      * @return Lista de reseñas publicadas por un Usuario
      * @throws ValidationException
      */
-    public List<ResenhaDto> verResenhasUsuario(Long idUsuario) throws ValidationException {
+    public List<ResenhaDto> verResenhasUsuario(Long idUsuario, Optional<TipoEstadoResenha> tipoEstadoResenha) throws ValidationException {
         var errores = new ArrayList<ErrorDto>();
         //Validar usuario existe
         var listaUsuarios = usuarioRepo.obtenerTodos();
@@ -216,12 +242,29 @@ public class ResenhaController {
         }
         var listaResenhas = resenhaRepo.obtenerTodos();
         var listaResenhasUsuario = resenhaRepo.obtenerTodasPorIdUsuario(idUsuario, listaResenhas);
+        List<ResenhaDto> listaResenhasDtoUsuario = List.of();
 
-        var listaResenhasDtoUsuario = listaResenhasUsuario.stream()
-                //Filtramos para mostrar solo las reseñas publicadas
-                .filter(r -> r.getEstadoResenha().equals(TipoEstadoResenha.PUBLICADA))
-                .map(resenha -> Mapper.mapaSimple(resenha))
-                .toList();
+        if (!tipoEstadoResenha.isPresent()) {
+            listaResenhasDtoUsuario = listaResenhasUsuario.stream()
+                    //Mostramos todas las reseñas publicadas
+                    .map(resenha -> Mapper.mapaSimple(resenha))
+                    .toList();
+
+        } else if (tipoEstadoResenha.get().equals(TipoEstadoResenha.PUBLICADA)) {
+            listaResenhasDtoUsuario = listaResenhasUsuario.stream()
+                    //Filtramos para mostrar solo las reseñas publicadas
+                    .filter(r -> r.getEstadoResenha().equals(TipoEstadoResenha.PUBLICADA))
+                    .map(resenha -> Mapper.mapaSimple(resenha))
+                    .toList();
+
+        } else if (tipoEstadoResenha.get().equals(TipoEstadoResenha.OCULTA)) {
+            listaResenhasDtoUsuario = listaResenhasUsuario.stream()
+                    //Filtramos para mostrar solo las reseñas ocultas
+                    .filter(r -> r.getEstadoResenha().equals(TipoEstadoResenha.OCULTA))
+                    .map(resenha -> Mapper.mapaSimple(resenha))
+                    .toList();
+
+        }
         return listaResenhasDtoUsuario;
     }
 

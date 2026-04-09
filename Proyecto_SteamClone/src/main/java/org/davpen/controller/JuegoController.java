@@ -207,11 +207,12 @@ public class JuegoController {
     public JuegoDto aplicarDescuento(Long id, int descuento) throws ValidationException {
 
         var errores = new ArrayList<ErrorDto>();
-        if (!juegoRepo.obtenerPorId(id).isPresent()) {
+        var juegoOpt = juegoRepo.obtenerPorId(id);
+        if (!juegoOpt.isPresent()) {
             errores.add(new ErrorDto("id", ErrorType.NO_ENCONTRADO));
             throw new ValidationException(errores);
         }
-        if (juegoRepo.obtenerPorId(id).get().getEstadoJuego() == TipoEstadoJuego.NO_DISPONIBLE) {
+        if (juegoOpt.get().getEstadoJuego() == TipoEstadoJuego.NO_DISPONIBLE) {
             errores.add(new ErrorDto("estado", ErrorType.NO_DISPONIBLE));
         }
         if (descuento < DESCUENTO_MIN) {
@@ -225,15 +226,15 @@ public class JuegoController {
             throw new ValidationException(errores);
         }
 
-        var juegoActual = juegoRepo.obtenerPorId(id);
-        var nuevoPrecio = juegoRepo.obtenerPorId(id).get().getPrecioBaseJuego()
-                - (juegoRepo.obtenerPorId(id).get().getPrecioBaseJuego() * descuento / 100);
+        var juegoActual = juegoOpt.get();
+        var nuevoPrecio = juegoActual.getPrecioBaseJuego()
+                - (juegoActual.getPrecioBaseJuego() * descuento / 100);
 
-        var juegoActualizadoForm = new JuegoForm(juegoActual.get().getTituloJuego(),
-                juegoActual.get().getDescripcionJuego(), juegoActual.get().getDesarrolladorJuego(),
-                juegoActual.get().getFechaLanzaJuego(), nuevoPrecio, descuento, juegoActual.get().getCategoriaJuego(),
-                juegoActual.get().getClasEdadJuego(), juegoActual.get().getIdiomasJuego(),
-                juegoActual.get().getEstadoJuego());
+        var juegoActualizadoForm = new JuegoForm(juegoActual.getTituloJuego(),
+                juegoActual.getDescripcionJuego(), juegoActual.getDesarrolladorJuego(),
+                juegoActual.getFechaLanzaJuego(), nuevoPrecio, descuento, juegoActual.getCategoriaJuego(),
+                juegoActual.getClasEdadJuego(), juegoActual.getIdiomasJuego(),
+                juegoActual.getEstadoJuego());
 
         var juegoActualizado = juegoRepo.actualizar(id, juegoActualizadoForm).orElse(null);
 
