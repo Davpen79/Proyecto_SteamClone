@@ -46,8 +46,7 @@ public class ResenhaController {
      */
     public ResenhaDto escribirResenha(ResenhaForm resenhaForm) throws ValidationException {
         //Validaciones
-        var errores = new ArrayList<ErrorDto>();
-        resenhaForm.validar();
+        var errores = resenhaForm.validar();
         //Validaciones modelo
         //usuario y juego existen
         var idUsuarioResenha = resenhaForm.getIdUsuarioResenha();
@@ -83,9 +82,12 @@ public class ResenhaController {
         }
 
         //crear reseña
-        var resenhaCreada = resenhaRepo.crear(resenhaForm).orElse(null);
+        var resenhaFormPublicada = new ResenhaForm(idUsuarioResenha,idJuegoResenha,resenhaForm.isRecomendacionResenha(),
+                resenhaForm.getTextoResenha(),resenhaForm.getTiempoJugadoResenha(), resenhaForm.getFechaPublicacionResenha(),
+                resenhaForm.getFechaUltiEdicResenha(),TipoEstadoResenha.PUBLICADA);
+        var resenhaPublicada = resenhaRepo.crear(resenhaFormPublicada).orElse(null);
 
-        return Mapper.mapaSimple(resenhaCreada);
+        return Mapper.mapaSimple(resenhaPublicada);
     }
 
     /**

@@ -11,6 +11,7 @@ import org.davpen.modelo.entity.CompraEntity;
 import org.davpen.modelo.entity.JuegoEntity;
 import org.davpen.modelo.entity.UsuarioEntity;
 import org.davpen.modelo.form.BibliotecaForm;
+import org.davpen.modelo.form.ErrorType;
 import org.davpen.repositorio.intefaces.IBibliotecaRepo;
 import org.davpen.repositorio.intefaces.ICompraRepo;
 import org.davpen.repositorio.intefaces.IJuegoRepo;
@@ -223,6 +224,20 @@ public class BibliotecaControllerTest {
     }
 
     @Test
+    public void testVerBibliotecaPersonal_UsuarioInvalido() throws ValidationException {
+        // Arrange
+        when(usuarioRepo.obtenerPorId(1L)).thenReturn(Optional.empty());
+
+        // Assert
+        var excepciones = assertThrows(ValidationException.class,
+                () -> bibliotecaController.verBibliotecaPersonal(1L, TipoOrden.ALFABETICO));
+        assertNotNull(excepciones.getErrores());
+        assertFalse(excepciones.getErrores().isEmpty());
+        assertEquals("id_usuario", excepciones.getErrores().get(0).getCampo());
+        assertEquals(ErrorType.NO_ENCONTRADO, excepciones.getErrores().get(0).getMensaje());
+    }
+
+    @Test
     public void testVerBibliotecaPersonal_OrdenAlfabetico() throws ValidationException {
         // Arrange
         when(usuarioRepo.obtenerPorId(1L)).thenReturn(Optional.of(usuarioValido));
@@ -277,7 +292,7 @@ public class BibliotecaControllerTest {
         assertNotNull(resultado);
         assertEquals(2, resultado.size());
         assertEquals(2L, resultado.getFirst().getIdJuegoBiblio());
-        assertEquals(LocalDateTime.of(2023, 1, 10,0,0),resultado.getFirst().getUltiFechaJuegoBiblio());
+        assertEquals(LocalDateTime.of(2023, 1, 10, 0, 0), resultado.getFirst().getUltiFechaJuegoBiblio());
     }
 
     @Test
@@ -299,7 +314,7 @@ public class BibliotecaControllerTest {
         assertNotNull(resultado);
         assertEquals(2, resultado.size());
         assertEquals(2L, resultado.getFirst().getIdJuegoBiblio());
-        assertEquals(LocalDate.of(2023, 1, 9),resultado.getFirst().getFechaCompraJuegoBiblio());
+        assertEquals(LocalDate.of(2023, 1, 9), resultado.getFirst().getFechaCompraJuegoBiblio());
     }
 
     @Test

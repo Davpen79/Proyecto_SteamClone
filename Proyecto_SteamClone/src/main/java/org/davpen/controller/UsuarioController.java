@@ -135,7 +135,8 @@ public class UsuarioController {
     /**
      * Añade saldo a la cuenta del usuario aplicando validaciones. Si hay errores, lanza ValidationException con la
      * lista de errores.
-     * @param id Identificador de Usuario
+     *
+     * @param id               Identificador de Usuario
      * @param cantidadAnhadida Saldo (double) a añadir a la cuenta
      * @return UsuarioDto con saldo actualizado
      * @throws ValidationException
@@ -198,8 +199,14 @@ public class UsuarioController {
                 TipoEstadoCuenta.ACTIVA));
 
         var salidaNombre2 = cuentaRepetida.getNombreCuentaUsuario();
-        System.out.println(salidaNombre1);
-        System.out.println(salidaNombre2);
+        System.out.println(cuenta1.getIdUsuario() + " " + salidaNombre1);
+        System.out.println(cuentaRepetida.getIdUsuario() + " " + salidaNombre2 + " " + cuentaRepetida.getSaldoUsuario());
+
+        c.anhadirSaldo(2L, 15d);
+        var cuentaActualizada = Mapper.mapaUsuarioCompleto(c.usuarioRepo.obtenerPorId(2L).get());
+        System.out.println(cuentaActualizada.getIdUsuario() + " " + cuentaActualizada.getNombreCuentaUsuario()
+                + " " + cuentaActualizada.getSaldoUsuario());
+
     }
 
 }

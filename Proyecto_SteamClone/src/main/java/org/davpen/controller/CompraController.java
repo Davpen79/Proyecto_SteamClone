@@ -54,13 +54,17 @@ public class CompraController {
         var errores = new ArrayList<ErrorDto>();
         //usuario existe y activo
         if (!usuarioRepo.obtenerPorId(idUsuario).isPresent()) {
-            errores.add(new ErrorDto("id", ErrorType.NO_ENCONTRADO));
+            errores.add(new ErrorDto("id_usuario", ErrorType.NO_ENCONTRADO));
             throw new ValidationException(errores);
         }
         if (!usuarioRepo.obtenerPorId(idUsuario).get().getEstadoCuentaUsuario().equals(TipoEstadoCuenta.ACTIVA)) {
             errores.add(new ErrorDto("estado_cuenta", ErrorType.CUENTA_INACTIVA));
         }
-        //juego comprable
+        //juego existe y comprable
+        if (!juegoRepo.obtenerPorId(idJuego).isPresent()){
+            errores.add(new ErrorDto("id_juego", ErrorType.NO_ENCONTRADO));
+            throw new ValidationException(errores);
+        }
         if (juegoRepo.obtenerPorId(idJuego).get().getEstadoJuego().equals(TipoEstadoJuego.NO_DISPONIBLE)) {
             errores.add(new ErrorDto("estado_juego", ErrorType.NO_DISPONIBLE));
         }
@@ -77,13 +81,10 @@ public class CompraController {
         var precioCompra = juegoRepo.obtenerPorId(idJuego).get().getPrecioBaseJuego();
         var descuentoCompra = juegoRepo.obtenerPorId(idJuego).get().getDescuentoActualJuego();
 
-        CompraForm compraForm = new CompraForm(idUsuario, idJuego, LocalDate.now(), metodoPago, precioCompra,
-                descuentoCompra, TipoEstadoCompra.COMPLETADA);
+        var compraForm = new CompraForm(idUsuario, idJuego, LocalDate.now(), metodoPago, precioCompra,
+                descuentoCompra, TipoEstadoCompra.PENDIENTE);
+
         var compraEfectuada = compraRepo.crear(compraForm).orElse(null);
-        var idCompraEfectuada = compraRepo.obtenerTodos().stream()
-                .filter(c -> c.getIdUsuarioCompra().equals(idUsuario))
-                .filter(c -> c.getIdJuegoCompra().equals(idJuego)).findFirst()
-                .get().getIdCompra();
 
         return Mapper.mapaCompraSimple(compraEfectuada);
     }
@@ -114,16 +115,14 @@ public class CompraController {
         var compraAProcesar = compraAProcesarOpt.get();
         var idUsuario = compraAProcesar.getIdUsuarioCompra();
         var usuarioCompra = usuarioRepo.obtenerPorId(idUsuario).get();
-        var idJuego = compraAProcesar.getIdJuegoCompra();
-        var juegoCompra = juegoRepo.obtenerPorId(idJuego).get();
-        var precioCompra = juegoCompra.getPrecioBaseJuego();
-        var descuentoCompra = juegoCompra.getDescuentoActualJuego();
+        var precioCompra = compraAProcesar.getPrecioBaseCompra();
+        var descuentoCompra = compraAProcesar.getDescuentoEnCompra();
         var precioFinal = precioCompra - (precioCompra * descuentoCompra / 100);
 
         IPlataformaPago plataformaPago;
         switch (metodoPago) {
             case CARTERA_STEAM:
-                plataformaPago = new PagoCarteraSteam(idUsuario, usuarioRepo);
+                plataformaPago = new PagoCarteraSteam(idUsuario, usuarioRepo, compraRepo);
                 break;
             case PAYPAL:
                 plataformaPago = new PagoPayPal();
@@ -138,7 +137,10 @@ public class CompraController {
                 errores.add(new ErrorDto("metodo_pago", ErrorType.NO_ENCONTRADO));
                 throw new ValidationException(errores);
         }
-        plataformaPago.procesarPago(compraAProcesar, usuarioCompra, precioFinal);
+        var pagoExitoso = plataformaPago.procesarPago(compraAProcesar, usuarioCompra, precioFinal);
+        if (!pagoExitoso){
+            throw new ValidationException(errores);
+        }
 
         return Mapper.mapaCompraSimple(compraAProcesar);
     }

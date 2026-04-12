@@ -76,7 +76,7 @@ public class CompraControllerTest {
         when(juegoRepo.obtenerPorId(1L)).thenReturn(Optional.of(juegoDisponible));
         when(bibliotecaRepo.obtenerTodos()).thenReturn(new ArrayList<>());
         when(compraRepo.crear(any())).thenReturn(Optional.of(compraEntity));
-        when(compraRepo.obtenerTodos()).thenReturn(List.of(compraEntity));
+        //when(compraRepo.obtenerTodos()).thenReturn(List.of(compraEntity));
 
         // Act
         CompraDto resultado = compraController.realizarCompra(1L, 1L, TipoMetodoPago.CARTERA_STEAM);
@@ -85,6 +85,29 @@ public class CompraControllerTest {
         assertNotNull(resultado);
         assertEquals(1L, resultado.getIdCompra());
         verify(compraRepo).crear(any());
+    }
+
+    @Test
+    public void testRealizarCompra_UsuarioNoExiste_ThrowsValidationException() throws ValidationException {
+        // Arrange
+        when(usuarioRepo.obtenerPorId(999L)).thenReturn(Optional.empty());
+
+        var exception = assertThrows(ValidationException.class, () -> compraController.realizarCompra(999L, 1L,
+                TipoMetodoPago.CARTERA_STEAM));
+        assertEquals("id_usuario", exception.getErrores().getFirst().getCampo());
+        assertEquals(ErrorType.NO_ENCONTRADO, exception.getErrores().getFirst().getMensaje());
+    }
+
+    @Test
+    public void testRealizarCompra_JuegoNoExiste_ThrowsValidationException() throws ValidationException {
+        // Arrange
+        when(usuarioRepo.obtenerPorId(1L)).thenReturn(Optional.of(usuarioActivo));
+        when(juegoRepo.obtenerPorId(999L)).thenReturn(Optional.empty());
+
+        var exception = assertThrows(ValidationException.class, () -> compraController.realizarCompra(1L, 999L,
+                TipoMetodoPago.CARTERA_STEAM));
+        assertEquals("id_juego", exception.getErrores().getFirst().getCampo());
+        assertEquals(ErrorType.NO_ENCONTRADO, exception.getErrores().getFirst().getMensaje());
     }
 
     @Test
@@ -262,7 +285,7 @@ public class CompraControllerTest {
 
         Long idCompra = 1L;
         when(compraRepo.obtenerPorId(idCompra)).thenReturn(Optional.of(compraEntity));
-        when(juegoRepo.obtenerPorId(1L)).thenReturn(Optional.of(juegoDisponible));
+        //when(juegoRepo.obtenerPorId(1L)).thenReturn(Optional.of(juegoDisponible));
         when(usuarioRepo.obtenerPorId(1L)).thenReturn(Optional.of(usuarioActivo));
 
         CompraDto expectedDto = new CompraDto(1L, 1L, Optional.empty(), 1L,

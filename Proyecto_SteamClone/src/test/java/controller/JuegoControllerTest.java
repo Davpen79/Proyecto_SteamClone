@@ -37,6 +37,7 @@ public class JuegoControllerTest {
     private JuegoEntity juego1;
     private JuegoEntity juego2;
     private JuegoEntity juego3;
+    private JuegoEntity juegoInvalido;
     private JuegoForm juegoForm;
 
     @BeforeEach
@@ -55,6 +56,12 @@ public class JuegoControllerTest {
                 LocalDate.of(2019, 5, 10), 0.00, 0, TipoCategoriaJuego.ESTRATEGIA,
                 TipoClasificacionEdades.PEGI_3, new ArrayList<>(List.of("Español", "Inglés")),
                 TipoEstadoJuego.NO_DISPONIBLE);
+
+        juegoInvalido = new JuegoEntity(4L, null, "juego generico", "gene Dev",
+                LocalDate.of(2019, 5, 10), 10.00, 0, TipoCategoriaJuego.ESTRATEGIA,
+                TipoClasificacionEdades.PEGI_3, new ArrayList<>(List.of("Español", "Inglés")),
+                TipoEstadoJuego.DISPONIBLE);
+
 
         juegoForm = new JuegoForm("New Game", "Descripcion nueva", "Developer",
                 LocalDate.of(2024, 1, 1), 29.99, 0, TipoCategoriaJuego.AVENTURA,
@@ -145,8 +152,6 @@ public class JuegoControllerTest {
 
     @Test
     public void testListaJuegosPorRangoPrecio_PrecioMinMayorQueMax_ThrowsException() {
-        // Arrange
-        //when(juegoRepo.obtenerTodos()).thenReturn(List.of(juego1, juego2, juego3));
 
         // Act & Assert
         assertThrows(IllegalArgumentException.class, () ->
@@ -267,6 +272,19 @@ public class JuegoControllerTest {
     }
 
     @Test
+    public void testListaCatalogoCompleto_ListaVacia() {
+        // Arrange
+        when(juegoRepo.obtenerTodos()).thenReturn(List.of());
+
+        // Act
+        List<JuegoDto> resultado = juegoController.listaCatalogoCompleto(TipoConsultaCatalogo.FECHA);
+
+        // Assert
+        assertNotNull(resultado);
+        assertEquals(0, resultado.size());
+    }
+
+    @Test
     public void testDetalleJuego_JuegoExistente() throws ValidationException {
         // Arrange
         when(juegoRepo.obtenerPorId(1L)).thenReturn(Optional.of(juego1));
@@ -329,15 +347,15 @@ public class JuegoControllerTest {
     }
 
     @Test
-    void aplicarDescuento_DatosValidos_RetornaJuegoDto() throws ValidationException {
-        when(juegoRepo.obtenerPorId(1L)).thenReturn(Optional.of(juego1));
+    void aplicarDescuento_IdInValido_ThrowsException() throws ValidationException {
 
-        when(juegoRepo.actualizar(eq(1L), any(JuegoForm.class)))
-                .thenReturn(Optional.of(juego1));
+        when(juegoRepo.obtenerPorId(5L)).thenReturn(Optional.empty());
 
-        JuegoDto resultado = juegoController.aplicarDescuento(1L, 10);
-
-        assertNotNull(resultado);
+        var excepciones = assertThrows(ValidationException.class, () -> juegoController.aplicarDescuento(5L, 10));
+        assertNotNull(excepciones.getErrores());
+        assertFalse(excepciones.getErrores().isEmpty());
+        assertEquals("id", excepciones.getErrores().get(0).getCampo());
+        assertEquals(ErrorType.NO_ENCONTRADO, excepciones.getErrores().get(0).getMensaje());
     }
 
     @Test
