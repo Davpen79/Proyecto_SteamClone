@@ -167,7 +167,7 @@ public class CompraControllerTest {
         when(compraRepo.obtenerPorId(1L)).thenReturn(Optional.of(compraEntity));
 
         // Act
-        CompraDto resultado = compraController.consultarHistorialCompras(1L, 1L);
+        CompraDto resultado = compraController.consultarCompra(1L, 1L);
 
         // Assert
         assertNotNull(resultado);
@@ -182,7 +182,7 @@ public class CompraControllerTest {
 
         // Act & Assert
         assertThrows(ValidationException.class, () ->
-                compraController.consultarHistorialCompras(999L, 1L));
+                compraController.consultarCompra(999L, 1L));
     }
 
     @Test
@@ -192,7 +192,7 @@ public class CompraControllerTest {
 
         // Act & Assert
         assertThrows(ValidationException.class, () ->
-                compraController.consultarHistorialCompras(1L, 999L));
+                compraController.consultarCompra(1L, 999L));
     }
 
     @Test

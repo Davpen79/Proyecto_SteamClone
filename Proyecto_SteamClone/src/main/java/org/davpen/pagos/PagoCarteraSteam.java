@@ -43,12 +43,6 @@ public class PagoCarteraSteam implements IPlataformaPago {
                     usuario.getAvatarUsuario(), nuevoSaldo, usuario.getEstadoCuentaUsuario());
             usuarioRepo.actualizar(idUsuario, usuarioActualizadoForm);
 
-            CompraForm compraActualizadaForm = new CompraForm(compra.getIdUsuarioCompra(), compra.getIdJuegoCompra(),
-                    compra.getFechaCompra(), compra.getTipoPagoCompra(), compra.getPrecioBaseCompra(),
-                    compra.getDescuentoEnCompra(), TipoEstadoCompra.COMPLETADA);
-
-            compraRepo.actualizar(compra.getIdCompra(), compraActualizadaForm);
-
             return true;
 
         } catch (ValidationException e) {

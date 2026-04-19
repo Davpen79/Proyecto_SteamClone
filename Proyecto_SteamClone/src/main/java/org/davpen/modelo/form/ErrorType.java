@@ -24,6 +24,7 @@ public enum ErrorType {
     PLAZO_SUPERADO("El plazo de devolución se ha superado"),
     TIEMPO_SUPERADO("El tiempo de devolucion se ha superado"),
     COMPRA_FALLIDA("La compra no se ha efectuado"),
+    COMPRA_COMPLETADA("La compra ya se completó"),
     RESENHA_NO_PUBLICADA("La reseña no se ha publicado"),
     SALDO_INSUFICIENTE("El saldo en cartera no es suficiente");
 

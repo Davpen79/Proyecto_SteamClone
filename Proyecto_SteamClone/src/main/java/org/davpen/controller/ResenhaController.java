@@ -199,6 +199,8 @@ public class ResenhaController {
         if (!tipoRecomendacion.isPresent()) {
 
             listaResenhasDtoJuego = listaResenhasJuego.stream()
+                    //filtramos para quedarnos solo con las reseñas que no esten ocultas
+                    .filter(r -> !r.getEstadoResenha().equals(TipoEstadoResenha.OCULTA))
                     //Ordenamos priorizando las reseñas mas recientes como mas utiles
                     .sorted(Comparator.comparing(ResenhaEntity::getFechaPublicacionResenha).reversed())
                     .map(resenha -> Mapper.mapaSimple(resenha))
@@ -206,6 +208,8 @@ public class ResenhaController {
 
         } else if (tipoRecomendacion.get().equals(TipoRecomendacionJuego.RECOMENDADO)) {
             listaResenhasDtoJuego = listaResenhasJuego.stream()
+                    //filtramos para quedarnos solo con las reseñas que no esten ocultas
+                    .filter(r -> !r.getEstadoResenha().equals(TipoEstadoResenha.OCULTA))
                     .filter(r -> r.isRecomendacionResenha())
                     .sorted(Comparator.comparing(ResenhaEntity::getFechaPublicacionResenha).reversed())
                     .map(resenha -> Mapper.mapaSimple(resenha))
@@ -213,6 +217,8 @@ public class ResenhaController {
 
         } else if (tipoRecomendacion.get().equals(TipoRecomendacionJuego.NO_RECOMENDADO)) {
             listaResenhasDtoJuego = listaResenhasJuego.stream()
+                    //filtramos para quedarnos solo con las reseñas que no esten ocultas
+                    .filter(r -> !r.getEstadoResenha().equals(TipoEstadoResenha.OCULTA))
                     .filter(r -> !r.isRecomendacionResenha())
                     .sorted(Comparator.comparing(ResenhaEntity::getFechaPublicacionResenha).reversed())
                     .map(resenha -> Mapper.mapaSimple(resenha))
