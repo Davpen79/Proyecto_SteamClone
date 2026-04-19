@@ -2,5 +2,5 @@ package org.davpen.enums;
 
 public enum TipoEstadoCompra {
 
-    COMPLETADA, REEMBOLSADA
+    PENDIENTE, COMPLETADA, REEMBOLSADA
 }

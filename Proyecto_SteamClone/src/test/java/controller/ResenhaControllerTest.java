@@ -8,6 +8,7 @@ import org.davpen.modelo.entity.BibliotecaEntity;
 import org.davpen.modelo.entity.JuegoEntity;
 import org.davpen.modelo.entity.ResenhaEntity;
 import org.davpen.modelo.entity.UsuarioEntity;
+import org.davpen.modelo.form.ErrorType;
 import org.davpen.modelo.form.ResenhaForm;
 import org.davpen.repositorio.intefaces.IBibliotecaRepo;
 import org.davpen.repositorio.intefaces.IJuegoRepo;
@@ -65,14 +66,17 @@ public class ResenhaControllerTest {
                 TipoClasificacionEdades.PEGI_16, new ArrayList<>(List.of("Español")), TipoEstadoJuego.DISPONIBLE);
 
         resenhaEntity = new ResenhaEntity(1L, 1L, 1L, true,
-                "Excelente juego", 20.5, LocalDate.of(2024, 3, 20),
+                "Excelente juego,Excelente juegoExcelente juegoExcelente juegoExcelente juegoExcelente juegoExcelente" +
+                        " juego", 20.5, LocalDate.of(2024, 3, 20),
                 null, TipoEstadoResenha.PUBLICADA);
 
         resenhaEntity2 = new ResenhaEntity(2L, 2L, 1L, false,
-                "Mal juego", 20.5, LocalDate.of(2024, 3, 22),
+                "Mal juego,Mal juegoMal juegoMal juegoMal juegoMal juegoMal juegoMal juegoMal juegoMal juego",
+                20.5, LocalDate.of(2024, 3, 22),
                 null, TipoEstadoResenha.PUBLICADA);
 
-        resenhaForm = new ResenhaForm(1L, 1L, true, "Excelente juego",
+        resenhaForm = new ResenhaForm(1L, 1L, true,
+                "Excelente juego,Excelente juego,Excelente juego,Excelente juego,Excelente juego",
                 20.5, LocalDate.of(2024, 3, 20), null, TipoEstadoResenha.PUBLICADA);
     }
 
@@ -94,6 +98,24 @@ public class ResenhaControllerTest {
     }
 
     @Test
+    public void testEscribirResena_DatosValidos_AssertResenhaPublicada() throws ValidationException {
+
+        var bibliotecaValida = new BibliotecaEntity(1L, 1L, 1L,
+                LocalDate.of(2023, 1, 1), 10.5,
+                LocalDateTime.of(2023, 1, 1, 0, 0), TipoEstadoInstalacion.INSTALADO);
+
+        when(usuarioRepo.obtenerPorId(1L)).thenReturn(Optional.of(usuario));
+        when(juegoRepo.obtenerPorId(1L)).thenReturn(Optional.of(juego));
+        when(bibliotecaRepo.obtenerTodos()).thenReturn(List.of(bibliotecaValida));
+        when(resenhaRepo.crear(any())).thenReturn(Optional.of(resenhaEntity));
+
+        ResenhaDto resultado = resenhaController.escribirResenha(resenhaForm);
+
+        assertNotNull(resultado);
+        assertEquals(TipoEstadoResenha.PUBLICADA, resultado.getEstadoResenha());
+    }
+
+    @Test
     public void testEscribirResena_UsuarioNoExiste_ThrowsValidationException() {
         // Arrange
         when(usuarioRepo.obtenerPorId(999L)).thenReturn(Optional.empty());
@@ -103,7 +125,42 @@ public class ResenhaControllerTest {
 
         // Act & Assert
         assertThrows(ValidationException.class, () ->
-            resenhaController.escribirResenha(formInvalido));
+                resenhaController.escribirResenha(formInvalido));
+    }
+
+    @Test
+    public void testEscribirResenha_TextoVacio_ThrowsValidationException() {
+
+        // Arrange
+        when(usuarioRepo.obtenerPorId(1L)).thenReturn(Optional.of(usuario));
+        when(juegoRepo.obtenerPorId(1L)).thenReturn(Optional.of(juego));
+
+        ResenhaForm formInvalido = new ResenhaForm(1L, 1L, true, "",
+                20.5, LocalDate.of(2024, 3, 20), LocalDate.now(), TipoEstadoResenha.PUBLICADA);
+
+        // Act & Assert
+        var exception = assertThrows(ValidationException.class, () ->
+                resenhaController.escribirResenha(formInvalido));
+        assertEquals(ErrorType.REQUERIDO, exception.getErrores().get(0).getMensaje());
+        assertEquals("texto_reseña", exception.getErrores().getFirst().getCampo());
+    }
+
+    @Test
+    public void testEscribirResenha_TextoDemasiadoGrande_ThrowsValidationException() {
+
+        // Arrange
+        when(usuarioRepo.obtenerPorId(1L)).thenReturn(Optional.of(usuario));
+        when(juegoRepo.obtenerPorId(1L)).thenReturn(Optional.of(juego));
+        var textoGigante = "A".repeat(8100);
+
+        ResenhaForm formInvalido = new ResenhaForm(1L, 1L, true, textoGigante,
+                20.5, LocalDate.of(2024, 3, 20), LocalDate.now(), TipoEstadoResenha.PUBLICADA);
+
+        // Act & Assert
+        var exception = assertThrows(ValidationException.class, () ->
+                resenhaController.escribirResenha(formInvalido));
+        assertEquals("texto_reseña", exception.getErrores().getFirst().getCampo());
+        assertEquals(ErrorType.DEMASIADO_LARGO, exception.getErrores().getFirst().getMensaje());
     }
 
     @Test
@@ -117,7 +174,7 @@ public class ResenhaControllerTest {
 
         // Act & Assert
         assertThrows(ValidationException.class, () ->
-            resenhaController.escribirResenha(formInvalido));
+                resenhaController.escribirResenha(formInvalido));
     }
 
     @Test
@@ -126,8 +183,8 @@ public class ResenhaControllerTest {
         var idResenha = 1L;
         var idUsuario = 1L;
         ResenhaEntity resenhaOculta = new ResenhaEntity(idResenha, 1L, 1L, true,
-                            "Excelente juego", 20.5, LocalDate.of(2024, 3, 20),
-                            null, TipoEstadoResenha.OCULTA);
+                "Excelente juego", 20.5, LocalDate.of(2024, 3, 20),
+                null, TipoEstadoResenha.OCULTA);
         when(resenhaRepo.obtenerPorId(idResenha)).thenReturn(Optional.of(resenhaEntity));
 
         List<ResenhaEntity> listaResenhas = new ArrayList<>();
@@ -161,7 +218,7 @@ public class ResenhaControllerTest {
 
         // Act & Assert
         assertThrows(ValidationException.class, () ->
-            resenhaController.ocultarResenha(999L, 1L));
+                resenhaController.ocultarResenha(999L, 1L));
     }
 
     @Test
@@ -173,7 +230,7 @@ public class ResenhaControllerTest {
 
         // Act & Assert
         assertThrows(ValidationException.class, () ->
-            resenhaController.ocultarResenha(1L, 999L));
+                resenhaController.ocultarResenha(1L, 999L));
     }
 
     @Test
@@ -187,7 +244,7 @@ public class ResenhaControllerTest {
 
         // Act & Assert
         assertThrows(ValidationException.class, () ->
-            resenhaController.ocultarResenha(1L, 1L));
+                resenhaController.ocultarResenha(1L, 1L));
     }
 
     @Test
@@ -213,7 +270,7 @@ public class ResenhaControllerTest {
 
         // Act & Assert
         assertThrows(ValidationException.class, () ->
-            resenhaController.eliminarResenha(999L, 1L));
+                resenhaController.eliminarResenha(999L, 1L));
     }
 
     @Test
@@ -225,7 +282,7 @@ public class ResenhaControllerTest {
 
         // Act & Assert
         assertThrows(ValidationException.class, () ->
-            resenhaController.eliminarResenha(1L, 999L));
+                resenhaController.eliminarResenha(1L, 999L));
     }
 
     @Test
@@ -251,7 +308,7 @@ public class ResenhaControllerTest {
 
         // Act & Assert
         assertThrows(ValidationException.class, () ->
-            resenhaController.verResenhasJuego(999L, Optional.empty()));
+                resenhaController.verResenhasJuego(999L, Optional.empty()));
     }
 
     @Test
@@ -326,7 +383,7 @@ public class ResenhaControllerTest {
 
         // Act & Assert
         assertThrows(ValidationException.class, () ->
-            resenhaController.verResenhasUsuario(999L,Optional.empty()));
+                resenhaController.verResenhasUsuario(999L, Optional.empty()));
     }
 
     @Test

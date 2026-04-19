@@ -11,8 +11,11 @@ import org.davpen.modelo.entity.JuegoEntity;
 import org.davpen.modelo.form.ErrorDto;
 import org.davpen.modelo.form.ErrorType;
 import org.davpen.modelo.form.JuegoForm;
+import org.davpen.repositorio.inmemory.JuegoRepoInMemory;
+import org.davpen.repositorio.inmemory.UsuarioRepoInMemory;
 import org.davpen.repositorio.intefaces.IJuegoRepo;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -246,7 +249,8 @@ public class JuegoController {
      * Valida que:
      * - El juego exista.
      * - El nuevo estado sea un valor válido dentro de TipoEstadoJuego.
-     * @param id Identificador del juego a actualizar.
+     *
+     * @param id          Identificador del juego a actualizar.
      * @param nuevoEstado TipoEstadoJuego a establecer.
      * @return JuegoDto con el juego actualizado.
      * @throws ValidationException Si existen errores de validación; la excepción contiene la lista de errores.
@@ -274,6 +278,25 @@ public class JuegoController {
         var juegoActualizado = juegoRepo.actualizar(id, juegoActualizadoForm).orElse(null);
 
         return Mapper.mapaJuegoCompleto(juegoActualizado);
+    }
+
+    static void main() throws ValidationException {
+
+        var c = new JuegoController(new JuegoRepoInMemory());
+
+        var listaCatalogo = c.listaCatalogoCompleto(TipoConsultaCatalogo.FECHA);
+
+        var juego1 = c.anhadirJuego(new JuegoForm("Elden Ring", "RPG de acción épico", "FromSoftware",
+                LocalDate.of(2022, 2, 25), 60d, 0, TipoCategoriaJuego.RPG,
+                TipoClasificacionEdades.PEGI_16, new ArrayList<>(List.of("Español", "Inglés")),
+                TipoEstadoJuego.DISPONIBLE));
+
+        System.out.println(listaCatalogo.size());
+
+        System.out.println(juego1.getTituloJuego() + " " + juego1.getPrecioBaseJuego() + " " + juego1.getDescuentoActualJuego());
+        System.out.println("======================");
+        var juegoAct = c.aplicarDescuento(juego1.getIdJuego(), 10);
+        System.out.println(juegoAct.getTituloJuego() + " " + juegoAct.getPrecioBaseJuego() + " " + juegoAct.getDescuentoActualJuego());
     }
 
 }

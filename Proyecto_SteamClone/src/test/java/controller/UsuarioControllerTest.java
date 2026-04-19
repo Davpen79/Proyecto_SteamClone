@@ -5,6 +5,7 @@ import org.davpen.enums.TipoEstadoCuenta;
 import org.davpen.excepciones.ValidationException;
 import org.davpen.modelo.dto.UsuarioDto;
 import org.davpen.modelo.entity.UsuarioEntity;
+import org.davpen.modelo.form.ErrorType;
 import org.davpen.modelo.form.UsuarioForm;
 import org.davpen.repositorio.intefaces.IUsuarioRepo;
 import org.junit.jupiter.api.BeforeEach;
@@ -61,6 +62,24 @@ public class UsuarioControllerTest {
         assertNotNull(resultado);
         assertEquals("usuario1", resultado.getNombreCuentaUsuario());
         verify(usuarioRepo).crear(any(UsuarioForm.class));
+    }
+
+    @Test
+    public void testRegistrarUsuario_UsuarioSinNombre_ThrowsValidationException() throws ValidationException {
+        // Arrange
+        var usuarioFormSinNombre = new UsuarioForm(null, "usuario1@mail.com",
+                "passUsuario1", "Usuario Uno", "España",
+                LocalDate.of(1980, 5, 5), LocalDate.of(2020, 1, 1),
+                "avatarUsuario1", 10.0, TipoEstadoCuenta.ACTIVA);
+
+
+        //UsuarioDto resultado = usuarioController.registrarUsuario(usuarioFormSinNombre);
+
+        // Act & Assert
+        var exception = assertThrows(ValidationException.class, () ->
+                usuarioController.registrarUsuario(usuarioFormSinNombre));
+        assertEquals("Nombre_Cuenta", exception.getErrores().getFirst().getCampo());
+        assertEquals(ErrorType.REQUERIDO, exception.getErrores().getFirst().getMensaje());
     }
 
     @Test

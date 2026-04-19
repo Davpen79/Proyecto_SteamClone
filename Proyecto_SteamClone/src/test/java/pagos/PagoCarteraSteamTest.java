@@ -10,6 +10,7 @@ import org.davpen.modelo.form.ErrorDto;
 import org.davpen.modelo.form.ErrorType;
 import org.davpen.modelo.form.UsuarioForm;
 import org.davpen.pagos.PagoCarteraSteam;
+import org.davpen.repositorio.intefaces.ICompraRepo;
 import org.davpen.repositorio.intefaces.IUsuarioRepo;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -28,11 +29,13 @@ public class PagoCarteraSteamTest {
     private IUsuarioRepo usuarioRepo;
     private Long idUsuario = 42L;
     private PagoCarteraSteam plataformaPago;
+    private ICompraRepo compraRepo;
 
     @BeforeEach
     void setUp() {
         usuarioRepo = mock(IUsuarioRepo.class);
-        plataformaPago = new PagoCarteraSteam(idUsuario, usuarioRepo);
+        compraRepo = mock(ICompraRepo.class);
+        plataformaPago = new PagoCarteraSteam(idUsuario, usuarioRepo, compraRepo);
     }
 
     @Test
