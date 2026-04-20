@@ -1,21 +1,33 @@
 package org.davpen.modelo.entity;
 
+import jakarta.persistence.*;
 import org.davpen.enums.TipoEstadoCompra;
 import org.davpen.enums.TipoMetodoPago;
 
 import java.time.LocalDate;
 import java.util.Objects;
 
+@Table(name = "compras")
+@Entity
 public class CompraEntity {
 
     //Atributos
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idCompra;
+    @Column(name = "id_usuario")
     private Long idUsuarioCompra;
+    @Column(name = "id_juego")
     private Long idJuegoCompra;
+    @Column(name = "fecha_compra")
     private LocalDate fechaCompra;
+    @Column(name = "tipo_pago")
     private TipoMetodoPago tipoPagoCompra;
+    @Column(name = "precio_base")
     private double precioBaseCompra;
+    @Column(name = "descuento")
     private int descuentoEnCompra;
+    @Column(name = "estado")
     private TipoEstadoCompra estadoCompra;
 
     //Constructor

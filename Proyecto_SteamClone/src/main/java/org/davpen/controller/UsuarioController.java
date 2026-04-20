@@ -10,6 +10,8 @@ import org.davpen.modelo.form.ErrorType;
 import org.davpen.modelo.form.UsuarioForm;
 import org.davpen.repositorio.inmemory.UsuarioRepoInMemory;
 import org.davpen.repositorio.intefaces.IUsuarioRepo;
+import org.davpen.transaction.HibernateTransactionManager;
+import org.davpen.transaction.ITransactionManager;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -21,9 +23,11 @@ public class UsuarioController {
     public static final double SALDO_MINIMO = 5.00;
     public static final double SALDO_MAXIMO = 500.00;
     private final IUsuarioRepo usuarioRepo;
+    public ITransactionManager transMgr;
 
-    public UsuarioController(IUsuarioRepo usuarioRepo) {
+    public UsuarioController(IUsuarioRepo usuarioRepo, ITransactionManager transMgr) {
         this.usuarioRepo = usuarioRepo;
+        this.transMgr = transMgr;
     }
 
     /**
@@ -37,27 +41,33 @@ public class UsuarioController {
     public UsuarioDto registrarUsuario(UsuarioForm usuarioForm) throws ValidationException {
         //validar formato
         var errores = usuarioForm.validar();
-        //validar modelo
-        //usuario unico
-        if (usuarioRepo.obtenerPorNombre(usuarioForm.getNombreCuentaUsuario()).isPresent()) {
-            errores.add(new ErrorDto("nombre", ErrorType.DUPLICADO));
-        }
-        //email unico
-        if (usuarioRepo.obtenerTodos().stream()
-                .anyMatch(u -> u.getEmailUsuario().equals(usuarioForm.getEmailUsuario()))) {
-            errores.add(new ErrorDto("email", ErrorType.DUPLICADO));
-        }
-        //comprobar pais existe en lista
-        if (!UsuarioRepoInMemory.listaPaises.contains(usuarioForm.getPaisUsuario())) {
-            errores.add(new ErrorDto("pais", ErrorType.NO_ENCONTRADO));
-        }
+
+        var usuario = transMgr.inTransaction(() -> {
+            //validar modelo
+            //usuario unico
+            if (usuarioRepo.obtenerPorNombre(usuarioForm.getNombreCuentaUsuario()).isPresent()) {
+                errores.add(new ErrorDto("nombre", ErrorType.DUPLICADO));
+            }
+            //email unico
+            if (usuarioRepo.obtenerTodos().stream()
+                    .anyMatch(u -> u.getEmailUsuario().equals(usuarioForm.getEmailUsuario()))) {
+                errores.add(new ErrorDto("email", ErrorType.DUPLICADO));
+            }
+            //comprobar pais existe en lista
+            if (!UsuarioRepoInMemory.listaPaises.contains(usuarioForm.getPaisUsuario())) {
+                errores.add(new ErrorDto("pais", ErrorType.NO_ENCONTRADO));
+            }
+
+            if (!errores.isEmpty()) {
+                throw new IllegalArgumentException();
+            }
+            var usuarioOpt = usuarioRepo.crear(usuarioForm);
+            return usuarioOpt.orElse(null);
+        });
 
         if (!errores.isEmpty()) {
             throw new ValidationException(errores);
         }
-
-        var usuarioOpt = usuarioRepo.crear(usuarioForm);
-        var usuario = usuarioOpt.orElse(null);
 
         return Mapper.mapaUsuarioCompleto(usuario);
     }
@@ -185,7 +195,8 @@ public class UsuarioController {
     }
 
     public static void main(String[] args) throws ValidationException {
-        var c = new UsuarioController(new UsuarioRepoInMemory());
+        ITransactionManager transactionManager = new HibernateTransactionManager();
+        var c = new UsuarioController(new UsuarioRepoInMemory(), transactionManager);//Crear UsuarioRepoHibernate
 
         var cuenta1 = c.registrarUsuario(new UsuarioForm("JugadorTotal", "usuario@email.com", "Aa1!nnnnnn", "Pedro",
                 "Portugal", LocalDate.of(1982, 10, 5), LocalDate.of(2024, 4, 6), "avatar", 5.00,

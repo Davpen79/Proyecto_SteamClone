@@ -1,26 +1,48 @@
 package org.davpen.modelo.entity;
 
+import org.davpen.dbconfig.HibernateUtil;
 import org.davpen.enums.TipoCategoriaJuego;
 import org.davpen.enums.TipoClasificacionEdades;
 import org.davpen.enums.TipoEstadoJuego;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Objects;
 
+@Table(name = "juegos")
+@Entity
 public class JuegoEntity {
 
     //Atributos
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idJuego;
+    @Column(name = "titulo")
     private String tituloJuego;
+    @Column(name = "descripcion")
     private String descripcionJuego;
+    @Column(name = "desarrollador")
     private String desarrolladorJuego;
+    @Column(name = "fecha_lanzamiento")
     private LocalDate fechaLanzaJuego;
+    @Column(name = "precio_base")
     private double precioBaseJuego;
+    @Column(name = "descuento_actual")
     private int descuentoActualJuego;
+    @Column(name = "categoria")
     private TipoCategoriaJuego categoriaJuego;
+    @Column(name = "clasificacion_edad")
     private TipoClasificacionEdades clasEdadJuego;
+    @Column(name = "idiomas")
     private ArrayList<String> idiomasJuego;
+    @Column(name = "estado")
     private TipoEstadoJuego estadoJuego;
 
     //Constructor
@@ -125,5 +147,11 @@ public class JuegoEntity {
                 ", idiomasJuego=" + idiomasJuego +
                 ", estadoJuego=" + estadoJuego +
                 '}';
+    }
+
+    static void main() {
+        var session = HibernateUtil.getSessionFactory().openSession();
+        session.close();
+
     }
 }

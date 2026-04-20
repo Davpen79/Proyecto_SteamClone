@@ -110,4 +110,21 @@ public class JuegoDto {
         return Objects.hash(idJuego, tituloJuego, descripcionJuego, desarrolladorJuego, fechaLanzaJuego,
                 precioBaseJuego, descuentoActualJuego, categoriaJuego, clasEdadJuego, idiomasJuego, estadoJuego);
     }
+
+    @Override
+    public String toString() {
+        return "JuegoDto{" +
+                "idJuego=" + idJuego +
+                ", tituloJuego='" + tituloJuego + '\'' +
+                ", descripcionJuego='" + descripcionJuego + '\'' +
+                ", desarrolladorJuego='" + desarrolladorJuego + '\'' +
+                ", fechaLanzaJuego=" + fechaLanzaJuego +
+                ", precioBaseJuego=" + precioBaseJuego +
+                ", descuentoActualJuego=" + descuentoActualJuego +
+                ", categoriaJuego=" + categoriaJuego +
+                ", clasEdadJuego=" + clasEdadJuego +
+                ", idiomasJuego=" + idiomasJuego +
+                ", estadoJuego=" + estadoJuego +
+                '}';
+    }
 }

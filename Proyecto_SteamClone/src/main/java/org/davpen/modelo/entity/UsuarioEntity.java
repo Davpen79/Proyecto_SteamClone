@@ -1,22 +1,38 @@
 package org.davpen.modelo.entity;
 
+import jakarta.persistence.*;
 import org.davpen.enums.TipoEstadoCuenta;
 
 import java.time.LocalDate;
 import java.util.Objects;
 
+@Table(name = "usuarios")
+@Entity
 public class UsuarioEntity {
+
     //Atributos
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idUsuario;
+    @Column(name = "nombre_cuenta")
     private String nombreCuentaUsuario;
+    @Column(name = "email")
     private String emailUsuario;
+    @Column(name = "password")
     private String passwordUsuario;
+    @Column(name = "nombre_real")
     private String nombreRealUsuario;
+    @Column(name = "pais")
     private String paisUsuario;
+    @Column(name = "fecha_nacimiento")
     private LocalDate fechaNacUsuario;
+    @Column(name = "fecha_registro")
     private LocalDate fechaRegUsuario;
+    @Column(name = "avatar")
     private String avatarUsuario;
+    @Column(name = "saldo")
     private double saldoUsuario;
+    @Column(name = "estado")
     private TipoEstadoCuenta estadoCuentaUsuario;
 
     //Constructor

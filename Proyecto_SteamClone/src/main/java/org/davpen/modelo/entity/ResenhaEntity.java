@@ -1,21 +1,34 @@
 package org.davpen.modelo.entity;
 
+import jakarta.persistence.*;
 import org.davpen.enums.TipoEstadoResenha;
 
 import java.time.LocalDate;
 import java.util.Objects;
 
+@Table(name = "reseñas")
+@Entity
 public class ResenhaEntity {
 
     //Atributos
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idResenha;
+    @Column(name = "id_usuario")
     private Long idUsuarioResenha;
+    @Column(name = "id_juego")
     private Long idJuegoResenha;
+    @Column(name = "recomendacion")
     private boolean recomendacionResenha;
+    @Column(name = "texto")
     private String textoResenha;
+    @Column(name = "tiempo_jugado")
     private double tiempoJugadoResenha;
+    @Column(name = "fecha_publicacion")
     private LocalDate fechaPublicacionResenha;
+    @Column(name = "fecha_edicion")
     private LocalDate fechaUltiEdicResenha;
+    @Column(name = "estado")
     private TipoEstadoResenha estadoResenha;
 
     //Constructor

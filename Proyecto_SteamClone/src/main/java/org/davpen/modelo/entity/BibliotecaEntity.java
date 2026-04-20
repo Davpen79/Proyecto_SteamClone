@@ -1,20 +1,31 @@
 package org.davpen.modelo.entity;
 
+import jakarta.persistence.*;
 import org.davpen.enums.TipoEstadoInstalacion;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
+@Table(name = "bibliotecas")
+@Entity
 public class BibliotecaEntity {
 
     //Atributos
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idBiblio;
+    @Column(name = "id_usuario")
     private Long idUsuarioBiblio;
+    @Column(name = "id_juego")
     private Long idJuegoBiblio;
+    @Column(name = "fecha_compra")
     private LocalDate fechaCompraJuegoBiblio;
+    @Column(name = "tiempo_jugado")
     private double tiempoJuegoBiblio;
+    @Column(name = "ultima_sesion")
     private LocalDateTime ultiFechaJuegoBiblio;
+    @Column(name = "estado")
     private TipoEstadoInstalacion estadoInstJuegoBiblio;
 
     //Constructor

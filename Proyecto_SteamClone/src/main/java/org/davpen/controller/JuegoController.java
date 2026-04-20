@@ -11,9 +11,13 @@ import org.davpen.modelo.entity.JuegoEntity;
 import org.davpen.modelo.form.ErrorDto;
 import org.davpen.modelo.form.ErrorType;
 import org.davpen.modelo.form.JuegoForm;
+import org.davpen.repositorio.hibernate.JuegoRepoHibernate;
 import org.davpen.repositorio.inmemory.JuegoRepoInMemory;
 import org.davpen.repositorio.inmemory.UsuarioRepoInMemory;
 import org.davpen.repositorio.intefaces.IJuegoRepo;
+import org.davpen.transaction.HibernateTransactionManager;
+import org.davpen.transaction.ISessionManager;
+import org.davpen.transaction.ITransactionManager;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -26,9 +30,11 @@ public class JuegoController {
     public static final int DESCUENTO_MIN = 0;
     public static final int DESCUENTO_MAX = 100;
     private final IJuegoRepo juegoRepo;
+    public ITransactionManager transMgr;
 
-    public JuegoController(IJuegoRepo juegoRepo) {
+    public JuegoController(IJuegoRepo juegoRepo, ITransactionManager transMgr) {
         this.juegoRepo = juegoRepo;
+        this.transMgr = transMgr;
     }
 
 
@@ -43,19 +49,26 @@ public class JuegoController {
     public JuegoDto anhadirJuego(JuegoForm juegoForm) throws ValidationException {
         //validar formato
         var errores = juegoForm.validar();
-        //validar modelo
-        //juego unico
-        if (juegoRepo.obtenerTodos().stream()
-                .anyMatch(j -> j.getTituloJuego().equals(juegoForm.getTituloJuego()))) {
-            errores.add(new ErrorDto("titulo", ErrorType.DUPLICADO));
-        }
+
+        var juego = transMgr.inTransaction(() -> {
+            //validar modelo
+            //juego unico
+            if (juegoRepo.obtenerTodos().stream()
+                    .anyMatch(j -> j.getTituloJuego().equals(juegoForm.getTituloJuego()))) {
+                errores.add(new ErrorDto("titulo", ErrorType.DUPLICADO));
+            }
+
+            if (!errores.isEmpty()) {
+                throw new IllegalArgumentException();
+            }
+
+            var juegoOpt = juegoRepo.crear(juegoForm);
+            return juegoOpt.orElse(null);
+        });
 
         if (!errores.isEmpty()) {
             throw new ValidationException(errores);
         }
-
-        var juegoOpt = juegoRepo.crear(juegoForm);
-        var juego = juegoOpt.orElse(null);
 
         return Mapper.mapaJuegoCompleto(juego);
     }
@@ -281,22 +294,19 @@ public class JuegoController {
     }
 
     static void main() throws ValidationException {
+        ITransactionManager transMgr = new HibernateTransactionManager();
+        var c = new JuegoController(new JuegoRepoHibernate((ISessionManager) transMgr), transMgr);
 
-        var c = new JuegoController(new JuegoRepoInMemory());
-
-        var listaCatalogo = c.listaCatalogoCompleto(TipoConsultaCatalogo.FECHA);
-
-        var juego1 = c.anhadirJuego(new JuegoForm("Elden Ring", "RPG de acción épico", "FromSoftware",
+        var juegoForm = new JuegoForm("Elden Ring", "RPG de acción épico", "FromSoftware",
                 LocalDate.of(2022, 2, 25), 60d, 0, TipoCategoriaJuego.RPG,
                 TipoClasificacionEdades.PEGI_16, new ArrayList<>(List.of("Español", "Inglés")),
-                TipoEstadoJuego.DISPONIBLE));
+                TipoEstadoJuego.DISPONIBLE);
 
-        System.out.println(listaCatalogo.size());
+        var juego1 = c.anhadirJuego(juegoForm);
+        var juego2 = c.anhadirJuego(juegoForm);
+        System.out.println(juego1);
+        System.out.println(juego2);
 
-        System.out.println(juego1.getTituloJuego() + " " + juego1.getPrecioBaseJuego() + " " + juego1.getDescuentoActualJuego());
-        System.out.println("======================");
-        var juegoAct = c.aplicarDescuento(juego1.getIdJuego(), 10);
-        System.out.println(juegoAct.getTituloJuego() + " " + juegoAct.getPrecioBaseJuego() + " " + juegoAct.getDescuentoActualJuego());
     }
 
 }
