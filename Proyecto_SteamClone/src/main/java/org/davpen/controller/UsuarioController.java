@@ -65,14 +65,14 @@ public class UsuarioController {
                 throw new IllegalArgumentException();
             }
             var usuarioOpt = usuarioRepo.crear(usuarioForm);
-            return usuarioOpt.orElse(null);
+            return usuarioOpt;
         });
 
         if (!errores.isEmpty()) {
             throw new ValidationException(errores);
         }
 
-        return Mapper.mapaUsuarioCompleto(usuario);
+        return Mapper.mapaUsuarioCompleto(usuario.orElse(null));
     }
 
     /**
@@ -211,11 +211,11 @@ public class UsuarioController {
                 TipoEstadoCuenta.ACTIVA);
 
         var usuario1 = c.registrarUsuario(usuario1Form);
-        System.out.println(usuario1.getNombreRealUsuario());
+        System.out.println(usuario1);
         var usuario2 = c.registrarUsuario(usuario2Form);
-        System.out.println(usuario2.getNombreRealUsuario());
+        System.out.println(usuario2);
         var usuarioRepetido = c.registrarUsuario(usuario1Form);
-        System.out.println(usuarioRepetido.getNombreRealUsuario());
+        System.out.println(usuarioRepetido);
 
     }
 

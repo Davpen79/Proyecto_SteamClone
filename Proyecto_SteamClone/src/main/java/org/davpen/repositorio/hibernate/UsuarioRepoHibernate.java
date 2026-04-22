@@ -84,7 +84,12 @@ public class UsuarioRepoHibernate implements IUsuarioRepo {
     @Override
     public Optional<UsuarioEntity> obtenerPorNombre(String nombreCuentaUsuario) {
         var session = sessionManager.getSession();
-        var usuario = session.find(UsuarioEntity.class, nombreCuentaUsuario);
-        return Optional.of(usuario);
+        CriteriaBuilder cb = session.getCriteriaBuilder();
+        CriteriaQuery<UsuarioEntity> cq = cb.createQuery(UsuarioEntity.class);
+        Root<UsuarioEntity> root = cq.from(UsuarioEntity.class);
+
+        cq.select(root).where(cb.equal(root.get("nombre_cuenta"), nombreCuentaUsuario));
+
+        return session.createQuery(cq).getResultStream().findFirst();
     }
 }

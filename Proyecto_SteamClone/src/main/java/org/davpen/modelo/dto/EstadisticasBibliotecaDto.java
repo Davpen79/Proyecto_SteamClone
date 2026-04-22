@@ -1,6 +1,7 @@
 package org.davpen.modelo.dto;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 public class EstadisticasBibliotecaDto {
@@ -54,5 +55,36 @@ public class EstadisticasBibliotecaDto {
 
     public List<JuegoDto> getJuegosNoJugados() {
         return juegosNoJugados;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        EstadisticasBibliotecaDto that = (EstadisticasBibliotecaDto) o;
+        return totalJuegos == that.totalJuegos && Double.compare(horasTotales, that.horasTotales) == 0
+                && Double.compare(valorTotalBiblioteca, that.valorTotalBiblioteca) == 0
+                && Objects.equals(idUsuario, that.idUsuario)
+                && Objects.equals(juegosInstalados, that.juegosInstalados)
+                && Objects.equals(juegoMasJugado, that.juegoMasJugado)
+                && Objects.equals(juegosNoJugados, that.juegosNoJugados);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(idUsuario, totalJuegos, horasTotales, juegosInstalados, juegoMasJugado,
+                valorTotalBiblioteca, juegosNoJugados);
+    }
+
+    @Override
+    public String toString() {
+        return "EstadisticasBibliotecaDto{" +
+                "idUsuario=" + idUsuario +
+                ", totalJuegos=" + totalJuegos +
+                ", horasTotales=" + horasTotales +
+                ", juegosInstalados=" + juegosInstalados +
+                ", juegoMasJugado=" + juegoMasJugado +
+                ", valorTotalBiblioteca=" + valorTotalBiblioteca +
+                ", juegosNoJugados=" + juegosNoJugados +
+                '}';
     }
 }

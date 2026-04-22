@@ -61,14 +61,14 @@ public class JuegoController {
             }
 
             var juegoOpt = juegoRepo.crear(juegoForm);
-            return juegoOpt.orElse(null);
+            return juegoOpt;//Linea corregida
         });
 
         if (!errores.isEmpty()) {
             throw new ValidationException(errores);
         }
 
-        return Mapper.mapaJuegoCompleto(juego);
+        return Mapper.mapaJuegoCompleto(juego.orElse(null));//corregir en todo_ el código
     }
 
     /**
@@ -303,11 +303,17 @@ public class JuegoController {
                 LocalDate.of(2020, 9, 17), 24.99, 10, TipoCategoriaJuego.ACCION,
                 TipoClasificacionEdades.PEGI_12, new ArrayList<>(List.of("Español", "Inglés")),
                 TipoEstadoJuego.DISPONIBLE);
+        var juego3Form = new JuegoForm( "Chess Game", "Ajedrez online", "Chess Dev",
+                LocalDate.of(2019, 5, 10), 0.00, 0, TipoCategoriaJuego.ESTRATEGIA,
+                TipoClasificacionEdades.PEGI_3, new ArrayList<>(List.of("Español", "Inglés")),
+                TipoEstadoJuego.NO_DISPONIBLE);
 
         var juego1 = c.anhadirJuego(juegoForm);
         System.out.println(juego1);
         var juego2 = c.anhadirJuego(juego2Form);
         System.out.println(juego2);
+        var juego3 = c.anhadirJuego(juego3Form);
+        System.out.println(juego3);
         var juegoRepetido = c.anhadirJuego(juegoForm);
         System.out.println(juegoRepetido);
 

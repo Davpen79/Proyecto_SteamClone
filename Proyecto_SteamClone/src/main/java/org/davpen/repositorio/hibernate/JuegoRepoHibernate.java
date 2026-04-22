@@ -67,9 +67,6 @@ public class JuegoRepoHibernate implements IJuegoRepo {
                     form.getDescuentoActualJuego(), form.getCategoriaJuego(), form.getClasEdadJuego(),
                     form.getIdiomasJuego(), form.getEstadoJuego()));
 
-            //LISTA_JUEGOS.removeIf(j -> j.getIdJuego().equals(id));
-            //LISTA_JUEGOS.add(juegoActualizado);
-
             return this.obtenerPorId(id);
         }
     }

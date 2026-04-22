@@ -169,9 +169,4 @@ public class JuegoEntity {
                 '}';
     }
 
-    static void main() {
-        var session = HibernateUtil.getSessionFactory().openSession();
-        session.close();
-
-    }
 }

@@ -108,4 +108,21 @@ public class ResenhaDto {
         return Objects.hash(idResenha, idUsuarioResenha, usuarioDto, idJuegoResenha, juegoDto, recomendacionResenha,
                 textoResenha, tiempoJugadoResenha, fechaPublicacionResenha, fechaUltiEdicResenha, estadoResenha);
     }
+
+    @Override
+    public String toString() {
+        return "ResenhaDto{" +
+                "idResenha=" + idResenha +
+                ", idUsuarioResenha=" + idUsuarioResenha +
+                ", usuarioDto=" + usuarioDto +
+                ", idJuegoResenha=" + idJuegoResenha +
+                ", juegoDto=" + juegoDto +
+                ", recomendacionResenha=" + recomendacionResenha +
+                ", textoResenha='" + textoResenha + '\'' +
+                ", tiempoJugadoResenha=" + tiempoJugadoResenha +
+                ", fechaPublicacionResenha=" + fechaPublicacionResenha +
+                ", fechaUltiEdicResenha=" + fechaUltiEdicResenha +
+                ", estadoResenha=" + estadoResenha +
+                '}';
+    }
 }
