@@ -29,10 +29,25 @@ public class BibliotecaEntity {
     private TipoEstadoInstalacion estadoInstJuegoBiblio;
 
     //Constructor
+    public BibliotecaEntity(){}
+
+    //Constructor
     public BibliotecaEntity(Long idBiblio, Long idUsuarioBiblio, Long idJuegoBiblio, LocalDate fechaCompraJuegoBiblio
             , double tiempoJuegoBiblio, LocalDateTime ultiFechaJuegoBiblio,
                             TipoEstadoInstalacion estadoInstJuegoBiblio) {
         this.idBiblio = idBiblio;
+        this.idUsuarioBiblio = idUsuarioBiblio;
+        this.idJuegoBiblio = idJuegoBiblio;
+        this.fechaCompraJuegoBiblio = fechaCompraJuegoBiblio;
+        this.tiempoJuegoBiblio = tiempoJuegoBiblio;
+        this.ultiFechaJuegoBiblio = ultiFechaJuegoBiblio;
+        this.estadoInstJuegoBiblio = estadoInstJuegoBiblio;
+    }
+
+    //Constructor
+    public BibliotecaEntity(Long idUsuarioBiblio, Long idJuegoBiblio, LocalDate fechaCompraJuegoBiblio
+            , double tiempoJuegoBiblio, LocalDateTime ultiFechaJuegoBiblio,
+                            TipoEstadoInstalacion estadoInstJuegoBiblio) {
         this.idUsuarioBiblio = idUsuarioBiblio;
         this.idJuegoBiblio = idJuegoBiblio;
         this.fechaCompraJuegoBiblio = fechaCompraJuegoBiblio;

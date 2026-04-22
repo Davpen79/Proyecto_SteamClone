@@ -3,7 +3,7 @@ package org.davpen.repositorio.inmemory;
 import org.davpen.enums.TipoEstadoCuenta;
 import org.davpen.modelo.entity.UsuarioEntity;
 import org.davpen.modelo.form.UsuarioForm;
-import org.davpen.repositorio.intefaces.IUsuarioRepo;
+import org.davpen.repositorio.interfaces.IUsuarioRepo;
 
 import java.time.LocalDate;
 import java.util.ArrayList;

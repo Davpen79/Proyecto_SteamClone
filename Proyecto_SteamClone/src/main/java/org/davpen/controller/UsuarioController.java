@@ -8,9 +8,12 @@ import org.davpen.modelo.entity.UsuarioEntity;
 import org.davpen.modelo.form.ErrorDto;
 import org.davpen.modelo.form.ErrorType;
 import org.davpen.modelo.form.UsuarioForm;
+import org.davpen.repositorio.hibernate.JuegoRepoHibernate;
+import org.davpen.repositorio.hibernate.UsuarioRepoHibernate;
 import org.davpen.repositorio.inmemory.UsuarioRepoInMemory;
-import org.davpen.repositorio.intefaces.IUsuarioRepo;
+import org.davpen.repositorio.interfaces.IUsuarioRepo;
 import org.davpen.transaction.HibernateTransactionManager;
+import org.davpen.transaction.ISessionManager;
 import org.davpen.transaction.ITransactionManager;
 
 import java.time.LocalDate;
@@ -195,28 +198,24 @@ public class UsuarioController {
     }
 
     public static void main(String[] args) throws ValidationException {
-        ITransactionManager transactionManager = new HibernateTransactionManager();
-        var c = new UsuarioController(new UsuarioRepoInMemory(), transactionManager);//Crear UsuarioRepoHibernate
+        ITransactionManager transMgr = new HibernateTransactionManager();
+        var c = new UsuarioController(new UsuarioRepoHibernate((ISessionManager) transMgr), transMgr);
 
-        var cuenta1 = c.registrarUsuario(new UsuarioForm("JugadorTotal", "usuario@email.com", "Aa1!nnnnnn", "Pedro",
+        var usuario1Form = new UsuarioForm("JugadorTotal", "usuario@email.com", "Aa1!nnnnnn", "Pedro",
                 "Portugal", LocalDate.of(1982, 10, 5), LocalDate.of(2024, 4, 6), "avatar", 5.00,
-                TipoEstadoCuenta.ACTIVA));
+                TipoEstadoCuenta.ACTIVA);
 
-        var salidaNombre1 = cuenta1.getNombreCuentaUsuario();
-
-        var cuentaRepetida = c.registrarUsuario(new UsuarioForm("JugadorBasico", "usuario2@email.com", "Ab1!nnnnnn",
+        var usuario2Form = new UsuarioForm("JugadorBasico", "usuario2@email.com", "Ab1!nnnnnn",
                 "Paco",
                 "Portugal", LocalDate.of(1982, 11, 5), LocalDate.of(2024, 5, 6), "avatar", 5.00,
-                TipoEstadoCuenta.ACTIVA));
+                TipoEstadoCuenta.ACTIVA);
 
-        var salidaNombre2 = cuentaRepetida.getNombreCuentaUsuario();
-        System.out.println(cuenta1.getIdUsuario() + " " + salidaNombre1);
-        System.out.println(cuentaRepetida.getIdUsuario() + " " + salidaNombre2 + " " + cuentaRepetida.getSaldoUsuario());
-
-        c.anhadirSaldo(2L, 15d);
-        var cuentaActualizada = Mapper.mapaUsuarioCompleto(c.usuarioRepo.obtenerPorId(2L).get());
-        System.out.println(cuentaActualizada.getIdUsuario() + " " + cuentaActualizada.getNombreCuentaUsuario()
-                + " " + cuentaActualizada.getSaldoUsuario());
+        var usuario1 = c.registrarUsuario(usuario1Form);
+        System.out.println(usuario1.getNombreRealUsuario());
+        var usuario2 = c.registrarUsuario(usuario2Form);
+        System.out.println(usuario2.getNombreRealUsuario());
+        var usuarioRepetido = c.registrarUsuario(usuario1Form);
+        System.out.println(usuarioRepetido.getNombreRealUsuario());
 
     }
 

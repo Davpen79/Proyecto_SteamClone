@@ -12,9 +12,7 @@ import org.davpen.modelo.form.ErrorDto;
 import org.davpen.modelo.form.ErrorType;
 import org.davpen.modelo.form.JuegoForm;
 import org.davpen.repositorio.hibernate.JuegoRepoHibernate;
-import org.davpen.repositorio.inmemory.JuegoRepoInMemory;
-import org.davpen.repositorio.inmemory.UsuarioRepoInMemory;
-import org.davpen.repositorio.intefaces.IJuegoRepo;
+import org.davpen.repositorio.interfaces.IJuegoRepo;
 import org.davpen.transaction.HibernateTransactionManager;
 import org.davpen.transaction.ISessionManager;
 import org.davpen.transaction.ITransactionManager;
@@ -301,11 +299,17 @@ public class JuegoController {
                 LocalDate.of(2022, 2, 25), 60d, 0, TipoCategoriaJuego.RPG,
                 TipoClasificacionEdades.PEGI_16, new ArrayList<>(List.of("Español", "Inglés")),
                 TipoEstadoJuego.DISPONIBLE);
+        var juego2Form = new JuegoForm("Hades", "Roguelike indie", "Supergiant Games",
+                LocalDate.of(2020, 9, 17), 24.99, 10, TipoCategoriaJuego.ACCION,
+                TipoClasificacionEdades.PEGI_12, new ArrayList<>(List.of("Español", "Inglés")),
+                TipoEstadoJuego.DISPONIBLE);
 
         var juego1 = c.anhadirJuego(juegoForm);
-        var juego2 = c.anhadirJuego(juegoForm);
         System.out.println(juego1);
+        var juego2 = c.anhadirJuego(juego2Form);
         System.out.println(juego2);
+        var juegoRepetido = c.anhadirJuego(juegoForm);
+        System.out.println(juegoRepetido);
 
     }
 

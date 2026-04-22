@@ -1,4 +1,4 @@
-package org.davpen.repositorio.intefaces;
+package org.davpen.repositorio.interfaces;
 
 //Definición de una interfaz genérica para operaciones CRUD (Crear, Leer, Actualizar, Eliminar).
 //E representa la entidad, F el DTO (Data Transfer Object) y ID el tipo del identificador de la entidad.

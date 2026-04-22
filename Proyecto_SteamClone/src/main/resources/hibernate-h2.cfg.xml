@@ -22,5 +22,9 @@
 
         <!-- Entidades mapeadas -->
         <mapping class="org.davpen.modelo.entity.JuegoEntity"/>
+        <mapping class="org.davpen.modelo.entity.UsuarioEntity"/>
+        <mapping class="org.davpen.modelo.entity.CompraEntity"/>
+        <mapping class="org.davpen.modelo.entity.BibliotecaEntity"/>
+        <mapping class="org.davpen.modelo.entity.ResenhaEntity"/>
     </session-factory>
 </hibernate-configuration>

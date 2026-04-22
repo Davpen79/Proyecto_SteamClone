@@ -10,10 +10,10 @@ import org.davpen.modelo.entity.BibliotecaEntity;
 import org.davpen.modelo.form.BibliotecaForm;
 import org.davpen.modelo.form.ErrorDto;
 import org.davpen.modelo.form.ErrorType;
-import org.davpen.repositorio.intefaces.IBibliotecaRepo;
-import org.davpen.repositorio.intefaces.ICompraRepo;
-import org.davpen.repositorio.intefaces.IJuegoRepo;
-import org.davpen.repositorio.intefaces.IUsuarioRepo;
+import org.davpen.repositorio.interfaces.IBibliotecaRepo;
+import org.davpen.repositorio.interfaces.ICompraRepo;
+import org.davpen.repositorio.interfaces.IJuegoRepo;
+import org.davpen.repositorio.interfaces.IUsuarioRepo;
 
 import java.time.LocalDate;
 import java.util.ArrayList;

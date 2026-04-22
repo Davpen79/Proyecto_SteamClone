@@ -32,10 +32,27 @@ public class ResenhaEntity {
     private TipoEstadoResenha estadoResenha;
 
     //Constructor
+    public ResenhaEntity(){}
+
+    //Constructor
     public ResenhaEntity(Long idResenha, Long idUsuarioResenha, Long idJuegoResenha, boolean recomendacionResenha,
                          String textoResenha, double tiempoJugadoResenha, LocalDate fechaPublicacionResenha,
                          LocalDate fechaUltiEdicResenha, TipoEstadoResenha estadoResenha) {
         this.idResenha = idResenha;
+        this.idUsuarioResenha = idUsuarioResenha;
+        this.idJuegoResenha = idJuegoResenha;
+        this.recomendacionResenha = recomendacionResenha;
+        this.textoResenha = textoResenha;
+        this.tiempoJugadoResenha = tiempoJugadoResenha;
+        this.fechaPublicacionResenha = fechaPublicacionResenha;
+        this.fechaUltiEdicResenha = fechaUltiEdicResenha;
+        this.estadoResenha = estadoResenha;
+    }
+
+    //Constructor
+    public ResenhaEntity(Long idUsuarioResenha, Long idJuegoResenha, boolean recomendacionResenha,
+                         String textoResenha, double tiempoJugadoResenha, LocalDate fechaPublicacionResenha,
+                         LocalDate fechaUltiEdicResenha, TipoEstadoResenha estadoResenha) {
         this.idUsuarioResenha = idUsuarioResenha;
         this.idJuegoResenha = idJuegoResenha;
         this.recomendacionResenha = recomendacionResenha;

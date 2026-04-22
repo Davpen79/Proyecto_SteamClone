@@ -9,10 +9,10 @@ import org.davpen.modelo.entity.ResenhaEntity;
 import org.davpen.modelo.form.ErrorDto;
 import org.davpen.modelo.form.ErrorType;
 import org.davpen.modelo.form.ResenhaForm;
-import org.davpen.repositorio.intefaces.IBibliotecaRepo;
-import org.davpen.repositorio.intefaces.IJuegoRepo;
-import org.davpen.repositorio.intefaces.IResenhaRepo;
-import org.davpen.repositorio.intefaces.IUsuarioRepo;
+import org.davpen.repositorio.interfaces.IBibliotecaRepo;
+import org.davpen.repositorio.interfaces.IJuegoRepo;
+import org.davpen.repositorio.interfaces.IResenhaRepo;
+import org.davpen.repositorio.interfaces.IUsuarioRepo;
 
 import java.util.ArrayList;
 import java.util.Comparator;

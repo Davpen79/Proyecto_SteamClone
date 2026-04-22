@@ -46,6 +46,9 @@ public class JuegoEntity {
     private TipoEstadoJuego estadoJuego;
 
     //Constructor
+    public JuegoEntity(){}
+
+    //Constructor
     public JuegoEntity(Long idJuego, String tituloJuego, String descripcionJuego, String desarrolladorJuego,
                        LocalDate fechaLanzaJuego, double precioBaseJuego, int descuentoActualJuego,
                        TipoCategoriaJuego categoriaJuego, TipoClasificacionEdades clasEdadJuego,
@@ -63,6 +66,23 @@ public class JuegoEntity {
         this.estadoJuego = estadoJuego;
     }
 
+
+    //Constructor
+    public JuegoEntity( String tituloJuego, String descripcionJuego, String desarrolladorJuego,
+                       LocalDate fechaLanzaJuego, double precioBaseJuego, int descuentoActualJuego,
+                       TipoCategoriaJuego categoriaJuego, TipoClasificacionEdades clasEdadJuego,
+                       ArrayList<String> idiomasJuego, TipoEstadoJuego estadoJuego) {
+        this.tituloJuego = tituloJuego;
+        this.descripcionJuego = descripcionJuego;
+        this.desarrolladorJuego = desarrolladorJuego;
+        this.fechaLanzaJuego = fechaLanzaJuego;
+        this.precioBaseJuego = precioBaseJuego;
+        this.descuentoActualJuego = descuentoActualJuego;
+        this.categoriaJuego = categoriaJuego;
+        this.clasEdadJuego = clasEdadJuego;
+        this.idiomasJuego = idiomasJuego;
+        this.estadoJuego = estadoJuego;
+    }
     //Getters
 
     public Long getIdJuego() {

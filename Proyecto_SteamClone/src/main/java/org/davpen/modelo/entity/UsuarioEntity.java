@@ -36,11 +36,31 @@ public class UsuarioEntity {
     private TipoEstadoCuenta estadoCuentaUsuario;
 
     //Constructor
+    public UsuarioEntity(){}
+
+    //Constructor
     public UsuarioEntity(Long idUsuario, String nombreCuentaUsuario, String emailUsuario, String passwordUsuario,
                          String nombreRealUsuario, String paisUsuario, LocalDate fechaNacUsuario,
                          LocalDate fechaRegUsuario, String avatarUsuario, double saldoUsuario,
                          TipoEstadoCuenta estadoCuentaUsuario) {
         this.idUsuario = idUsuario;
+        this.nombreCuentaUsuario = nombreCuentaUsuario;
+        this.emailUsuario = emailUsuario;
+        this.passwordUsuario = passwordUsuario;
+        this.nombreRealUsuario = nombreRealUsuario;
+        this.paisUsuario = paisUsuario;
+        this.fechaNacUsuario = fechaNacUsuario;
+        this.fechaRegUsuario = fechaRegUsuario;
+        this.avatarUsuario = avatarUsuario;
+        this.saldoUsuario = saldoUsuario;
+        this.estadoCuentaUsuario = estadoCuentaUsuario;
+    }
+
+    //Constructor
+    public UsuarioEntity(String nombreCuentaUsuario, String emailUsuario, String passwordUsuario,
+                         String nombreRealUsuario, String paisUsuario, LocalDate fechaNacUsuario,
+                         LocalDate fechaRegUsuario, String avatarUsuario, double saldoUsuario,
+                         TipoEstadoCuenta estadoCuentaUsuario) {
         this.nombreCuentaUsuario = nombreCuentaUsuario;
         this.emailUsuario = emailUsuario;
         this.passwordUsuario = passwordUsuario;

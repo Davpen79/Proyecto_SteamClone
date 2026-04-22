@@ -31,10 +31,26 @@ public class CompraEntity {
     private TipoEstadoCompra estadoCompra;
 
     //Constructor
+    public CompraEntity(){}
+
+    //Constructor
     public CompraEntity(Long idCompra, Long idUsuarioCompra, Long idJuegoCompra, LocalDate fechaCompra,
                         TipoMetodoPago tipoPagoCompra, double precioBaseCompra, int descuentoEnCompra,
                         TipoEstadoCompra estadoCompra) {
         this.idCompra = idCompra;
+        this.idUsuarioCompra = idUsuarioCompra;
+        this.idJuegoCompra = idJuegoCompra;
+        this.fechaCompra = fechaCompra;
+        this.tipoPagoCompra = tipoPagoCompra;
+        this.precioBaseCompra = precioBaseCompra;
+        this.descuentoEnCompra = descuentoEnCompra;
+        this.estadoCompra = estadoCompra;
+    }
+
+    //Constructor
+    public CompraEntity(Long idUsuarioCompra, Long idJuegoCompra, LocalDate fechaCompra,
+                        TipoMetodoPago tipoPagoCompra, double precioBaseCompra, int descuentoEnCompra,
+                        TipoEstadoCompra estadoCompra) {
         this.idUsuarioCompra = idUsuarioCompra;
         this.idJuegoCompra = idJuegoCompra;
         this.fechaCompra = fechaCompra;

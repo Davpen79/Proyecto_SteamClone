@@ -7,7 +7,7 @@ import org.davpen.modelo.dto.JuegoDto;
 import org.davpen.modelo.entity.JuegoEntity;
 import org.davpen.modelo.form.ErrorType;
 import org.davpen.modelo.form.JuegoForm;
-import org.davpen.repositorio.intefaces.IJuegoRepo;
+import org.davpen.repositorio.interfaces.IJuegoRepo;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
