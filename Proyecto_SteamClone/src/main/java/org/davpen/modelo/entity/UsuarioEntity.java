@@ -14,7 +14,7 @@ public class UsuarioEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idUsuario;
-    @Column(name = "nombre_cuenta")
+    @Column(name = "nombreCuentaUsuario")
     private String nombreCuentaUsuario;
     @Column(name = "email")
     private String emailUsuario;

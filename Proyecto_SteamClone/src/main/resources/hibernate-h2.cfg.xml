@@ -6,7 +6,7 @@
     <session-factory>
         <!-- Conexión (datos de docker-compose.yml) -->
         <property name="hibernate.connection.driver_class">org.h2.Driver</property>
-        <property name="hibernate.connection.url">jdbc:h2:file:./data/steamdb2;AUTO_SERVER=TRUE</property>
+        <property name="hibernate.connection.url">jdbc:h2:file:./data/steamdb;AUTO_SERVER=TRUE</property>
         <property name="hibernate.connection.username">sa</property>
         <property name="hibernate.connection.password"></property>
 

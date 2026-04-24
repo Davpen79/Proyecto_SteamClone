@@ -14,10 +14,17 @@ import org.davpen.modelo.form.ErrorDto;
 import org.davpen.modelo.form.ErrorType;
 import org.davpen.modelo.form.UsuarioForm;
 import org.davpen.pagos.*;
+import org.davpen.repositorio.hibernate.BibliotecaRepoHibernate;
+import org.davpen.repositorio.hibernate.CompraRepoHibernate;
+import org.davpen.repositorio.hibernate.JuegoRepoHibernate;
+import org.davpen.repositorio.hibernate.UsuarioRepoHibernate;
 import org.davpen.repositorio.interfaces.IBibliotecaRepo;
 import org.davpen.repositorio.interfaces.ICompraRepo;
 import org.davpen.repositorio.interfaces.IJuegoRepo;
 import org.davpen.repositorio.interfaces.IUsuarioRepo;
+import org.davpen.transaction.HibernateTransactionManager;
+import org.davpen.transaction.ISessionManager;
+import org.davpen.transaction.ITransactionManager;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -31,13 +38,15 @@ public class CompraController {
     private final IUsuarioRepo usuarioRepo;
     private final IJuegoRepo juegoRepo;
     private final IBibliotecaRepo bibliotecaRepo;
+    public ITransactionManager transMgr;
 
     public CompraController(ICompraRepo compraRepo, IUsuarioRepo usuarioRepo, IJuegoRepo juegoRepo,
-                            IBibliotecaRepo bibliotecaRepo) {
+                            IBibliotecaRepo bibliotecaRepo, ITransactionManager transMgr) {
         this.compraRepo = compraRepo;
         this.usuarioRepo = usuarioRepo;
         this.juegoRepo = juegoRepo;
         this.bibliotecaRepo = bibliotecaRepo;
+        this.transMgr = transMgr;
     }
 
     /**
@@ -54,49 +63,58 @@ public class CompraController {
     public CompraDto realizarCompra(Long idUsuario, Long idJuego, TipoMetodoPago metodoPago) throws ValidationException {
         //Validar
         var errores = new ArrayList<ErrorDto>();
-        //usuario existe y activo
-        if (!usuarioRepo.obtenerPorId(idUsuario).isPresent()) {
-            errores.add(new ErrorDto("id_usuario", ErrorType.NO_ENCONTRADO));
-            throw new ValidationException(errores);
-        }
-        if (!usuarioRepo.obtenerPorId(idUsuario).get().getEstadoCuentaUsuario().equals(TipoEstadoCuenta.ACTIVA)) {
-            errores.add(new ErrorDto("estado_cuenta", ErrorType.CUENTA_INACTIVA));
-        }
-        //juego existe y comprable
-        if (!juegoRepo.obtenerPorId(idJuego).isPresent()) {
-            errores.add(new ErrorDto("id_juego", ErrorType.NO_ENCONTRADO));
-            throw new ValidationException(errores);
-        }
-        if (juegoRepo.obtenerPorId(idJuego).get().getEstadoJuego().equals(TipoEstadoJuego.NO_DISPONIBLE)) {
-            errores.add(new ErrorDto("estado_juego", ErrorType.NO_DISPONIBLE));
-        }
-        //juego duplicado
-        if (bibliotecaRepo.obtenerTodos().stream()
-                .filter(b -> b.getIdUsuarioBiblio().equals(idUsuario))
-                .anyMatch(b -> b.getIdJuegoBiblio().equals(idJuego))) {
-            errores.add(new ErrorDto("id_juego", ErrorType.DUPLICADO));
-        }
-        //Comprobar Descuento
-        var descuentoCompra = juegoRepo.obtenerPorId(idJuego).get().getDescuentoActualJuego();
-        if (descuentoCompra > DESCUENTO_MAX){
-            errores.add(new ErrorDto("descuento", ErrorType.VALOR_DEMASIADO_ALTO));
-        }
-        if (descuentoCompra < DESCUENTO_MIN){
-            errores.add(new ErrorDto("descuento",ErrorType.VALOR_NEGATIVO));
-        }
+
+        var compra = transMgr.inTransaction(() -> {
+            //usuario existe y activo
+            if (!usuarioRepo.obtenerPorId(idUsuario).isPresent()) {
+                errores.add(new ErrorDto("id_usuario", ErrorType.NO_ENCONTRADO));
+                throw new ValidationException(errores);
+            }
+            if (!usuarioRepo.obtenerPorId(idUsuario).get().getEstadoCuentaUsuario().equals(TipoEstadoCuenta.ACTIVA)) {
+                errores.add(new ErrorDto("estado_cuenta", ErrorType.CUENTA_INACTIVA));
+            }
+            //juego existe y comprable
+            if (!juegoRepo.obtenerPorId(idJuego).isPresent()) {
+                errores.add(new ErrorDto("id_juego", ErrorType.NO_ENCONTRADO));
+                throw new ValidationException(errores);
+            }
+            if (juegoRepo.obtenerPorId(idJuego).get().getEstadoJuego().equals(TipoEstadoJuego.NO_DISPONIBLE)) {
+                errores.add(new ErrorDto("estado_juego", ErrorType.NO_DISPONIBLE));
+            }
+            //juego duplicado
+            if (bibliotecaRepo.obtenerTodos().stream()
+                    .filter(b -> b.getIdUsuarioBiblio().equals(idUsuario))
+                    .anyMatch(b -> b.getIdJuegoBiblio().equals(idJuego))) {
+                errores.add(new ErrorDto("id_juego", ErrorType.DUPLICADO));
+            }
+            //Comprobar Descuento
+            var descuentoCompra = juegoRepo.obtenerPorId(idJuego).get().getDescuentoActualJuego();
+            if (descuentoCompra > DESCUENTO_MAX) {
+                errores.add(new ErrorDto("descuento", ErrorType.VALOR_DEMASIADO_ALTO));
+            }
+            if (descuentoCompra < DESCUENTO_MIN) {
+                errores.add(new ErrorDto("descuento", ErrorType.VALOR_NEGATIVO));
+            }
+
+            if (!errores.isEmpty()) {
+                throw new ValidationException(errores);
+            }
+            var precioCompra = juegoRepo.obtenerPorId(idJuego).get().getPrecioBaseJuego();
+
+
+            var compraForm = new CompraForm(idUsuario, idJuego, LocalDate.now(), metodoPago, precioCompra,
+                    descuentoCompra, TipoEstadoCompra.PENDIENTE);
+
+            var compraEfectuada = compraRepo.crear(compraForm);
+            return compraEfectuada;
+
+        });
 
         if (!errores.isEmpty()) {
             throw new ValidationException(errores);
         }
-        var precioCompra = juegoRepo.obtenerPorId(idJuego).get().getPrecioBaseJuego();
 
-
-        var compraForm = new CompraForm(idUsuario, idJuego, LocalDate.now(), metodoPago, precioCompra,
-                descuentoCompra, TipoEstadoCompra.PENDIENTE);
-
-        var compraEfectuada = compraRepo.crear(compraForm).orElse(null);
-
-        return Mapper.mapaCompraSimple(compraEfectuada);
+        return Mapper.mapaCompraSimple(compra.orElse(null));
     }
 
     /**
@@ -124,7 +142,7 @@ public class CompraController {
         }
 
         var compraAProcesar = compraAProcesarOpt.get();
-        if (compraAProcesar.getEstadoCompra().equals(TipoEstadoCompra.COMPLETADA)){
+        if (compraAProcesar.getEstadoCompra().equals(TipoEstadoCompra.COMPLETADA)) {
             errores.add(new ErrorDto("estado_compra", ErrorType.COMPRA_COMPLETADA));
             throw new ValidationException(errores);
         }
@@ -277,11 +295,22 @@ public class CompraController {
         return Mapper.mapaUsuarioCompleto(usuarioRepoActualizado);
     }
 
+    static void main() throws ValidationException {
 
-    //Consultar historial de compras(Ficheros)
+        ITransactionManager transMgr = new HibernateTransactionManager();
+        var c = new CompraController(new CompraRepoHibernate((ISessionManager) transMgr),
+                                        new UsuarioRepoHibernate((ISessionManager) transMgr),
+                                        new JuegoRepoHibernate((ISessionManager) transMgr),
+                                        new BibliotecaRepoHibernate((ISessionManager) transMgr), transMgr);
 
+        var compraForm = new CompraForm ( 1L, 1L,
+                LocalDate.now().minusDays(10), TipoMetodoPago.CARTERA_STEAM,
+                29.99, 0, TipoEstadoCompra.COMPLETADA);
 
-    //Generar factura (Ficheros)
+        var compra1 = c.realizarCompra(compraForm.getIdUsuarioCompra(), compraForm.getIdJuegoCompra(), compraForm.getTipoPagoCompra());
+
+        System.out.println(compra1);
+    }
 
 
 }

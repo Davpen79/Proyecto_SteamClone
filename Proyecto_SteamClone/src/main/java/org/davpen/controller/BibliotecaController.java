@@ -10,10 +10,17 @@ import org.davpen.modelo.entity.BibliotecaEntity;
 import org.davpen.modelo.form.BibliotecaForm;
 import org.davpen.modelo.form.ErrorDto;
 import org.davpen.modelo.form.ErrorType;
+import org.davpen.repositorio.hibernate.BibliotecaRepoHibernate;
+import org.davpen.repositorio.hibernate.CompraRepoHibernate;
+import org.davpen.repositorio.hibernate.JuegoRepoHibernate;
+import org.davpen.repositorio.hibernate.UsuarioRepoHibernate;
 import org.davpen.repositorio.interfaces.IBibliotecaRepo;
 import org.davpen.repositorio.interfaces.ICompraRepo;
 import org.davpen.repositorio.interfaces.IJuegoRepo;
 import org.davpen.repositorio.interfaces.IUsuarioRepo;
+import org.davpen.transaction.HibernateTransactionManager;
+import org.davpen.transaction.ISessionManager;
+import org.davpen.transaction.ITransactionManager;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -26,13 +33,15 @@ public class BibliotecaController {
     private final IUsuarioRepo usuarioRepo;
     private final IJuegoRepo juegoRepo;
     private final ICompraRepo compraRepo;
+    public ITransactionManager transaMgr;
 
     public BibliotecaController(IBibliotecaRepo bibliotecaRepo, IUsuarioRepo usuarioRepo, IJuegoRepo juegoRepo,
-                                ICompraRepo compraRepo) {
+                                ICompraRepo compraRepo, ITransactionManager transaMgr) {
         this.bibliotecaRepo = bibliotecaRepo;
         this.usuarioRepo = usuarioRepo;
         this.juegoRepo = juegoRepo;
         this.compraRepo = compraRepo;
+        this.transaMgr = transaMgr;
     }
 
     /**
@@ -126,30 +135,39 @@ public class BibliotecaController {
     public BibliotecaDto anhadirJuegoABiblioteca(Long idUsuario, Long idJuego) throws ValidationException {
         //Validar modelo
         var errores = new ArrayList<ErrorDto>();
-        //Validar usuario
-        if (!usuarioRepo.obtenerPorId(idUsuario).isPresent()) {
-            errores.add(new ErrorDto("id_usuario", ErrorType.NO_ENCONTRADO));
-            throw new ValidationException(errores);
-        }
-        //Validar juego
-        if (!juegoRepo.obtenerPorId(idJuego).isPresent()) {
-            errores.add(new ErrorDto("id_juego", ErrorType.NO_ENCONTRADO));
-            throw new ValidationException(errores);
-        }
-        if (bibliotecaRepo.obtenerTodos().stream().filter(b -> b.getIdUsuarioBiblio().equals(idUsuario))
-                .anyMatch(b -> b.getIdJuegoBiblio().equals(idJuego))) {
-            errores.add(new ErrorDto("id_juego", ErrorType.DUPLICADO));
-        }
+
+        var biblioteca = transaMgr.inTransaction(() -> {
+
+            //Validar usuario
+            if (!usuarioRepo.obtenerPorId(idUsuario).isPresent()) {
+                errores.add(new ErrorDto("id_usuario", ErrorType.NO_ENCONTRADO));
+                throw new ValidationException(errores);
+            }
+            //Validar juego
+            if (!juegoRepo.obtenerPorId(idJuego).isPresent()) {
+                errores.add(new ErrorDto("id_juego", ErrorType.NO_ENCONTRADO));
+                throw new ValidationException(errores);
+            }
+            if (bibliotecaRepo.obtenerTodos().stream().filter(b -> b.getIdUsuarioBiblio().equals(idUsuario))
+                    .anyMatch(b -> b.getIdJuegoBiblio().equals(idJuego))) {
+                errores.add(new ErrorDto("id_juego", ErrorType.DUPLICADO));
+            }
+            if (!errores.isEmpty()) {
+                throw new ValidationException(errores);
+            }
+
+            var bibliotecaNuevaEntrada = new BibliotecaForm(idUsuario, idJuego, LocalDate.now(),
+                    0.00, null, TipoEstadoInstalacion.NO_INSTALADO);
+            var bibliotecaOpt = bibliotecaRepo.crear(bibliotecaNuevaEntrada);
+            return bibliotecaOpt;
+
+        });
+
         if (!errores.isEmpty()) {
             throw new ValidationException(errores);
         }
 
-        var bibliotecaNuevaEntrada = new BibliotecaForm(idUsuario, idJuego, LocalDate.now(),
-                0.00, null, TipoEstadoInstalacion.NO_INSTALADO);
-        var bibliotecaOpt = bibliotecaRepo.crear(bibliotecaNuevaEntrada);
-        var biblioteca = bibliotecaOpt.orElse(null);
-
-        return Mapper.mapaSimple(biblioteca);
+        return Mapper.mapaSimple(biblioteca.orElse(null));
     }
 
     /**
@@ -259,7 +277,7 @@ public class BibliotecaController {
      * - Si la entrada nunca fue jugada.<p>
      *
      * @param idUsuario Identificador del usuario.
-     * @param idJuego Identificador del juego.
+     * @param idJuego   Identificador del juego.
      * @return BibliotecaDto con la entrada (incluye la fecha de la última sesión).
      * @throws ValidationException Si alguna validación falla; la excepción contiene la lista de errores.
      */
@@ -352,7 +370,27 @@ public class BibliotecaController {
                 juegoMasJugado, valorTotalBiblioteca, listaJuegosNoJugados);
     }
 
-    //TODO: Filtrar biblioteca (Ficheros)
+    static void main() throws ValidationException {
+
+        ITransactionManager transMgr = new HibernateTransactionManager();
+        var c = new BibliotecaController(new BibliotecaRepoHibernate((ISessionManager) transMgr),
+                                        new UsuarioRepoHibernate((ISessionManager) transMgr),
+                                        new JuegoRepoHibernate((ISessionManager) transMgr),
+                                        new CompraRepoHibernate((ISessionManager) transMgr), transMgr);
+
+        var bibliotecaForm = new BibliotecaForm(1L, 1L,
+                LocalDate.of(2023, 1, 1), 0.0, null,
+                TipoEstadoInstalacion.NO_INSTALADO);
+
+        var bibliotecaForm2 = new BibliotecaForm(2L, 2L,
+                LocalDate.of(2023, 2, 10), 0.0, null,
+                TipoEstadoInstalacion.NO_INSTALADO);
+
+        var biblioteca1 = c.anhadirJuegoABiblioteca(bibliotecaForm.getIdUsuarioBiblio(), bibliotecaForm.getIdJuegoBiblio());
+
+        System.out.println(biblioteca1);
+
+    }
 
 }
 

@@ -16,7 +16,6 @@ import java.util.Optional;
 
 public class CompraRepoHibernate implements ICompraRepo {
 
-    //private final List<CompraEntity> LISTA_COMPRAS = new ArrayList<>();
     private ISessionManager sessionManager;
 
     public CompraRepoHibernate(ISessionManager sm) {
@@ -61,7 +60,7 @@ public class CompraRepoHibernate implements ICompraRepo {
 
         var compraInicial = this.obtenerPorId(id);
         if (compraInicial.isEmpty()) {
-            throw new IllegalArgumentException("No se encuentra esta compra");
+            throw new IllegalArgumentException("Compra no encontrada");
         } else {
             session.merge(new CompraEntity(id, form.getIdUsuarioCompra(), form.getIdJuegoCompra(),
                     form.getFechaCompra(), form.getTipoPagoCompra(), form.getPrecioBaseCompra(),
@@ -88,12 +87,12 @@ public class CompraRepoHibernate implements ICompraRepo {
     public Optional<CompraEntity> obtenerPorIdUsuario(Long idUsuario) {
         var session = sessionManager.getSession();
         CriteriaBuilder cb = session.getCriteriaBuilder();
-        CriteriaQuery<UsuarioEntity> cq = cb.createQuery(UsuarioEntity.class);
-        Root<UsuarioEntity> root = cq.from(UsuarioEntity.class);
+        CriteriaQuery<CompraEntity> cq = cb.createQuery(CompraEntity.class);
+        Root<CompraEntity> root = cq.from(CompraEntity.class);
 
         cq.select(root).where(cb.equal(root.get("id_usuario"), idUsuario));
 
-        return session.createQuery(cq).getResultStream().findFirst();//Revisar para arreglar
+        return session.createQuery(cq).getResultStream().findFirst();
     }
 
 }
