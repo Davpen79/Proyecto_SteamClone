@@ -97,7 +97,7 @@ public class JuegoControllerTest {
     }
 
     @Test
-    public void testListaJuegosPorCategoria_CategoriaRPG() {
+    public void testListaJuegosPorCategoria_CategoriaRPG() throws ValidationException {
         // Arrange
         when(juegoRepo.obtenerTodos()).thenReturn(List.of(juego1, juego2, juego3));
 
@@ -111,7 +111,7 @@ public class JuegoControllerTest {
     }
 
     @Test
-    public void testListaJuegosPorCategoria_CategoriaVacia() {
+    public void testListaJuegosPorCategoria_CategoriaVacia() throws ValidationException {
         // Arrange
         when(juegoRepo.obtenerTodos()).thenReturn(List.of(juego1, juego2, juego3));
 
@@ -124,7 +124,7 @@ public class JuegoControllerTest {
     }
 
     @Test
-    public void testListaJuegosPorRangoPrecio_RangoValido() {
+    public void testListaJuegosPorRangoPrecio_RangoValido() throws ValidationException {
         // Arrange
         when(juegoRepo.obtenerTodos()).thenReturn(List.of(juego1, juego2, juego3));
 
@@ -138,7 +138,7 @@ public class JuegoControllerTest {
     }
 
     @Test
-    public void testListaJuegosPorRangoPrecio_RangoCompleto() {
+    public void testListaJuegosPorRangoPrecio_RangoCompleto() throws ValidationException {
         // Arrange
         when(juegoRepo.obtenerTodos()).thenReturn(List.of(juego1, juego2, juego3));
 
@@ -159,7 +159,7 @@ public class JuegoControllerTest {
     }
 
     @Test
-    public void testListaJuegosPorClasificacion_Pegi16() {
+    public void testListaJuegosPorClasificacion_Pegi16() throws ValidationException {
         // Arrange
         when(juegoRepo.obtenerTodos()).thenReturn(List.of(juego1, juego2, juego3));
 
@@ -173,7 +173,7 @@ public class JuegoControllerTest {
     }
 
     @Test
-    public void testListaJuegosPorEstado_Disponibles() {
+    public void testListaJuegosPorEstado_Disponibles() throws ValidationException {
         // Arrange
         when(juegoRepo.obtenerTodos()).thenReturn(List.of(juego1, juego2, juego3));
 
@@ -186,7 +186,7 @@ public class JuegoControllerTest {
     }
 
     @Test
-    public void testListaJuegosPorEstado_NoDisponibles() {
+    public void testListaJuegosPorEstado_NoDisponibles() throws ValidationException {
         // Arrange
         when(juegoRepo.obtenerTodos()).thenReturn(List.of(juego1, juego2, juego3));
 
@@ -200,7 +200,7 @@ public class JuegoControllerTest {
     }
 
     @Test
-    public void testListaJuegosPorPalabraEnDescripcion_PalabraEncontrada() {
+    public void testListaJuegosPorPalabraEnDescripcion_PalabraEncontrada() throws ValidationException {
         // Arrange
         when(juegoRepo.obtenerTodos()).thenReturn(List.of(juego1, juego2, juego3));
 
@@ -214,7 +214,7 @@ public class JuegoControllerTest {
     }
 
     @Test
-    public void testListaJuegosPorPalabraEnDescripcion_PalabraNoEncontrada() {
+    public void testListaJuegosPorPalabraEnDescripcion_PalabraNoEncontrada() throws ValidationException {
         // Arrange
         when(juegoRepo.obtenerTodos()).thenReturn(List.of(juego1, juego2, juego3));
 
@@ -227,7 +227,7 @@ public class JuegoControllerTest {
     }
 
     @Test
-    public void testListaCatalogoCompleto_OrdenAlfabetico() {
+    public void testListaCatalogoCompleto_OrdenAlfabetico() throws ValidationException {
         // Arrange
         when(juegoRepo.obtenerTodos()).thenReturn(List.of(juego1, juego2, juego3));
 
@@ -243,7 +243,7 @@ public class JuegoControllerTest {
     }
 
     @Test
-    public void testListaCatalogoCompleto_OrdenPrecio() {
+    public void testListaCatalogoCompleto_OrdenPrecio() throws ValidationException {
         // Arrange
         when(juegoRepo.obtenerTodos()).thenReturn(List.of(juego1, juego2, juego3));
 
@@ -258,7 +258,7 @@ public class JuegoControllerTest {
     }
 
     @Test
-    public void testListaCatalogoCompleto_OrdenFecha() {
+    public void testListaCatalogoCompleto_OrdenFecha() throws ValidationException {
         // Arrange
         when(juegoRepo.obtenerTodos()).thenReturn(List.of(juego1, juego2, juego3));
 
@@ -272,7 +272,7 @@ public class JuegoControllerTest {
     }
 
     @Test
-    public void testListaCatalogoCompleto_ListaVacia() {
+    public void testListaCatalogoCompleto_ListaVacia() throws ValidationException {
         // Arrange
         when(juegoRepo.obtenerTodos()).thenReturn(List.of());
 

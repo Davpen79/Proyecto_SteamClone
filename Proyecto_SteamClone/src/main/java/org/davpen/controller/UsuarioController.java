@@ -85,17 +85,26 @@ public class UsuarioController {
     public UsuarioDto consultarPerfil(Long id) throws ValidationException {
         //Comprobamos si el usuario existe
         var errores = new ArrayList<ErrorDto>();
-        var usuarioConsultado = usuarioRepo.obtenerPorId(id);
-        if (!usuarioConsultado.isPresent()) {
-            errores.add(new ErrorDto("id", ErrorType.NO_ENCONTRADO));
-        }
+
+        var usuario = transMgr.inTransaction(() -> {
+
+            var usuarioConsultado = usuarioRepo.obtenerPorId(id);
+            if (!usuarioConsultado.isPresent()) {
+                errores.add(new ErrorDto("id", ErrorType.NO_ENCONTRADO));
+            }
+            if (!errores.isEmpty()) {
+                throw new ValidationException(errores);
+            }
+
+            var usuarioEncontrado = usuarioConsultado.orElse(null);
+            return usuarioEncontrado;
+
+        });
         if (!errores.isEmpty()) {
             throw new ValidationException(errores);
         }
 
-        var usuarioEncontrado = usuarioConsultado.orElse(null);
-
-        return Mapper.mapaUsuarioCompleto(usuarioEncontrado);
+        return Mapper.mapaUsuarioCompleto(usuario);
     }
 
     /**
@@ -106,19 +115,28 @@ public class UsuarioController {
      * @throws ValidationException
      */
     public UsuarioDto consultarPerfil(String nombreCuentaUsuario) throws ValidationException {
-        //Comprobamos si el usuario existe
         var errores = new ArrayList<ErrorDto>();
-        var usuarioConsultado = usuarioRepo.obtenerPorNombre(nombreCuentaUsuario);
-        if (!usuarioConsultado.isPresent()) {
-            errores.add(new ErrorDto("nombre", ErrorType.NO_ENCONTRADO));
-        }
+
+        var usuario = transMgr.inTransaction(() -> {
+
+            //Comprobamos si el usuario existe
+            var usuarioConsultado = usuarioRepo.obtenerPorNombre(nombreCuentaUsuario);
+            if (!usuarioConsultado.isPresent()) {
+                errores.add(new ErrorDto("nombre", ErrorType.NO_ENCONTRADO));
+            }
+            if (!errores.isEmpty()) {
+                throw new ValidationException(errores);
+            }
+
+            var usuarioEncontrado = usuarioConsultado.orElse(null);
+            return usuarioEncontrado;
+
+        });
         if (!errores.isEmpty()) {
             throw new ValidationException(errores);
         }
 
-        var usuarioEncontrado = usuarioConsultado.orElse(null);
-
-        return Mapper.mapaUsuarioCompleto(usuarioEncontrado);
+        return Mapper.mapaUsuarioCompleto(usuario);
     }
 
     /**
@@ -132,16 +150,26 @@ public class UsuarioController {
     public UsuarioDto consultarSaldo(Long id) throws ValidationException {
 
         var errores = new ArrayList<ErrorDto>();
-        var usuarioEntityOpt = usuarioRepo.obtenerPorId(id);
-        if (!usuarioEntityOpt.isPresent()) {
-            errores.add(new ErrorDto("id", ErrorType.NO_ENCONTRADO));
-        }
+
+        var usuario = transMgr.inTransaction(() -> {
+
+            var usuarioEntityOpt = usuarioRepo.obtenerPorId(id);
+            if (!usuarioEntityOpt.isPresent()) {
+                errores.add(new ErrorDto("id", ErrorType.NO_ENCONTRADO));
+            }
+            if (!errores.isEmpty()) {
+                throw new ValidationException(errores);
+            }
+
+            var usuarioEntity = usuarioEntityOpt.get();
+            return usuarioEntity;
+
+        });
         if (!errores.isEmpty()) {
             throw new ValidationException(errores);
         }
 
-        var usuarioEntity = usuarioEntityOpt.get();
-        return Mapper.mapaUsuarioCompleto(usuarioEntity);
+        return Mapper.mapaUsuarioCompleto(usuario);
 
     }
 
@@ -157,43 +185,55 @@ public class UsuarioController {
     public UsuarioDto anhadirSaldo(Long id, Double cantidadAnhadida) throws ValidationException {
 
         var errores = new ArrayList<ErrorDto>();
-        Optional<UsuarioEntity> usuarioEntityOpt = usuarioRepo.obtenerPorId(id);
-        if (!usuarioEntityOpt.isPresent()) {
-            errores.add(new ErrorDto("id", ErrorType.NO_ENCONTRADO));
-            throw new ValidationException(errores);
-        }
-        if (cantidadAnhadida.isNaN()) {
-            errores.add(new ErrorDto("cantidad", ErrorType.FORMATO_INVALIDO));
-        }
-        if (cantidadAnhadida < 0) {
-            errores.add(new ErrorDto("cantidad", ErrorType.VALOR_NEGATIVO));
-        }
-        if (cantidadAnhadida < SALDO_MINIMO) {
-            errores.add(new ErrorDto("cantidad", ErrorType.VALOR_DEMASIADO_BAJO));
-        }
-        if (cantidadAnhadida > SALDO_MAXIMO) {
-            errores.add(new ErrorDto("cantidad", ErrorType.VALOR_DEMASIADO_ALTO));
-        }
-        if (usuarioEntityOpt.get().getEstadoCuentaUsuario() != TipoEstadoCuenta.ACTIVA) {
-            errores.add(new ErrorDto("id", ErrorType.CUENTA_INACTIVA));
-        }
 
+        var usuario = transMgr.inTransaction(() -> {
+
+            Optional<UsuarioEntity> usuarioEntityOpt = usuarioRepo.obtenerPorId(id);
+            if (!usuarioEntityOpt.isPresent()) {
+                errores.add(new ErrorDto("id", ErrorType.NO_ENCONTRADO));
+                throw new ValidationException(errores);
+            }
+            if (cantidadAnhadida.isNaN()) {
+                errores.add(new ErrorDto("cantidad", ErrorType.FORMATO_INVALIDO));
+            }
+            if (cantidadAnhadida < 0) {
+                errores.add(new ErrorDto("cantidad", ErrorType.VALOR_NEGATIVO));
+            }
+            if (cantidadAnhadida < SALDO_MINIMO) {
+                errores.add(new ErrorDto("cantidad", ErrorType.VALOR_DEMASIADO_BAJO));
+            }
+            if (cantidadAnhadida > SALDO_MAXIMO) {
+                errores.add(new ErrorDto("cantidad", ErrorType.VALOR_DEMASIADO_ALTO));
+            }
+            if (!cantidadAnhadida.toString().matches("\\d+(\\.\\d{0,2})?")){
+                errores.add(new ErrorDto("cantidad", ErrorType.DEMASIADOS_DECIMALES));
+            }
+            if (usuarioEntityOpt.get().getEstadoCuentaUsuario() != TipoEstadoCuenta.ACTIVA) {
+                errores.add(new ErrorDto("id", ErrorType.CUENTA_INACTIVA));
+            }
+
+            if (!errores.isEmpty()) {
+                throw new ValidationException(errores);
+            }
+
+            var nuevoSaldo = usuarioEntityOpt.get().getSaldoUsuario() + cantidadAnhadida;
+            var usuarioActual = usuarioEntityOpt.get();
+
+            var usuarioActualizadoForm = new UsuarioForm(usuarioActual.getNombreCuentaUsuario(),
+                    usuarioActual.getEmailUsuario(),
+                    usuarioActual.getPasswordUsuario(), usuarioActual.getNombreRealUsuario(),
+                    usuarioActual.getPaisUsuario(), usuarioActual.getFechaNacUsuario(), usuarioActual.getFechaRegUsuario(),
+                    usuarioActual.getAvatarUsuario(), nuevoSaldo, usuarioActual.getEstadoCuentaUsuario());
+
+            var usuarioActualizado = usuarioRepo.actualizar(id, usuarioActualizadoForm);
+            return usuarioActualizado;
+
+        });
         if (!errores.isEmpty()) {
             throw new ValidationException(errores);
         }
 
-        var nuevoSaldo = usuarioEntityOpt.get().getSaldoUsuario() + cantidadAnhadida;
-        var usuarioActual = usuarioEntityOpt.get();
-
-        var usuarioActualizadoForm = new UsuarioForm(usuarioActual.getNombreCuentaUsuario(),
-                usuarioActual.getEmailUsuario(),
-                usuarioActual.getPasswordUsuario(), usuarioActual.getNombreRealUsuario(),
-                usuarioActual.getPaisUsuario(), usuarioActual.getFechaNacUsuario(), usuarioActual.getFechaRegUsuario(),
-                usuarioActual.getAvatarUsuario(), nuevoSaldo, usuarioActual.getEstadoCuentaUsuario());
-
-        var usuarioActualizado = usuarioRepo.actualizar(id, usuarioActualizadoForm).orElse(null);
-
-        return Mapper.mapaUsuarioCompleto(usuarioActualizado);
+        return Mapper.mapaUsuarioCompleto(usuario.orElse(null));
 
     }
 
@@ -201,21 +241,39 @@ public class UsuarioController {
         ITransactionManager transMgr = new HibernateTransactionManager();
         var c = new UsuarioController(new UsuarioRepoHibernate((ISessionManager) transMgr), transMgr);
 
-        var usuario1Form = new UsuarioForm("JugadorTotal", "usuario@email.com", "Aa1!nnnnnn", "Pedro",
-                "Portugal", LocalDate.of(1982, 10, 5), LocalDate.of(2024, 4, 6), "avatar", 5.00,
-                TipoEstadoCuenta.ACTIVA);
+        //var usuario1Form = new UsuarioForm("JugadorTotal", "usuario@email.com", "Aa1!nnnnnn", "Pedro",
+        //        "Portugal", LocalDate.of(1982, 10, 5), LocalDate.of(2024, 4, 6), "avatar", 5.00,
+        //        TipoEstadoCuenta.ACTIVA);
 
-        var usuario2Form = new UsuarioForm("JugadorBasico", "usuario2@email.com", "Ab1!nnnnnn",
-                "Paco",
-                "Portugal", LocalDate.of(1982, 11, 5), LocalDate.of(2024, 5, 6), "avatar", 5.00,
-                TipoEstadoCuenta.ACTIVA);
+        //var usuario2Form = new UsuarioForm("JugadorBasico", "usuario2@email.com", "Ab1!nnnnnn",
+        //        "Paco",
+        //        "Portugal", LocalDate.of(1982, 11, 5), LocalDate.of(2024, 5, 6), "avatar", 5.00,
+        //        TipoEstadoCuenta.ACTIVA);
 
-        var usuario1 = c.registrarUsuario(usuario1Form);
-        System.out.println(usuario1);
-        var usuario2 = c.registrarUsuario(usuario2Form);
-        System.out.println(usuario2);
-        var usuarioRepetido = c.registrarUsuario(usuario1Form);
-        System.out.println(usuarioRepetido);
+        //var usuario3Form = new UsuarioForm("Jugador3", "usuario3@email.com",
+        //        "Ab1!nnnnnn", "Pablo", "Portugal",
+        //        LocalDate.of(1982, 11, 5), LocalDate.of(2024, 5, 6),
+        //        "avatar", 15.00, TipoEstadoCuenta.ACTIVA);
+
+        //var usuario1 = c.registrarUsuario(usuario1Form);
+        //System.out.println(usuario1);
+        //var usuario2 = c.registrarUsuario(usuario2Form);
+        //System.out.println(usuario2);
+        //var usuario3 = c.registrarUsuario(usuario3Form);
+        //var usuarioRepetido = c.registrarUsuario(usuario1Form);
+        //System.out.println(usuarioRepetido);
+
+        //System.out.println(c.consultarPerfil(2L));
+        //System.out.println(c.consultarPerfil("JugadorTotal"));
+
+
+        System.out.println(c.consultarSaldo(2L));
+
+        System.out.println(c.consultarSaldo(1L));
+        System.out.println(c.consultarSaldo(5L));
+
+        c.anhadirSaldo(5L, 5.00d);
+        System.out.println(c.consultarSaldo(5L));
 
     }
 

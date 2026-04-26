@@ -90,7 +90,7 @@ public class CompraRepoHibernate implements ICompraRepo {
         CriteriaQuery<CompraEntity> cq = cb.createQuery(CompraEntity.class);
         Root<CompraEntity> root = cq.from(CompraEntity.class);
 
-        cq.select(root).where(cb.equal(root.get("id_usuario"), idUsuario));
+        cq.select(root).where(cb.equal(root.get("idUsuarioCompra"), idUsuario));
 
         return session.createQuery(cq).getResultStream().findFirst();
     }

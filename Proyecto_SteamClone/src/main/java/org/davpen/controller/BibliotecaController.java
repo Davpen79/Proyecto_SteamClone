@@ -382,13 +382,15 @@ public class BibliotecaController {
                 LocalDate.of(2023, 1, 1), 0.0, null,
                 TipoEstadoInstalacion.NO_INSTALADO);
 
-        var bibliotecaForm2 = new BibliotecaForm(2L, 2L,
+        var bibliotecaForm2 = new BibliotecaForm(1L, 2L,
                 LocalDate.of(2023, 2, 10), 0.0, null,
                 TipoEstadoInstalacion.NO_INSTALADO);
 
         var biblioteca1 = c.anhadirJuegoABiblioteca(bibliotecaForm.getIdUsuarioBiblio(), bibliotecaForm.getIdJuegoBiblio());
+        var biblioteca2 = c.anhadirJuegoABiblioteca(bibliotecaForm2.getIdUsuarioBiblio(), bibliotecaForm2.getIdJuegoBiblio());
 
         System.out.println(biblioteca1);
+        System.out.println(biblioteca2);
 
     }
 

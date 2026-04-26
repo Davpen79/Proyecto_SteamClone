@@ -15,19 +15,19 @@ public class CompraEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idCompra;
-    @Column(name = "id_usuario")
+    @Column(name = "idUsuarioCompra")
     private Long idUsuarioCompra;
-    @Column(name = "id_juego")
+    @Column(name = "idJuegoCompra")
     private Long idJuegoCompra;
-    @Column(name = "fecha_compra")
+    @Column(name = "fechaCompra")
     private LocalDate fechaCompra;
-    @Column(name = "tipo_pago")
+    @Column(name = "tipoPagoCompra")
     private TipoMetodoPago tipoPagoCompra;
-    @Column(name = "precio_base")
+    @Column(name = "precioBaseCompra")
     private double precioBaseCompra;
-    @Column(name = "descuento")
+    @Column(name = "descuentoEnCompra")
     private int descuentoEnCompra;
-    @Column(name = "estado")
+    @Column(name = "estadoCompra")
     private TipoEstadoCompra estadoCompra;
 
     //Constructor

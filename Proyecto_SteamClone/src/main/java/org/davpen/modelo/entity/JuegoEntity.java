@@ -24,25 +24,25 @@ public class JuegoEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idJuego;
-    @Column(name = "titulo")
+    @Column(name = "tituloJuego")
     private String tituloJuego;
-    @Column(name = "descripcion")
+    @Column(name = "descripcionJuego")
     private String descripcionJuego;
-    @Column(name = "desarrollador")
+    @Column(name = "desarrolladorJuego")
     private String desarrolladorJuego;
-    @Column(name = "fecha_lanzamiento")
+    @Column(name = "fechaLanzaJuego")
     private LocalDate fechaLanzaJuego;
-    @Column(name = "precio_base")
+    @Column(name = "precioBaseJuego")
     private double precioBaseJuego;
-    @Column(name = "descuento_actual")
+    @Column(name = "descuentoActualJuego")
     private int descuentoActualJuego;
-    @Column(name = "categoria")
+    @Column(name = "categoriaJuego")
     private TipoCategoriaJuego categoriaJuego;
-    @Column(name = "clasificacion_edad")
+    @Column(name = "clasEdadJuego")
     private TipoClasificacionEdades clasEdadJuego;
-    @Column(name = "idiomas")
+    @Column(name = "idiomasJuego")
     private ArrayList<String> idiomasJuego;
-    @Column(name = "estado")
+    @Column(name = "estadoJuego")
     private TipoEstadoJuego estadoJuego;
 
     //Constructor

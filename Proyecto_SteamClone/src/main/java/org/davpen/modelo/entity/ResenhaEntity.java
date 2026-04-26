@@ -14,21 +14,21 @@ public class ResenhaEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idResenha;
-    @Column(name = "id_usuario")
+    @Column(name = "idUsuarioResenha")
     private Long idUsuarioResenha;
-    @Column(name = "id_juego")
+    @Column(name = "idJuegoResenha")
     private Long idJuegoResenha;
-    @Column(name = "recomendacion")
+    @Column(name = "recomendacionResenha")
     private boolean recomendacionResenha;
-    @Column(name = "texto")
+    @Column(name = "textoResenha")
     private String textoResenha;
-    @Column(name = "tiempo_jugado")
+    @Column(name = "tiempoJugadoResenha")
     private double tiempoJugadoResenha;
-    @Column(name = "fecha_publicacion")
+    @Column(name = "fechaPublicacionResenha")
     private LocalDate fechaPublicacionResenha;
-    @Column(name = "fecha_edicion")
+    @Column(name = "fechaUltiEdicResenha")
     private LocalDate fechaUltiEdicResenha;
-    @Column(name = "estado")
+    @Column(name = "estadoResenha")
     private TipoEstadoResenha estadoResenha;
 
     //Constructor

@@ -16,23 +16,23 @@ public class UsuarioEntity {
     private Long idUsuario;
     @Column(name = "nombreCuentaUsuario")
     private String nombreCuentaUsuario;
-    @Column(name = "email")
+    @Column(name = "emailUsuario")
     private String emailUsuario;
-    @Column(name = "password")
+    @Column(name = "passwordUsuario")
     private String passwordUsuario;
-    @Column(name = "nombre_real")
+    @Column(name = "nombreRealUsuario")
     private String nombreRealUsuario;
-    @Column(name = "pais")
+    @Column(name = "paisUsuario")
     private String paisUsuario;
-    @Column(name = "fecha_nacimiento")
+    @Column(name = "fechaNacUsuario")
     private LocalDate fechaNacUsuario;
-    @Column(name = "fecha_registro")
+    @Column(name = "fechaRegUsuario")
     private LocalDate fechaRegUsuario;
-    @Column(name = "avatar")
+    @Column(name = "avatarUsuario")
     private String avatarUsuario;
-    @Column(name = "saldo")
+    @Column(name = "saldoUsuario")
     private double saldoUsuario;
-    @Column(name = "estado")
+    @Column(name = "estadoCuentaUsuario")
     private TipoEstadoCuenta estadoCuentaUsuario;
 
     //Constructor

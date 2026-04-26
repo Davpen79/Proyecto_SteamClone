@@ -15,17 +15,17 @@ public class BibliotecaEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idBiblio;
-    @Column(name = "id_usuario")
+    @Column(name = "idUsuarioBiblio")
     private Long idUsuarioBiblio;
-    @Column(name = "id_juego")
+    @Column(name = "idJuegoBiblio")
     private Long idJuegoBiblio;
-    @Column(name = "fecha_compra")
+    @Column(name = "fechaCompraJuegoBiblio")
     private LocalDate fechaCompraJuegoBiblio;
-    @Column(name = "tiempo_jugado")
+    @Column(name = "tiempoJuegoBiblio")
     private double tiempoJuegoBiblio;
-    @Column(name = "ultima_sesion")
+    @Column(name = "ultiFechaJuegoBiblio")
     private LocalDateTime ultiFechaJuegoBiblio;
-    @Column(name = "estado")
+    @Column(name = "estadoInstJuegoBiblio")
     private TipoEstadoInstalacion estadoInstJuegoBiblio;
 
     //Constructor

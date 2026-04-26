@@ -17,7 +17,6 @@ import org.davpen.transaction.HibernateTransactionManager;
 import org.davpen.transaction.ISessionManager;
 import org.davpen.transaction.ITransactionManager;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -77,11 +76,16 @@ public class JuegoController {
      * @param categoria TipoCategoriaJuego por el que filtrar.
      * @return Lista de JuegoDto que pertenecen a la categoría indicada. Puede ser lista vacía si no hay coincidencias.
      */
-    public List<JuegoDto> listaJuegosPorCategoria(TipoCategoriaJuego categoria) {
-        return juegoRepo.obtenerTodos().stream()
-                .filter(j -> j.getCategoriaJuego().equals(categoria))
-                .map(Mapper::mapaJuegoCompleto)
-                .toList();
+    public List<JuegoDto> listaJuegosPorCategoria(TipoCategoriaJuego categoria) throws ValidationException {
+        var listaJuegos = transMgr.inTransaction(() -> {
+            var listaFiltrada = juegoRepo.obtenerTodos().stream()
+                    .filter(j -> j.getCategoriaJuego().equals(categoria))
+                    .map(Mapper::mapaJuegoCompleto)
+                    .toList();
+            return listaFiltrada;
+        });
+
+        return listaJuegos;
     }
 
     /**
@@ -92,19 +96,22 @@ public class JuegoController {
      * @return Lista de JuegoDto cuyo precio base está dentro del rango.
      * @throws IllegalArgumentException Si precio_Min > precio_Max.
      */
-    public List<JuegoDto> listaJuegosPorRangoPrecio(double precio_Min, double precio_Max) throws IllegalArgumentException {
+    public List<JuegoDto> listaJuegosPorRangoPrecio(double precio_Min, double precio_Max) throws IllegalArgumentException, ValidationException {
 
         if (precio_Min > precio_Max) {
             throw new IllegalArgumentException("El precio minimo no puede ser mayor que el precio máximo");
         }
 
-        var resultadoBusqueda = juegoRepo.obtenerTodos().stream()
-                .filter(j -> j.getPrecioBaseJuego() <= precio_Max)
-                .filter(j -> j.getPrecioBaseJuego() >= precio_Min)
-                .map(Mapper::mapaJuegoCompleto)
-                .toList();
+        var listaJuegos = transMgr.inTransaction(() -> {
+            var resultadoBusqueda = juegoRepo.obtenerTodos().stream()
+                    .filter(j -> j.getPrecioBaseJuego() <= precio_Max)
+                    .filter(j -> j.getPrecioBaseJuego() >= precio_Min)
+                    .map(Mapper::mapaJuegoCompleto)
+                    .toList();
+            return resultadoBusqueda;
+        });
 
-        return resultadoBusqueda;
+        return listaJuegos;
     }
 
     /**
@@ -113,11 +120,15 @@ public class JuegoController {
      * @param clasificacionEdades TipoClasificacionEdades por el que filtrar.
      * @return Lista de JuegoDto que cumplen la clasificación indicada. Puede ser lista vacía.
      */
-    public List<JuegoDto> listaJuegosPorClasificacion(TipoClasificacionEdades clasificacionEdades) {
-        return juegoRepo.obtenerTodos().stream()
-                .filter(j -> j.getClasEdadJuego().equals(clasificacionEdades))
-                .map(Mapper::mapaJuegoCompleto)
-                .toList();
+    public List<JuegoDto> listaJuegosPorClasificacion(TipoClasificacionEdades clasificacionEdades) throws ValidationException {
+        List<JuegoDto> listaJuegos = transMgr.inTransaction(() -> {
+            var listaFiltrada = juegoRepo.obtenerTodos().stream()
+                    .filter(j -> j.getClasEdadJuego().equals(clasificacionEdades))
+                    .map(Mapper::mapaJuegoCompleto)
+                    .toList();
+            return listaFiltrada;
+        });
+        return listaJuegos;
     }
 
     /**
@@ -126,11 +137,16 @@ public class JuegoController {
      * @param estadoJuego TipoEstadoJuego por el que filtrar.
      * @return Lista de JuegoDto que tienen el estado indicado. Puede ser lista vacía.
      */
-    public List<JuegoDto> listaJuegosPorEstado(TipoEstadoJuego estadoJuego) {
-        return juegoRepo.obtenerTodos().stream()
-                .filter(j -> j.getEstadoJuego().equals(estadoJuego))
-                .map(Mapper::mapaJuegoCompleto)
-                .toList();
+    public List<JuegoDto> listaJuegosPorEstado(TipoEstadoJuego estadoJuego) throws ValidationException {
+        List<JuegoDto> listaJuegos = transMgr.inTransaction(() -> {
+            var listaFiltrada = juegoRepo.obtenerTodos().stream()
+                    .filter(j -> j.getEstadoJuego().equals(estadoJuego))
+                    .map(Mapper::mapaJuegoCompleto)
+                    .toList();
+            return listaFiltrada;
+        });
+
+        return listaJuegos;
     }
 
     /**
@@ -139,11 +155,16 @@ public class JuegoController {
      * @param palabraBuscada Subcadena a buscar dentro de la descripción del juego.
      * @return Lista de JuegoDto cuya descripción contiene el texto indicado.
      */
-    public List<JuegoDto> listaJuegosPorPalabraEnDescripcion(String palabraBuscada) {
-        return juegoRepo.obtenerTodos().stream()
-                .filter(j -> j.getDescripcionJuego().contains(palabraBuscada))
-                .map(Mapper::mapaJuegoCompleto)
-                .toList();
+    public List<JuegoDto> listaJuegosPorPalabraEnDescripcion(String palabraBuscada) throws ValidationException {
+        List<JuegoDto> listaJuegos = transMgr.inTransaction(() -> {
+            var listaFiltrada = juegoRepo.obtenerTodos().stream()
+                    .filter(j -> j.getDescripcionJuego().contains(palabraBuscada))
+                    .map(Mapper::mapaJuegoCompleto)
+                    .toList();
+            return listaFiltrada;
+        });
+
+        return listaJuegos;
     }
 
     /**
@@ -152,33 +173,35 @@ public class JuegoController {
      * @param consulta TipoConsultaCatalogo criterio de orden: ALFABETICO, PRECIO o FECHA.
      * @return Lista ordenada de JuegoDto según el criterio; lista vacía si no hay juegos.
      */
-    public List<JuegoDto> listaCatalogoCompleto(TipoConsultaCatalogo consulta) {
+    public List<JuegoDto> listaCatalogoCompleto(TipoConsultaCatalogo consulta) throws ValidationException {
 
-        List<JuegoDto> listaConsultaDto = new ArrayList<>(List.of());
+        List<JuegoDto> listaConsultaDto = transMgr.inTransaction(() -> {
+            List<JuegoDto> listaCatalogo = new ArrayList<>(List.of());
 
-        if (consulta == TipoConsultaCatalogo.ALFABETICO) {
-            var resultadoConsulta = juegoRepo.obtenerTodos().stream()
-                    .sorted(Comparator.comparing(JuegoEntity::getTituloJuego))
-                    .toList();
-            for (JuegoEntity juegoEntity : resultadoConsulta) {
-                listaConsultaDto.add(Mapper.mapaJuegoCompleto(juegoEntity));
+            if (consulta == TipoConsultaCatalogo.ALFABETICO) {
+                var resultadoConsulta = juegoRepo.obtenerTodos().stream()
+                        .sorted(Comparator.comparing(JuegoEntity::getTituloJuego))
+                        .toList();
+                for (JuegoEntity juegoEntity : resultadoConsulta) {
+                    listaCatalogo.add(Mapper.mapaJuegoCompleto(juegoEntity));
+                }
+            } else if (consulta == TipoConsultaCatalogo.PRECIO) {
+                var resultadoConsulta = juegoRepo.obtenerTodos().stream()
+                        .sorted(Comparator.comparing(JuegoEntity::getPrecioBaseJuego))
+                        .toList();
+                for (JuegoEntity juegoEntity : resultadoConsulta) {
+                    listaCatalogo.add(Mapper.mapaJuegoCompleto(juegoEntity));
+                }
+            } else if (consulta == TipoConsultaCatalogo.FECHA) {
+                var resultadoConsulta = juegoRepo.obtenerTodos().stream()
+                        .sorted(Comparator.comparing(JuegoEntity::getFechaLanzaJuego))
+                        .toList();
+                for (JuegoEntity juegoEntity : resultadoConsulta) {
+                    listaCatalogo.add(Mapper.mapaJuegoCompleto(juegoEntity));
+                }
             }
-        } else if (consulta == TipoConsultaCatalogo.PRECIO) {
-            var resultadoConsulta = juegoRepo.obtenerTodos().stream()
-                    .sorted(Comparator.comparing(JuegoEntity::getPrecioBaseJuego))
-                    .toList();
-            for (JuegoEntity juegoEntity : resultadoConsulta) {
-                listaConsultaDto.add(Mapper.mapaJuegoCompleto(juegoEntity));
-            }
-        } else if (consulta == TipoConsultaCatalogo.FECHA) {
-            var resultadoConsulta = juegoRepo.obtenerTodos().stream()
-                    .sorted(Comparator.comparing(JuegoEntity::getFechaLanzaJuego))
-                    .toList();
-            for (JuegoEntity juegoEntity : resultadoConsulta) {
-                listaConsultaDto.add(Mapper.mapaJuegoCompleto(juegoEntity));
-            }
-
-        }
+            return listaCatalogo;
+        });
 
         return listaConsultaDto;
     }
@@ -193,16 +216,26 @@ public class JuegoController {
     public JuegoDto detalleJuego(Long id) throws ValidationException {
 
         var errores = new ArrayList<ErrorDto>();
-        var juegoInfo = juegoRepo.obtenerPorId(id);
-        if (!juegoInfo.isPresent()) {
-            errores.add(new ErrorDto("id", ErrorType.NO_ENCONTRADO));
-        }
+
+        var juegoInfo = transMgr.inTransaction(() -> {
+
+            var juego = juegoRepo.obtenerPorId(id);
+            if (!juego.isPresent()) {
+                errores.add(new ErrorDto("id", ErrorType.NO_ENCONTRADO));
+            }
+            if (!errores.isEmpty()) {
+                throw new ValidationException(errores);
+            }
+
+            var juegoOpt = juego;
+            return juegoOpt;
+
+        });
         if (!errores.isEmpty()) {
             throw new ValidationException(errores);
         }
 
-        var juego = juegoInfo.orElse(null);
-        return Mapper.mapaJuegoCompleto(juego);
+        return Mapper.mapaJuegoCompleto(juegoInfo.orElse(null));
 
     }
 
@@ -221,38 +254,47 @@ public class JuegoController {
     public JuegoDto aplicarDescuento(Long id, int descuento) throws ValidationException {
 
         var errores = new ArrayList<ErrorDto>();
-        var juegoOpt = juegoRepo.obtenerPorId(id);
-        if (!juegoOpt.isPresent()) {
-            errores.add(new ErrorDto("id", ErrorType.NO_ENCONTRADO));
-            throw new ValidationException(errores);
-        }
-        if (juegoOpt.get().getEstadoJuego() == TipoEstadoJuego.NO_DISPONIBLE) {
-            errores.add(new ErrorDto("estado", ErrorType.NO_DISPONIBLE));
-        }
-        if (descuento < DESCUENTO_MIN) {
-            errores.add(new ErrorDto("descuento", ErrorType.VALOR_NEGATIVO));
-        }
-        if (descuento > DESCUENTO_MAX) {
-            errores.add(new ErrorDto("descuento", ErrorType.VALOR_DEMASIADO_ALTO));
-        }
 
+        var juego = transMgr.inTransaction(() -> {
+
+            var juegoOpt = juegoRepo.obtenerPorId(id);
+            if (!juegoOpt.isPresent()) {
+                errores.add(new ErrorDto("id", ErrorType.NO_ENCONTRADO));
+                throw new ValidationException(errores);
+            }
+            if (juegoOpt.get().getEstadoJuego() == TipoEstadoJuego.NO_DISPONIBLE) {
+                errores.add(new ErrorDto("estado", ErrorType.NO_DISPONIBLE));
+            }
+            if (descuento < DESCUENTO_MIN) {
+                errores.add(new ErrorDto("descuento", ErrorType.VALOR_NEGATIVO));
+            }
+            if (descuento > DESCUENTO_MAX) {
+                errores.add(new ErrorDto("descuento", ErrorType.VALOR_DEMASIADO_ALTO));
+            }
+
+            if (!errores.isEmpty()) {
+                throw new ValidationException(errores);
+            }
+
+            var juegoActual = juegoOpt.get();
+            var nuevoPrecio = juegoActual.getPrecioBaseJuego()
+                    - (juegoActual.getPrecioBaseJuego() * descuento / 100);
+
+            var juegoActualizadoForm = new JuegoForm(juegoActual.getTituloJuego(),
+                    juegoActual.getDescripcionJuego(), juegoActual.getDesarrolladorJuego(),
+                    juegoActual.getFechaLanzaJuego(), nuevoPrecio, descuento, juegoActual.getCategoriaJuego(),
+                    juegoActual.getClasEdadJuego(), juegoActual.getIdiomasJuego(),
+                    juegoActual.getEstadoJuego());
+
+            var juegoActualizado = juegoRepo.actualizar(id, juegoActualizadoForm);
+
+            return juegoActualizado;
+        });
         if (!errores.isEmpty()) {
             throw new ValidationException(errores);
         }
 
-        var juegoActual = juegoOpt.get();
-        var nuevoPrecio = juegoActual.getPrecioBaseJuego()
-                - (juegoActual.getPrecioBaseJuego() * descuento / 100);
-
-        var juegoActualizadoForm = new JuegoForm(juegoActual.getTituloJuego(),
-                juegoActual.getDescripcionJuego(), juegoActual.getDesarrolladorJuego(),
-                juegoActual.getFechaLanzaJuego(), nuevoPrecio, descuento, juegoActual.getCategoriaJuego(),
-                juegoActual.getClasEdadJuego(), juegoActual.getIdiomasJuego(),
-                juegoActual.getEstadoJuego());
-
-        var juegoActualizado = juegoRepo.actualizar(id, juegoActualizadoForm).orElse(null);
-
-        return Mapper.mapaJuegoCompleto(juegoActualizado);
+        return Mapper.mapaJuegoCompleto(juego.orElse(null));
     }
 
     /**
@@ -269,53 +311,102 @@ public class JuegoController {
     public JuegoDto cambiarEstadoJuego(Long id, TipoEstadoJuego nuevoEstado) throws ValidationException {
 
         var errores = new ArrayList<ErrorDto>();
-        if (!juegoRepo.obtenerPorId(id).isPresent()) {
-            errores.add(new ErrorDto("id", ErrorType.NO_ENCONTRADO));
-            throw new ValidationException(errores);
-        }
-        if (!Arrays.stream(TipoEstadoJuego.values()).anyMatch(t -> t.equals(nuevoEstado))) {
-            errores.add(new ErrorDto("estado", ErrorType.NO_ENCONTRADO));
-        }
-        if (!errores.isEmpty()) {
-            throw new ValidationException(errores);
-        }
-        var juegoActual = juegoRepo.obtenerPorId(id);
-        var juegoActualizadoForm = new JuegoForm(juegoActual.get().getTituloJuego(),
-                juegoActual.get().getDescripcionJuego(), juegoActual.get().getDesarrolladorJuego(),
-                juegoActual.get().getFechaLanzaJuego(), juegoActual.get().getPrecioBaseJuego(),
-                juegoActual.get().getDescuentoActualJuego(), juegoActual.get().getCategoriaJuego(),
-                juegoActual.get().getClasEdadJuego(), juegoActual.get().getIdiomasJuego(), nuevoEstado);
 
-        var juegoActualizado = juegoRepo.actualizar(id, juegoActualizadoForm).orElse(null);
+        var juego = transMgr.inTransaction(() -> {
 
-        return Mapper.mapaJuegoCompleto(juegoActualizado);
+            if (!juegoRepo.obtenerPorId(id).isPresent()) {
+                errores.add(new ErrorDto("id", ErrorType.NO_ENCONTRADO));
+                throw new ValidationException(errores);
+            }
+            if (!Arrays.stream(TipoEstadoJuego.values()).anyMatch(t -> t.equals(nuevoEstado))) {
+                errores.add(new ErrorDto("estado", ErrorType.NO_ENCONTRADO));
+            }
+            if (!errores.isEmpty()) {
+                throw new ValidationException(errores);
+            }
+            var juegoActual = juegoRepo.obtenerPorId(id);
+            var juegoActualizadoForm = new JuegoForm(juegoActual.get().getTituloJuego(),
+                    juegoActual.get().getDescripcionJuego(), juegoActual.get().getDesarrolladorJuego(),
+                    juegoActual.get().getFechaLanzaJuego(), juegoActual.get().getPrecioBaseJuego(),
+                    juegoActual.get().getDescuentoActualJuego(), juegoActual.get().getCategoriaJuego(),
+                    juegoActual.get().getClasEdadJuego(), juegoActual.get().getIdiomasJuego(), nuevoEstado);
+
+            var juegoActualizado = juegoRepo.actualizar(id, juegoActualizadoForm);
+
+            return juegoActualizado;
+
+        });
+
+        return Mapper.mapaJuegoCompleto(juego.orElse(null));
     }
 
     static void main() throws ValidationException {
         ITransactionManager transMgr = new HibernateTransactionManager();
         var c = new JuegoController(new JuegoRepoHibernate((ISessionManager) transMgr), transMgr);
 
-        var juegoForm = new JuegoForm("Elden Ring", "RPG de acción épico", "FromSoftware",
-                LocalDate.of(2022, 2, 25), 60d, 0, TipoCategoriaJuego.RPG,
-                TipoClasificacionEdades.PEGI_16, new ArrayList<>(List.of("Español", "Inglés")),
-                TipoEstadoJuego.DISPONIBLE);
-        var juego2Form = new JuegoForm("Hades", "Roguelike indie", "Supergiant Games",
-                LocalDate.of(2020, 9, 17), 24.99, 10, TipoCategoriaJuego.ACCION,
-                TipoClasificacionEdades.PEGI_12, new ArrayList<>(List.of("Español", "Inglés")),
-                TipoEstadoJuego.DISPONIBLE);
-        var juego3Form = new JuegoForm( "Chess Game", "Ajedrez online", "Chess Dev",
-                LocalDate.of(2019, 5, 10), 0.00, 0, TipoCategoriaJuego.ESTRATEGIA,
-                TipoClasificacionEdades.PEGI_3, new ArrayList<>(List.of("Español", "Inglés")),
-                TipoEstadoJuego.NO_DISPONIBLE);
+        //var juegoForm = new JuegoForm("Elden Ring", "RPG de acción épico", "FromSoftware",
+        //        LocalDate.of(2022, 2, 25), 60d, 0, TipoCategoriaJuego.RPG,
+        //        TipoClasificacionEdades.PEGI_16, new ArrayList<>(List.of("Español", "Inglés")),
+        //        TipoEstadoJuego.DISPONIBLE);
+        //var juego2Form = new JuegoForm("Hades", "Roguelike indie", "Supergiant Games",
+        //        LocalDate.of(2020, 9, 17), 24.99, 10, TipoCategoriaJuego.ACCION,
+        //        TipoClasificacionEdades.PEGI_12, new ArrayList<>(List.of("Español", "Inglés")),
+        //        TipoEstadoJuego.DISPONIBLE);
+        //var juego3Form = new JuegoForm("Chess Game", "Ajedrez online", "Chess Dev",
+        //        LocalDate.of(2019, 5, 10), 0.00, 0, TipoCategoriaJuego.ESTRATEGIA,
+        //        TipoClasificacionEdades.PEGI_3, new ArrayList<>(List.of("Español", "Inglés")),
+        //        TipoEstadoJuego.NO_DISPONIBLE);
 
-        var juego1 = c.anhadirJuego(juegoForm);
-        System.out.println(juego1);
-        var juego2 = c.anhadirJuego(juego2Form);
-        System.out.println(juego2);
-        var juego3 = c.anhadirJuego(juego3Form);
-        System.out.println(juego3);
-        var juegoRepetido = c.anhadirJuego(juegoForm);
-        System.out.println(juegoRepetido);
+        //var juego1 = c.anhadirJuego(juegoForm);
+        //System.out.println(juego1);
+        //var juego2 = c.anhadirJuego(juego2Form);
+        //System.out.println(juego2);
+        //var juego3 = c.anhadirJuego(juego3Form);
+        //System.out.println(juego3);
+        //var juegoRepetido = c.anhadirJuego(juegoForm);
+        //System.out.println(juegoRepetido);
+
+        //var juego = c.detalleJuego(2L);
+        //System.out.println(juego.getEstadoJuego());
+        //c.cambiarEstadoJuego(2L, TipoEstadoJuego.ACCESO_ANTICIPADO);
+        //System.out.println("Tras cambio");
+        //var juegoCambiado = c.detalleJuego(2L);
+        //System.out.println(juegoCambiado.getEstadoJuego());
+
+        //var juego = c.detalleJuego(1L);
+        //System.out.println(juego.getDescuentoActualJuego());
+        //c.aplicarDescuento(1L, 15);
+        //System.out.println("Tras modificacion");
+        //var juegoCambiado = c.detalleJuego(1L);
+        //System.out.println(juegoCambiado.getDescuentoActualJuego());
+
+        //System.out.println(c.listaCatalogoCompleto(TipoConsultaCatalogo.ALFABETICO));
+        //System.out.println(c.listaCatalogoCompleto(TipoConsultaCatalogo.PRECIO));
+        //System.out.println(c.listaCatalogoCompleto(TipoConsultaCatalogo.FECHA));
+
+        //System.out.println(c.listaJuegosPorPalabraEnDescripcion("online"));
+        //System.out.println("Se han encontrado "+ c.listaJuegosPorPalabraEnDescripcion("online").size() +" juegos");
+
+        //System.out.println(c.listaJuegosPorEstado(TipoEstadoJuego.DISPONIBLE));
+        //System.out.println(c.listaJuegosPorEstado(TipoEstadoJuego.NO_DISPONIBLE));
+        //System.out.println(c.listaJuegosPorEstado(TipoEstadoJuego.ACCESO_ANTICIPADO));
+        //System.out.println(c.listaJuegosPorEstado(TipoEstadoJuego.PREVENTA));
+        //System.out.println(c.listaJuegosPorEstado(TipoEstadoJuego.valueOf("")));
+
+        //System.out.println(c.listaJuegosPorClasificacion(TipoClasificacionEdades.PEGI_16));
+        //System.out.println(c.listaJuegosPorClasificacion(TipoClasificacionEdades.PEGI_12));
+        //System.out.println(c.listaJuegosPorClasificacion(TipoClasificacionEdades.PEGI_3));
+        //System.out.println(c.listaJuegosPorClasificacion(TipoClasificacionEdades.PEGI_18));
+
+        //System.out.println(c.listaJuegosPorRangoPrecio(0d, 50d));
+        //System.out.println(c.listaJuegosPorRangoPrecio(0d, 25));
+        //System.out.println(c.listaJuegosPorRangoPrecio(500d, 20d));
+
+        //System.out.println(c.listaJuegosPorCategoria(TipoCategoriaJuego.RPG));
+        //System.out.println(c.listaJuegosPorCategoria(TipoCategoriaJuego.ACCION));
+        //System.out.println(c.listaJuegosPorCategoria(TipoCategoriaJuego.ESTRATEGIA));
+        //System.out.println(c.listaJuegosPorCategoria(TipoCategoriaJuego.FPS));
+
 
     }
 

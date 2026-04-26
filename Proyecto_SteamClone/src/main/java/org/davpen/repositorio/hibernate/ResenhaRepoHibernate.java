@@ -90,7 +90,7 @@ public class ResenhaRepoHibernate implements IResenhaRepo {
         CriteriaQuery<ResenhaEntity> cq = cb.createQuery(ResenhaEntity.class);
         Root<ResenhaEntity> root = cq.from(ResenhaEntity.class);
 
-        cq.select(root).where(cb.equal(root.get("id_usuario"), idUsuario));
+        cq.select(root).where(cb.equal(root.get("idUsuarioResenha"), idUsuario));
 
         return session.createQuery(cq).getResultStream().toList();
 
@@ -103,7 +103,7 @@ public class ResenhaRepoHibernate implements IResenhaRepo {
         CriteriaQuery<ResenhaEntity> cq = cb.createQuery(ResenhaEntity.class);
         Root<ResenhaEntity> root = cq.from(ResenhaEntity.class);
 
-        cq.select(root).where(cb.equal(root.get("id_juego"), idJuego));
+        cq.select(root).where(cb.equal(root.get("idJuegoResenha"), idJuego));
 
         return session.createQuery(cq).getResultStream().toList();
 

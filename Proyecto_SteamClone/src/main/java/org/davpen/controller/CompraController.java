@@ -135,55 +135,61 @@ public class CompraController {
      */
     public CompraDto procesarPago(Long idCompra, TipoMetodoPago metodoPago) throws ValidationException {
         var errores = new ArrayList<ErrorDto>();
-        Optional<CompraEntity> compraAProcesarOpt = compraRepo.obtenerPorId(idCompra);
-        if (!compraAProcesarOpt.isPresent()) {
-            errores.add(new ErrorDto("id", ErrorType.NO_ENCONTRADO));
-            throw new ValidationException(errores);
-        }
 
-        var compraAProcesar = compraAProcesarOpt.get();
-        if (compraAProcesar.getEstadoCompra().equals(TipoEstadoCompra.COMPLETADA)) {
-            errores.add(new ErrorDto("estado_compra", ErrorType.COMPRA_COMPLETADA));
-            throw new ValidationException(errores);
-        }
-        var idUsuario = compraAProcesar.getIdUsuarioCompra();
-        var usuarioCompra = usuarioRepo.obtenerPorId(idUsuario).get();
-        var precioCompra = compraAProcesar.getPrecioBaseCompra();
-        var descuentoCompra = compraAProcesar.getDescuentoEnCompra();
-        var precioFinal = precioCompra - (precioCompra * descuentoCompra / 100);
-
-        IPlataformaPago plataformaPago;
-        switch (metodoPago) {
-            case CARTERA_STEAM:
-                plataformaPago = new PagoCarteraSteam(idUsuario, usuarioRepo, compraRepo);
-                break;
-            case PAYPAL:
-                plataformaPago = new PagoPayPal();
-                break;
-            case TARJETA_CREDITO:
-                plataformaPago = new PagoTarjetaCredito();
-                break;
-            case TRANSFERENCIA:
-                plataformaPago = new PagoTransferencia();
-                break;
-            default:
-                errores.add(new ErrorDto("metodo_pago", ErrorType.NO_ENCONTRADO));
+        var compraProcesada = transMgr.inTransaction(() -> {
+            Optional<CompraEntity> compraAProcesarOpt = compraRepo.obtenerPorId(idCompra);
+            if (!compraAProcesarOpt.isPresent()) {
+                errores.add(new ErrorDto("id", ErrorType.NO_ENCONTRADO));
                 throw new ValidationException(errores);
-        }
-        var pagoExitoso = plataformaPago.procesarPago(compraAProcesar, usuarioCompra, precioFinal);
-        if (!pagoExitoso) {
+            }
+
+            var compraAProcesar = compraAProcesarOpt.get();
+            if (compraAProcesar.getEstadoCompra().equals(TipoEstadoCompra.COMPLETADA)) {
+                errores.add(new ErrorDto("estado_compra", ErrorType.COMPRA_COMPLETADA));
+                throw new ValidationException(errores);
+            }
+            var idUsuario = compraAProcesar.getIdUsuarioCompra();
+            var usuarioCompra = usuarioRepo.obtenerPorId(idUsuario).get();
+            var precioCompra = compraAProcesar.getPrecioBaseCompra();
+            var descuentoCompra = compraAProcesar.getDescuentoEnCompra();
+            var precioFinal = precioCompra - (precioCompra * descuentoCompra / 100);
+
+            IPlataformaPago plataformaPago;
+            switch (metodoPago) {
+                case CARTERA_STEAM:
+                    plataformaPago = new PagoCarteraSteam(idUsuario, usuarioRepo, compraRepo);
+                    break;
+                case PAYPAL:
+                    plataformaPago = new PagoPayPal();
+                    break;
+                case TARJETA_CREDITO:
+                    plataformaPago = new PagoTarjetaCredito();
+                    break;
+                case TRANSFERENCIA:
+                    plataformaPago = new PagoTransferencia();
+                    break;
+                default:
+                    errores.add(new ErrorDto("metodo_pago", ErrorType.NO_ENCONTRADO));
+                    throw new ValidationException(errores);
+            }
+            var pagoExitoso = plataformaPago.procesarPago(compraAProcesar, usuarioCompra, precioFinal);
+            if (!pagoExitoso) {
+                throw new ValidationException(errores);
+            } else {
+                CompraForm compraActualizadaForm = new CompraForm(compraAProcesar.getIdUsuarioCompra(),
+                        compraAProcesar.getIdJuegoCompra(), compraAProcesar.getFechaCompra(),
+                        compraAProcesar.getTipoPagoCompra(), compraAProcesar.getPrecioBaseCompra(),
+                        compraAProcesar.getDescuentoEnCompra(),
+                        TipoEstadoCompra.COMPLETADA);
+
+                return compraRepo.actualizar(idCompra, compraActualizadaForm);
+            }
+        });
+        if (!errores.isEmpty()) {
             throw new ValidationException(errores);
-        } else {
-            CompraForm compraActualizadaForm = new CompraForm(compraAProcesar.getIdUsuarioCompra(),
-                    compraAProcesar.getIdJuegoCompra(), compraAProcesar.getFechaCompra(),
-                    compraAProcesar.getTipoPagoCompra(), compraAProcesar.getPrecioBaseCompra(),
-                    compraAProcesar.getDescuentoEnCompra(),
-                    TipoEstadoCompra.COMPLETADA);
-
-            compraRepo.actualizar(idCompra, compraActualizadaForm);
         }
 
-        return Mapper.mapaCompraSimple(compraAProcesar);
+        return Mapper.mapaCompraSimple(compraProcesada.orElse(null));
     }
 
     /**
@@ -201,26 +207,33 @@ public class CompraController {
     public CompraDto consultarCompra(Long idCompra, Long idUsuario) throws ValidationException {
         //Validaciones
         var errores = new ArrayList<ErrorDto>();
-        var compraConsultada = compraRepo.obtenerPorId(idCompra);
-        //Compra existe
-        if (!compraConsultada.isPresent()) {
-            errores.add(new ErrorDto("id_compra", ErrorType.NO_ENCONTRADO));
-            throw new ValidationException(errores);
-        }
-        //verificar pertenencia de compra a usuario
 
-        var idUsuarioEnCompra = compraConsultada.get().getIdUsuarioCompra();
-        if (idUsuarioEnCompra != idUsuario) {
-            errores.add(new ErrorDto("id", ErrorType.NO_PERTENECE));
-        }
+        var compra = transMgr.inTransaction(() -> {
+            var compraConsultada = compraRepo.obtenerPorId(idCompra);
+            //Compra existe
+            if (!compraConsultada.isPresent()) {
+                errores.add(new ErrorDto("id_compra", ErrorType.NO_ENCONTRADO));
+                throw new ValidationException(errores);
+            }
+            //verificar pertenencia de consultaCompra a usuario
 
+            var idUsuarioEnCompra = compraConsultada.get().getIdUsuarioCompra();
+            if (idUsuarioEnCompra != idUsuario) {
+                errores.add(new ErrorDto("id", ErrorType.NO_PERTENECE));
+            }
+
+            if (!errores.isEmpty()) {
+                throw new ValidationException(errores);
+            }
+
+            var consultaCompra = compraConsultada.orElse(null);
+            return consultaCompra;
+        });
         if (!errores.isEmpty()) {
             throw new ValidationException(errores);
         }
 
-        var compra = compraConsultada.orElse(null);
         return Mapper.mapaCompraSimple(compra);
-
     }
 
     /**
@@ -243,73 +256,99 @@ public class CompraController {
     public UsuarioDto solicitarReembolso(Long idCompra) throws ValidationException {
         //Validaciones
         var errores = new ArrayList<ErrorDto>();
-        //validar compra existe
-        var compraAReembolsar = compraRepo.obtenerPorId(idCompra);
-        if (!compraAReembolsar.isPresent()) {
-            errores.add(new ErrorDto("id_compra", ErrorType.NO_ENCONTRADO));
-            throw new ValidationException(errores);
-        }
-        //validar compra completada
-        if (compraAReembolsar.get().getEstadoCompra() != TipoEstadoCompra.COMPLETADA) {
-            errores.add(new ErrorDto("estado_compra", ErrorType.COMPRA_FALLIDA));
-            throw new ValidationException(errores);
-        }
-        //Validar Condiciones Devolución 14 dias
-        if (compraAReembolsar.get().getFechaCompra().isBefore(LocalDate.now().minusDays(14))) {
-            errores.add(new ErrorDto("plazo", ErrorType.PLAZO_SUPERADO));
-        }
-        //Validar Condiciones de devolución 2 horas
-        var idUsuarioCompra = compraAReembolsar.get().getIdUsuarioCompra();
-        var idJuegoCompra = compraAReembolsar.get().getIdJuegoCompra();
-        var entradaBiblioteca = bibliotecaRepo.obtenerTodos().stream()
-                .filter(b -> b.getIdUsuarioBiblio().equals(idUsuarioCompra))
-                .filter(b -> b.getIdJuegoBiblio().equals(idJuegoCompra))
-                .findFirst();
-        if (entradaBiblioteca.isPresent()) {
-            var tiempoJugado = entradaBiblioteca.get().getTiempoJuegoBiblio();
-            if (tiempoJugado > 2.00) {
-                errores.add(new ErrorDto("tiempo_jugado", ErrorType.TIEMPO_SUPERADO));
-            }
-        } else {
-            errores.add(new ErrorDto("biblioteca", ErrorType.NO_ENCONTRADO));
-        }
 
+        var usuario = transMgr.inTransaction(() -> {
+            //validar compra existe
+            var compraAReembolsarOpt = compraRepo.obtenerPorId(idCompra);
+            if (!compraAReembolsarOpt.isPresent()) {
+                errores.add(new ErrorDto("id_compra", ErrorType.NO_ENCONTRADO));
+                throw new ValidationException(errores);
+            }
+            //validar compra completada
+            if (compraAReembolsarOpt.get().getEstadoCompra() != TipoEstadoCompra.COMPLETADA) {
+                errores.add(new ErrorDto("estado_compra", ErrorType.COMPRA_FALLIDA));
+                throw new ValidationException(errores);
+            }
+            //Validar Condiciones Devolución 14 dias
+            if (compraAReembolsarOpt.get().getFechaCompra().isBefore(LocalDate.now().minusDays(14))) {
+                errores.add(new ErrorDto("plazo", ErrorType.PLAZO_SUPERADO));
+            }
+            //Validar Condiciones de devolución 2 horas
+            var idUsuarioCompra = compraAReembolsarOpt.get().getIdUsuarioCompra();
+            var idJuegoCompra = compraAReembolsarOpt.get().getIdJuegoCompra();
+            var entradaBiblioteca = bibliotecaRepo.obtenerTodos().stream()
+                    .filter(b -> b.getIdUsuarioBiblio().equals(idUsuarioCompra))
+                    .filter(b -> b.getIdJuegoBiblio().equals(idJuegoCompra))
+                    .findFirst();
+            if (entradaBiblioteca.isPresent()) {
+                var tiempoJugado = entradaBiblioteca.get().getTiempoJuegoBiblio();
+                if (tiempoJugado > 2.00) {
+                    errores.add(new ErrorDto("tiempo_jugado", ErrorType.TIEMPO_SUPERADO));
+                }
+            } else {
+                errores.add(new ErrorDto("biblioteca", ErrorType.NO_ENCONTRADO));
+            }
+
+            if (!errores.isEmpty()) {
+                throw new ValidationException(errores);
+            }
+
+            //Procesar Reembolso
+            var precioAReembolsar = compraAReembolsarOpt.get().getPrecioBaseCompra();
+            var saldoActualUsuario = usuarioRepo.obtenerPorId(idUsuarioCompra).get().getSaldoUsuario();
+            var nuevoSaldoUsuario = saldoActualUsuario + precioAReembolsar;
+
+            var usuarioCompra = usuarioRepo.obtenerPorId(idUsuarioCompra).get();
+            var usuarioForm = new UsuarioForm(usuarioCompra.getNombreCuentaUsuario(), usuarioCompra.getEmailUsuario(),
+                    usuarioCompra.getPasswordUsuario(),
+                    usuarioCompra.getNombreRealUsuario(), usuarioCompra.getPaisUsuario(),
+                    usuarioCompra.getFechaNacUsuario(), usuarioCompra.getFechaRegUsuario(),
+                    usuarioCompra.getAvatarUsuario(), nuevoSaldoUsuario, usuarioCompra.getEstadoCuentaUsuario());
+            usuarioRepo.actualizar(idUsuarioCompra, usuarioForm);
+
+            //Modifica estado compra a Reembolsada
+            var compraAReembolsar = compraAReembolsarOpt.get();
+            var compraReembolsadaForm = new CompraForm(compraAReembolsar.getIdUsuarioCompra(), compraAReembolsar.getIdJuegoCompra(),
+                                        compraAReembolsar.getFechaCompra(), compraAReembolsar.getTipoPagoCompra(),
+                                        compraAReembolsar.getPrecioBaseCompra(), compraAReembolsar.getDescuentoEnCompra(),
+                                        TipoEstadoCompra.REEMBOLSADA);
+            compraRepo.actualizar(idCompra, compraReembolsadaForm);
+
+            var usuarioRepoActualizado = usuarioRepo.obtenerPorId(idUsuarioCompra);
+            return usuarioRepoActualizado;
+        });
         if (!errores.isEmpty()) {
             throw new ValidationException(errores);
         }
 
-        //Procesar Reembolso
-        var precioAReembolsar = compraAReembolsar.get().getPrecioBaseCompra();
-        var saldoActualUsuario = usuarioRepo.obtenerPorId(idUsuarioCompra).get().getSaldoUsuario();
-        var nuevoSaldoUsuario = saldoActualUsuario + precioAReembolsar;
-
-        var usuarioCompra = usuarioRepo.obtenerPorId(idUsuarioCompra).get();
-        var usuarioForm = new UsuarioForm(usuarioCompra.getNombreCuentaUsuario(), usuarioCompra.getEmailUsuario(),
-                usuarioCompra.getPasswordUsuario(),
-                usuarioCompra.getNombreRealUsuario(), usuarioCompra.getPaisUsuario(),
-                usuarioCompra.getFechaNacUsuario(), usuarioCompra.getFechaRegUsuario(),
-                usuarioCompra.getAvatarUsuario(), nuevoSaldoUsuario, usuarioCompra.getEstadoCuentaUsuario());
-        usuarioRepo.actualizar(idUsuarioCompra, usuarioForm);
-
-        var usuarioRepoActualizado = usuarioRepo.obtenerPorId(idUsuarioCompra).orElse(null);
-        return Mapper.mapaUsuarioCompleto(usuarioRepoActualizado);
+        return Mapper.mapaUsuarioCompleto(usuario.orElse(null));
     }
 
     static void main() throws ValidationException {
 
         ITransactionManager transMgr = new HibernateTransactionManager();
         var c = new CompraController(new CompraRepoHibernate((ISessionManager) transMgr),
-                                        new UsuarioRepoHibernate((ISessionManager) transMgr),
-                                        new JuegoRepoHibernate((ISessionManager) transMgr),
-                                        new BibliotecaRepoHibernate((ISessionManager) transMgr), transMgr);
+                new UsuarioRepoHibernate((ISessionManager) transMgr),
+                new JuegoRepoHibernate((ISessionManager) transMgr),
+                new BibliotecaRepoHibernate((ISessionManager) transMgr), transMgr);
+        //
+        //var compraForm = new CompraForm(2L, 1L,
+        //        LocalDate.now().minusDays(10), TipoMetodoPago.CARTERA_STEAM,
+        //        34.99, 0, TipoEstadoCompra.PENDIENTE);
+        //
+        //var compra1 = c.realizarCompra(compraForm.getIdUsuarioCompra(), compraForm.getIdJuegoCompra(),
+        //        compraForm.getTipoPagoCompra());
+        //
+        //System.out.println(compra1);
 
-        var compraForm = new CompraForm ( 1L, 1L,
-                LocalDate.now().minusDays(10), TipoMetodoPago.CARTERA_STEAM,
-                29.99, 0, TipoEstadoCompra.COMPLETADA);
+        //System.out.println(c.consultarCompra(1L, 1L));
+        //System.out.println(c.consultarCompra(2L, 2L));
 
-        var compra1 = c.realizarCompra(compraForm.getIdUsuarioCompra(), compraForm.getIdJuegoCompra(), compraForm.getTipoPagoCompra());
+        //var resultado = c.procesarPago(1L, TipoMetodoPago.CARTERA_STEAM);
+        //System.out.println(resultado.getEstadoCompra());
 
-        System.out.println(compra1);
+        //c.solicitarReembolso(1L);
+
     }
 
 
