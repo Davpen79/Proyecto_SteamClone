@@ -106,6 +106,7 @@ public class BibliotecaController {
             else if (tipoOrden == TipoOrden.ULTIMA_SESION) {
                 bibliotecaOrd = bibliotecaRepo.obtenerTodos().stream()
                         .filter(b -> b.getIdUsuarioBiblio().equals(idUsuario))
+                        .filter(b -> !Objects.isNull(b.getUltiFechaJuegoBiblio()))
                         .sorted(Comparator.comparing(BibliotecaEntity::getUltiFechaJuegoBiblio).reversed())
                         .map(Mapper::mapaSimple)
                         .toList();
