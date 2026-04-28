@@ -26,6 +26,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 
 public class BibliotecaController {
 
@@ -435,7 +436,10 @@ public class BibliotecaController {
         //System.out.println(biblioteca1);
         //System.out.println(biblioteca2);
 
-        System.out.println(c.verBibliotecaPersonal(1L, TipoOrden.ALFABETICO)); // NO FUNCIONA
+        System.out.println("Alfabetico: " + c.verBibliotecaPersonal(1L, TipoOrden.ALFABETICO)); // NO FUNCIONA
+        System.out.println("Fecha Adquisicion: " + c.verBibliotecaPersonal(1L, TipoOrden.FECHA_ADQUISICION));
+        System.out.println("Tiempo Juego: " + c.verBibliotecaPersonal(1L, TipoOrden.TIEMPO_JUEGO));
+        System.out.println("Ultima Sesion: " + c.verBibliotecaPersonal(1L, TipoOrden.ULTIMA_SESION));
 
         //var juegoEliminado = c.eliminarJuegoDeBiblioteca(1L, 3L);
         //System.out.println(juegoEliminado);
