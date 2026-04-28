@@ -62,7 +62,7 @@ public class UsuarioController {
             }
 
             if (!errores.isEmpty()) {
-                throw new IllegalArgumentException();
+                throw new ValidationException(errores);
             }
             var usuarioOpt = usuarioRepo.crear(usuarioForm);
             return usuarioOpt;
@@ -267,13 +267,16 @@ public class UsuarioController {
         //System.out.println(c.consultarPerfil("JugadorTotal"));
 
 
-        System.out.println(c.consultarSaldo(2L));
+        //System.out.println(c.consultarSaldo(2L));
 
-        System.out.println(c.consultarSaldo(1L));
-        System.out.println(c.consultarSaldo(5L));
+        //System.out.println(c.consultarSaldo(1L));
+        //System.out.println(c.consultarSaldo(5L));
 
-        c.anhadirSaldo(5L, 5.00d);
-        System.out.println(c.consultarSaldo(5L));
+        //c.anhadirSaldo(5L, 5.00d);
+        //System.out.println(c.consultarSaldo(5L));
+
+        //System.out.println(c.consultarPerfil(1L));
+        System.out.println(c.consultarPerfil(9999L));
 
     }
 

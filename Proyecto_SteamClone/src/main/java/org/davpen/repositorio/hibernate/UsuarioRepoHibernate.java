@@ -36,7 +36,8 @@ public class UsuarioRepoHibernate implements IUsuarioRepo {
     public Optional<UsuarioEntity> obtenerPorId(Long id) {
         var session = sessionManager.getSession();
         var usuario = session.find(UsuarioEntity.class, id);
-        return Optional.of(usuario);
+
+        return Optional.ofNullable(usuario);
     }
 
     @Override

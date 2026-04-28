@@ -33,14 +33,6 @@ public class HibernateTransactionManager implements ITransactionManager, ISessio
                     tx.rollback();
                 throw e;
             }
-        } catch (ValidationException ve) {
-            throw ve;
-        } catch (Exception e) {
-            try {
-                return (T) Optional.empty();
-            } catch (ClassCastException ex) {
-                return null;
-            }
         } finally {
             session = null;
         }
