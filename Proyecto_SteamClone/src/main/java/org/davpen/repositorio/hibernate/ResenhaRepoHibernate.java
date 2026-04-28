@@ -74,10 +74,11 @@ public class ResenhaRepoHibernate implements IResenhaRepo {
     public boolean eliminar(Long id) {
         var session = sessionManager.getSession();
 
-        var resenha = this.obtenerPorId(id);
-        if (resenha.isEmpty()) {
+        var resenhaOpt = this.obtenerPorId(id);
+        if (resenhaOpt.isEmpty()) {
             return false;
         }
+        var resenha = resenhaOpt.get();
         session.remove(resenha);
 
         return true;

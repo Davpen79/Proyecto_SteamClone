@@ -73,10 +73,11 @@ public class UsuarioRepoHibernate implements IUsuarioRepo {
     public boolean eliminar(Long id) {
         var session = sessionManager.getSession();
 
-        var usuario = this.obtenerPorId(id);
-        if (usuario.isEmpty()){
+        var usuarioOpt = this.obtenerPorId(id);
+        if (usuarioOpt.isEmpty()){
             return false;
         }
+        var usuario = usuarioOpt.get();
         session.remove(usuario);
         return true;
     }
