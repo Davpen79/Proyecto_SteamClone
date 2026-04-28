@@ -77,22 +77,25 @@ public class BibliotecaController {
                 throw new ValidationException(errores);
             }
 
-            List<BibliotecaDto> bibliotecaO = new ArrayList<>();
+            List<BibliotecaDto> bibliotecaOrd = new ArrayList<>();
+            var usuario = usuarioRepo.obtenerPorId(idUsuario).get();
+
 
             //lista ordenada alfabeticamente
             if (tipoOrden == TipoOrden.ALFABETICO) {
                 var listaDesordenada = bibliotecaRepo.obtenerTodos().stream()
                         .filter(b -> b.getIdUsuarioBiblio().equals(idUsuario))
-                        .map(Mapper::mapaSimple)
+                        .map(b -> Mapper.mapaCompleto(b,usuario,
+                                juegoRepo.obtenerPorId(b.getIdJuegoBiblio()).get()))
                         .toList();
-                bibliotecaO = listaDesordenada.stream()
+                bibliotecaOrd = listaDesordenada.stream()
                         .sorted(Comparator.comparing(b -> b.getJuegoDto().get().getTituloJuego()))
                         .toList();
             }
 
             //lista ordenada por tiempo de juego
             else if (tipoOrden == TipoOrden.TIEMPO_JUEGO) {
-                bibliotecaO = bibliotecaRepo.obtenerTodos().stream()
+                bibliotecaOrd = bibliotecaRepo.obtenerTodos().stream()
                         .filter(b -> b.getIdUsuarioBiblio().equals(idUsuario))
                         .sorted(Comparator.comparingDouble(BibliotecaEntity::getTiempoJuegoBiblio).reversed())
                         .map(Mapper::mapaSimple)
@@ -101,7 +104,7 @@ public class BibliotecaController {
             }
             //lista ordenada por
             else if (tipoOrden == TipoOrden.ULTIMA_SESION) {
-                bibliotecaO = bibliotecaRepo.obtenerTodos().stream()
+                bibliotecaOrd = bibliotecaRepo.obtenerTodos().stream()
                         .filter(b -> b.getIdUsuarioBiblio().equals(idUsuario))
                         .sorted(Comparator.comparing(BibliotecaEntity::getUltiFechaJuegoBiblio).reversed())
                         .map(Mapper::mapaSimple)
@@ -109,13 +112,13 @@ public class BibliotecaController {
             }
             //lista ordenada por fecha adquisicion
             else if (tipoOrden == TipoOrden.FECHA_ADQUISICION) {
-                bibliotecaO = bibliotecaRepo.obtenerTodos().stream()
+                bibliotecaOrd = bibliotecaRepo.obtenerTodos().stream()
                         .filter(b -> b.getIdUsuarioBiblio().equals(idUsuario))
                         .sorted(Comparator.comparing(BibliotecaEntity::getFechaCompraJuegoBiblio).reversed())
                         .map(Mapper::mapaSimple)
                         .toList();
             }
-            return bibliotecaO;
+            return bibliotecaOrd;
 
         });
 
@@ -431,7 +434,7 @@ public class BibliotecaController {
         //System.out.println(biblioteca1);
         //System.out.println(biblioteca2);
 
-        //System.out.println(c.verBibliotecaPersonal(1L, TipoOrden.ALFABETICO)); // NO FUNCIONA
+        System.out.println(c.verBibliotecaPersonal(1L, TipoOrden.ALFABETICO)); // NO FUNCIONA
 
         //var juegoEliminado = c.eliminarJuegoDeBiblioteca(1L, 3L);
         //System.out.println(juegoEliminado);
