@@ -341,8 +341,8 @@ public class CompraController {
         //
         //System.out.println(compra1);
 
-        //System.out.println(c.consultarCompra(1L, 1L));
-        //System.out.println(c.consultarCompra(2L, 2L));
+        System.out.println(c.consultarCompra(1L, 1L));
+        System.out.println(c.consultarCompra(2L, 2L));
 
         //var resultado = c.procesarPago(1L, TipoMetodoPago.CARTERA_STEAM);
         //System.out.println(resultado.getEstadoCompra());

@@ -318,7 +318,7 @@ public class BibliotecaControllerTest {
     }
 
     @Test
-    public void testVerEstadisticasBiblioteca_DatosValidos() {
+    public void testVerEstadisticasBiblioteca_DatosValidos() throws ValidationException {
         // Arrange
         var idUsuario = 1L;
         JuegoEntity juegoValido2 = new JuegoEntity(2L, "Game2", "Descripcion",

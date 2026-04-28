@@ -75,10 +75,11 @@ public class JuegoRepoHibernate implements IJuegoRepo {
     public boolean eliminar(Long id) {
         var session = sessionManager.getSession();
 
-        var juego = this.obtenerPorId(id);
-        if (juego.isEmpty()) {
+        var juegoOpt = this.obtenerPorId(id);
+        if (juegoOpt.isEmpty()) {
             return false;
         }
+        var juego = juegoOpt.get();
         session.remove(juego);
 
         return true;

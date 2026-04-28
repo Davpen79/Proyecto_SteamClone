@@ -4,13 +4,10 @@ import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Root;
 import org.davpen.modelo.entity.CompraEntity;
-import org.davpen.modelo.entity.JuegoEntity;
-import org.davpen.modelo.entity.UsuarioEntity;
 import org.davpen.modelo.form.CompraForm;
 import org.davpen.repositorio.interfaces.ICompraRepo;
 import org.davpen.transaction.ISessionManager;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -75,10 +72,11 @@ public class CompraRepoHibernate implements ICompraRepo {
     public boolean eliminar(Long id) {
         var session = sessionManager.getSession();
 
-        var compra = this.obtenerPorId(id);
-        if (compra.isEmpty()) {
+        var compraOpt = this.obtenerPorId(id);
+        if (compraOpt.isEmpty()) {
             return false;
         }
+        var compra = compraOpt.get();
         session.remove(compra);
         return  true;
     }

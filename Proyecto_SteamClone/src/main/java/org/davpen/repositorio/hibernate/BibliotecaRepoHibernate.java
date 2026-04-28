@@ -71,10 +71,11 @@ public class BibliotecaRepoHibernate implements IBibliotecaRepo {
     public boolean eliminar(Long id) {
         var session = sessionManager.getSession();
 
-        var biblioteca = this.obtenerPorId(id);
-        if (biblioteca.isEmpty()) {
+        var bibliotecaOpt = this.obtenerPorId(id);
+        if (bibliotecaOpt.isEmpty()) {
             return false;
         }
+        var biblioteca = bibliotecaOpt.get();
         session.remove(biblioteca);
 
         return true;

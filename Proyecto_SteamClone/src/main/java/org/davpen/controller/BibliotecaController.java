@@ -33,7 +33,7 @@ public class BibliotecaController {
     private final IUsuarioRepo usuarioRepo;
     private final IJuegoRepo juegoRepo;
     private final ICompraRepo compraRepo;
-    public ITransactionManager transaMgr;
+    public ITransactionManager transMgr;
 
     public BibliotecaController(IBibliotecaRepo bibliotecaRepo, IUsuarioRepo usuarioRepo, IJuegoRepo juegoRepo,
                                 ICompraRepo compraRepo, ITransactionManager transaMgr) {
@@ -41,7 +41,7 @@ public class BibliotecaController {
         this.usuarioRepo = usuarioRepo;
         this.juegoRepo = juegoRepo;
         this.compraRepo = compraRepo;
-        this.transaMgr = transaMgr;
+        this.transMgr = transaMgr;
     }
 
     /**
@@ -66,53 +66,58 @@ public class BibliotecaController {
      * @throws ValidationException Si el usuario no existe.
      */
     public List<BibliotecaDto> verBibliotecaPersonal(Long idUsuario, TipoOrden tipoOrden) throws ValidationException {
-        //Validar usuario
         var errores = new ArrayList<ErrorDto>();
-        if (!usuarioRepo.obtenerPorId(idUsuario).isPresent()) {
-            errores.add(new ErrorDto("id_usuario", ErrorType.NO_ENCONTRADO));
-        }
-        if (!errores.isEmpty()) {
-            throw new ValidationException(errores);
-        }
 
-        List<BibliotecaDto> bibliotecaOrdenada = new ArrayList<>();
+        var bibliotecaOrdenada = transMgr.inTransaction(() -> {
+            //Validar usuario
+            if (!usuarioRepo.obtenerPorId(idUsuario).isPresent()) {
+                errores.add(new ErrorDto("id_usuario", ErrorType.NO_ENCONTRADO));
+            }
+            if (!errores.isEmpty()) {
+                throw new ValidationException(errores);
+            }
 
-        //lista ordenada alfabeticamente
-        if (tipoOrden == TipoOrden.ALFABETICO) {
-            var listaDesordenada = bibliotecaRepo.obtenerTodos().stream()
-                    .filter(b -> b.getIdUsuarioBiblio().equals(idUsuario))
-                    .map(Mapper::mapaSimple)
-                    .toList();
-            bibliotecaOrdenada = listaDesordenada.stream()
-                    .sorted(Comparator.comparing(b -> b.getJuegoDto().orElseThrow().getTituloJuego()))
-                    .toList();
-        }
+            List<BibliotecaDto> bibliotecaO = new ArrayList<>();
 
-        //lista ordenada por tiempo de juego
-        else if (tipoOrden == TipoOrden.TIEMPO_JUEGO) {
-            bibliotecaOrdenada = bibliotecaRepo.obtenerTodos().stream()
-                    .filter(b -> b.getIdUsuarioBiblio().equals(idUsuario))
-                    .sorted(Comparator.comparingDouble(BibliotecaEntity::getTiempoJuegoBiblio).reversed())
-                    .map(Mapper::mapaSimple)
-                    .toList();
+            //lista ordenada alfabeticamente
+            if (tipoOrden == TipoOrden.ALFABETICO) {
+                var listaDesordenada = bibliotecaRepo.obtenerTodos().stream()
+                        .filter(b -> b.getIdUsuarioBiblio().equals(idUsuario))
+                        .map(Mapper::mapaSimple)
+                        .toList();
+                bibliotecaO = listaDesordenada.stream()
+                        .sorted(Comparator.comparing(b -> b.getJuegoDto().get().getTituloJuego()))
+                        .toList();
+            }
 
-        }
-        //lista ordenada por
-        else if (tipoOrden == TipoOrden.ULTIMA_SESION) {
-            bibliotecaOrdenada = bibliotecaRepo.obtenerTodos().stream()
-                    .filter(b -> b.getIdUsuarioBiblio().equals(idUsuario))
-                    .sorted(Comparator.comparing(BibliotecaEntity::getUltiFechaJuegoBiblio).reversed())
-                    .map(Mapper::mapaSimple)
-                    .toList();
-        }
-        //lista ordenada por fecha adquisicion
-        else if (tipoOrden == TipoOrden.FECHA_ADQUISICION) {
-            bibliotecaOrdenada = bibliotecaRepo.obtenerTodos().stream()
-                    .filter(b -> b.getIdUsuarioBiblio().equals(idUsuario))
-                    .sorted(Comparator.comparing(BibliotecaEntity::getFechaCompraJuegoBiblio).reversed())
-                    .map(Mapper::mapaSimple)
-                    .toList();
-        }
+            //lista ordenada por tiempo de juego
+            else if (tipoOrden == TipoOrden.TIEMPO_JUEGO) {
+                bibliotecaO = bibliotecaRepo.obtenerTodos().stream()
+                        .filter(b -> b.getIdUsuarioBiblio().equals(idUsuario))
+                        .sorted(Comparator.comparingDouble(BibliotecaEntity::getTiempoJuegoBiblio).reversed())
+                        .map(Mapper::mapaSimple)
+                        .toList();
+
+            }
+            //lista ordenada por
+            else if (tipoOrden == TipoOrden.ULTIMA_SESION) {
+                bibliotecaO = bibliotecaRepo.obtenerTodos().stream()
+                        .filter(b -> b.getIdUsuarioBiblio().equals(idUsuario))
+                        .sorted(Comparator.comparing(BibliotecaEntity::getUltiFechaJuegoBiblio).reversed())
+                        .map(Mapper::mapaSimple)
+                        .toList();
+            }
+            //lista ordenada por fecha adquisicion
+            else if (tipoOrden == TipoOrden.FECHA_ADQUISICION) {
+                bibliotecaO = bibliotecaRepo.obtenerTodos().stream()
+                        .filter(b -> b.getIdUsuarioBiblio().equals(idUsuario))
+                        .sorted(Comparator.comparing(BibliotecaEntity::getFechaCompraJuegoBiblio).reversed())
+                        .map(Mapper::mapaSimple)
+                        .toList();
+            }
+            return bibliotecaO;
+
+        });
 
         return bibliotecaOrdenada;
     }
@@ -136,7 +141,7 @@ public class BibliotecaController {
         //Validar modelo
         var errores = new ArrayList<ErrorDto>();
 
-        var biblioteca = transaMgr.inTransaction(() -> {
+        var biblioteca = transMgr.inTransaction(() -> {
 
             //Validar usuario
             if (!usuarioRepo.obtenerPorId(idUsuario).isPresent()) {
@@ -187,30 +192,38 @@ public class BibliotecaController {
      */
     public BibliotecaDto eliminarJuegoDeBiblioteca(Long idUsuario, Long idJuego) throws ValidationException {
         var errores = new ArrayList<ErrorDto>();
-        //Validar Usuario && Juego existen
-        var usuarioExiste = usuarioRepo.obtenerPorId(idUsuario).isPresent();
-        var juegoExiste = juegoRepo.obtenerPorId(idJuego).isPresent();
-        if (!usuarioExiste || !juegoExiste) {
-            errores.add(new ErrorDto("id", ErrorType.NO_ENCONTRADO));
-            throw new ValidationException(errores);
-        }
-        //Validar entrada en Biblioteca existe
-        var entradaBiblioteca = bibliotecaRepo.obtenerTodos().stream()
-                .filter(u -> u.getIdUsuarioBiblio().equals(idUsuario))
-                .filter(j -> j.getIdJuegoBiblio().equals(idJuego))
-                .findFirst();
-        if (entradaBiblioteca.isEmpty()) {
-            errores.add(new ErrorDto("entrada", ErrorType.NO_ENCONTRADO));
-        }
+
+        var bibliotecaEliminada = transMgr.inTransaction(() -> {
+            //Validar Usuario && Juego existen
+            var usuarioExiste = usuarioRepo.obtenerPorId(idUsuario).isPresent();
+            var juegoExiste = juegoRepo.obtenerPorId(idJuego).isPresent();
+            if (!usuarioExiste || !juegoExiste) {
+                errores.add(new ErrorDto("id", ErrorType.NO_ENCONTRADO));
+                throw new ValidationException(errores);
+            }
+            //Validar entrada en Biblioteca existe
+            var entradaBiblioteca = bibliotecaRepo.obtenerTodos().stream()
+                    .filter(u -> u.getIdUsuarioBiblio().equals(idUsuario))
+                    .filter(j -> j.getIdJuegoBiblio().equals(idJuego))
+                    .findFirst();
+            if (entradaBiblioteca.isEmpty()) {
+                errores.add(new ErrorDto("entrada", ErrorType.NO_ENCONTRADO));
+            }
+
+            if (!errores.isEmpty()) {
+                throw new ValidationException(errores);
+            }
+            var idEntradaEncontrada = entradaBiblioteca.get().getIdBiblio();
+            bibliotecaRepo.eliminar(idEntradaEncontrada);
+
+            return entradaBiblioteca;
+        });
 
         if (!errores.isEmpty()) {
             throw new ValidationException(errores);
         }
-        var idEntradaEncontrada = entradaBiblioteca.get().getIdBiblio();
 
-        bibliotecaRepo.eliminar(idEntradaEncontrada);
-
-        return Mapper.mapaSimple(entradaBiblioteca.orElseThrow());
+        return Mapper.mapaSimple(bibliotecaEliminada.orElse(null));
     }
 
     /**
@@ -231,41 +244,52 @@ public class BibliotecaController {
      */
     public BibliotecaDto actualizarTiempoJuego(Long idUsuario, Long idJuego, double horasParaAnhadir) throws ValidationException {
         var errores = new ArrayList<ErrorDto>();
-        //Validar Usuario && Juego existen
-        var usuarioExiste = usuarioRepo.obtenerPorId(idUsuario).isPresent();
-        var juegoExiste = juegoRepo.obtenerPorId(idJuego).isPresent();
-        if (!usuarioExiste || !juegoExiste) {
-            errores.add(new ErrorDto("id", ErrorType.NO_ENCONTRADO));
-            throw new ValidationException(errores);
-        }
-        //Validar entrada en Biblioteca existe
-        var entradaBiblioteca =
-                bibliotecaRepo.obtenerTodos().stream()
-                        .filter(u -> u.getIdUsuarioBiblio().equals(idUsuario))
-                        .filter(j -> j.getIdJuegoBiblio().equals(idJuego))
-                        .findFirst();
-        if (entradaBiblioteca.isEmpty()) {
-            errores.add(new ErrorDto("entrada", ErrorType.NO_ENCONTRADO));
-        }
-        //validar horas jugadas positivas - Deberia ser en Formulario??
-        if (horasParaAnhadir < 0) {
-            errores.add(new ErrorDto("horas", ErrorType.VALOR_NEGATIVO));
-        }
+
+        var bibliotecaActualizadaEntity = transMgr.inTransaction(() -> {
+            //Validar Usuario && Juego existen
+            var usuarioExiste = usuarioRepo.obtenerPorId(idUsuario).isPresent();
+            var juegoExiste = juegoRepo.obtenerPorId(idJuego).isPresent();
+            if (!usuarioExiste || !juegoExiste) {
+                errores.add(new ErrorDto("id", ErrorType.NO_ENCONTRADO));
+                throw new ValidationException(errores);
+            }
+            //Validar entrada en Biblioteca existe
+            var entradaBiblioteca =
+                    bibliotecaRepo.obtenerTodos().stream()
+                            .filter(u -> u.getIdUsuarioBiblio().equals(idUsuario))
+                            .filter(j -> j.getIdJuegoBiblio().equals(idJuego))
+                            .findFirst();
+            if (entradaBiblioteca.isEmpty()) {
+                errores.add(new ErrorDto("entrada", ErrorType.NO_ENCONTRADO));
+            }
+            //validar horas jugadas positivas - Deberia ser en Formulario??
+            if (horasParaAnhadir < 0) {
+                errores.add(new ErrorDto("horas", ErrorType.VALOR_NEGATIVO));
+            }
+
+            if (!errores.isEmpty()) {
+                throw new ValidationException(errores);
+            }
+            var entradaBibEntity = entradaBiblioteca.get();
+            var idEntradaEncontrada = entradaBibEntity.getIdBiblio();
+            var horasActualizadas = entradaBibEntity.getTiempoJuegoBiblio() + horasParaAnhadir;
+
+            var bibliotecaActualizadaForm = new BibliotecaForm(entradaBibEntity.getIdUsuarioBiblio(),
+                    entradaBibEntity.getIdJuegoBiblio(), entradaBibEntity.getFechaCompraJuegoBiblio(),
+                    horasActualizadas,
+                    entradaBibEntity.getUltiFechaJuegoBiblio(), entradaBibEntity.getEstadoInstJuegoBiblio());
+
+            var bibliotecaActualizada =
+                    bibliotecaRepo.actualizar(idEntradaEncontrada, bibliotecaActualizadaForm).orElse(null);
+            return bibliotecaActualizada;
+
+        });
 
         if (!errores.isEmpty()) {
             throw new ValidationException(errores);
         }
-        var entradaBibEntity = entradaBiblioteca.get();
-        var idEntradaEncontrada = entradaBibEntity.getIdBiblio();
-        var horasActualizadas = entradaBibEntity.getTiempoJuegoBiblio() + horasParaAnhadir;
 
-        var bibliotecaActualizadaForm = new BibliotecaForm(entradaBibEntity.getIdUsuarioBiblio(),
-                entradaBibEntity.getIdJuegoBiblio(), entradaBibEntity.getFechaCompraJuegoBiblio(), horasActualizadas,
-                entradaBibEntity.getUltiFechaJuegoBiblio(), entradaBibEntity.getEstadoInstJuegoBiblio());
-
-        var bibliotecaActualizada =
-                bibliotecaRepo.actualizar(idEntradaEncontrada, bibliotecaActualizadaForm).orElse(null);
-        return Mapper.mapaSimple(bibliotecaActualizada);
+        return Mapper.mapaSimple(bibliotecaActualizadaEntity);
     }
 
     /**
@@ -284,37 +308,41 @@ public class BibliotecaController {
 
     public BibliotecaDto consultarUltimaSesion(Long idUsuario, Long idJuego) throws ValidationException {
         var errores = new ArrayList<ErrorDto>();
-        //Validar Usuario && Juego existen
-        var usuarioExiste = usuarioRepo.obtenerPorId(idUsuario).isPresent();
-        var juegoExiste = juegoRepo.obtenerPorId(idJuego).isPresent();
-        if (!usuarioExiste || !juegoExiste) {
-            errores.add(new ErrorDto("id", ErrorType.NO_ENCONTRADO));
-            throw new ValidationException(errores);
-        }
-        //Validar entrada en Biblioteca existe
-        var entradaBiblioteca =
-                bibliotecaRepo.obtenerTodos().stream()
-                        .filter(u -> u.getIdUsuarioBiblio().equals(idUsuario))
-                        .filter(j -> j.getIdJuegoBiblio().equals(idJuego))
-                        .findFirst();
-        if (entradaBiblioteca.isEmpty()) {
-            errores.add(new ErrorDto("entrada", ErrorType.NO_ENCONTRADO));
-        }
-        if (!errores.isEmpty()) {
-            throw new ValidationException(errores);
-        }
-        var entradaBibEntity = entradaBiblioteca.get();
-        var ultimaPartida = entradaBibEntity.getUltiFechaJuegoBiblio();
 
-        if (ultimaPartida == null) {
-            errores.add(new ErrorDto("Fecha_ultima_sesion", ErrorType.NUNCA_JUGADO));
-        }
-        if (!errores.isEmpty()) {
-            throw new ValidationException(errores);
-        }
+        var ultimaSesion = transMgr.inTransaction(() -> {
+            //Validar Usuario && Juego existen
+            var usuarioExiste = usuarioRepo.obtenerPorId(idUsuario).isPresent();
+            var juegoExiste = juegoRepo.obtenerPorId(idJuego).isPresent();
+            if (!usuarioExiste || !juegoExiste) {
+                errores.add(new ErrorDto("id", ErrorType.NO_ENCONTRADO));
+                throw new ValidationException(errores);
+            }
+            //Validar entrada en Biblioteca existe
+            var entradaBiblioteca =
+                    bibliotecaRepo.obtenerTodos().stream()
+                            .filter(u -> u.getIdUsuarioBiblio().equals(idUsuario))
+                            .filter(j -> j.getIdJuegoBiblio().equals(idJuego))
+                            .findFirst();
+            if (entradaBiblioteca.isEmpty()) {
+                errores.add(new ErrorDto("entrada", ErrorType.NO_ENCONTRADO));
+            }
+            if (!errores.isEmpty()) {
+                throw new ValidationException(errores);
+            }
+            var entradaBibEntity = entradaBiblioteca.get();
+            var ultimaPartida = entradaBibEntity.getUltiFechaJuegoBiblio();
 
-        var bibliotecaUltimaSesion = Mapper.mapaSimple(entradaBibEntity);
-        return bibliotecaUltimaSesion;
+            if (ultimaPartida == null) {
+                errores.add(new ErrorDto("Fecha_ultima_sesion", ErrorType.NUNCA_JUGADO));
+            }
+            if (!errores.isEmpty()) {
+                throw new ValidationException(errores);
+            }
+
+            return entradaBibEntity;
+        });
+
+        return Mapper.mapaSimple(ultimaSesion);
     }
 
     /**
@@ -331,66 +359,93 @@ public class BibliotecaController {
      * @param idUsuario Identificador del usuario.
      * @return EstadisticasBibliotecaDto con los datos agregados de la biblioteca.
      */
-    public EstadisticasBibliotecaDto verEstadisticasBiblioteca(Long idUsuario) {
+    public EstadisticasBibliotecaDto verEstadisticasBiblioteca(Long idUsuario) throws ValidationException {
 
-        var bibliotecaUsuario = bibliotecaRepo.obtenerTodos().stream()
-                .filter(b -> b.getIdUsuarioBiblio().equals(idUsuario))
-                .toList();
-        var totalHoras = bibliotecaUsuario.stream()
-                .map(b -> b.getTiempoJuegoBiblio())
-                .reduce((a, b) -> a + b)
-                .orElse(0d);
-        var listaJuegosEnBibliotecaInstalados = bibliotecaUsuario.stream()
-                .filter(b -> b.getEstadoInstJuegoBiblio().equals(TipoEstadoInstalacion.INSTALADO))
-                .toList();
-        var listaJuegosInstalados = listaJuegosEnBibliotecaInstalados.stream()
-                .map(b -> juegoRepo.obtenerPorId(b.getIdJuegoBiblio()).get())
-                .map(Mapper::mapaJuegoCompleto)
-                .toList();
-        var bibliotecaJuegoMasJugado = bibliotecaUsuario.stream()
-                .max(Comparator.comparing(BibliotecaEntity::getTiempoJuegoBiblio));
+        var estadisticas = transMgr.inTransaction(() -> {
+            var bibliotecaUsuario = bibliotecaRepo.obtenerTodos().stream()
+                    .filter(b -> b.getIdUsuarioBiblio().equals(idUsuario))
+                    .toList();
 
-        var juegoMasJugado = bibliotecaJuegoMasJugado.flatMap(b -> juegoRepo.obtenerPorId(b.getIdJuegoBiblio()))
-                .map(Mapper::mapaJuegoCompleto);
+            var totalHoras = bibliotecaUsuario.stream()
+                    .map(b -> b.getTiempoJuegoBiblio())
+                    .reduce((a, b) -> a + b)
+                    .orElse(0d);
 
-        var listComprasBiblioteca = bibliotecaUsuario.stream()
-                .map(b -> compraRepo.obtenerPorIdUsuario(b.getIdUsuarioBiblio()))
-                .toList();
-        var valorTotalBiblioteca = listComprasBiblioteca.stream()
-                .map(c -> c.get().getPrecioBaseCompra())
-                .reduce((a, b) -> a + b)
-                .orElse(0d);
-        var listaJuegosNoJugados = bibliotecaUsuario.stream()
-                .filter(b -> b.getTiempoJuegoBiblio() == 0d)
-                .map(b -> juegoRepo.obtenerPorId(b.getIdJuegoBiblio()).get())
-                .map(Mapper::mapaJuegoCompleto)
-                .toList();
+            var listaJuegosEnBibliotecaInstalados = bibliotecaUsuario.stream()
+                    .filter(b -> b.getEstadoInstJuegoBiblio().equals(TipoEstadoInstalacion.INSTALADO))
+                    .toList();
 
-        return new EstadisticasBibliotecaDto(idUsuario, bibliotecaUsuario.size(), totalHoras, listaJuegosInstalados,
-                juegoMasJugado, valorTotalBiblioteca, listaJuegosNoJugados);
+            var listaJuegosInstalados = listaJuegosEnBibliotecaInstalados.stream()
+                    .map(b -> juegoRepo.obtenerPorId(b.getIdJuegoBiblio()).get())
+                    .map(Mapper::mapaJuegoCompleto)
+                    .toList();
+
+            var bibliotecaJuegoMasJugado = bibliotecaUsuario.stream()
+                    .max(Comparator.comparing(BibliotecaEntity::getTiempoJuegoBiblio));
+
+            var juegoMasJugado = bibliotecaJuegoMasJugado.flatMap(b -> juegoRepo.obtenerPorId(b.getIdJuegoBiblio()))
+                    .map(Mapper::mapaJuegoCompleto);
+
+            var listaComprasBiblioteca = compraRepo.obtenerTodos().stream()
+                    .filter(c -> c.getIdUsuarioCompra().equals(idUsuario))
+                    .toList();
+            var valorTotalBiblioteca = listaComprasBiblioteca.stream()
+                    .map(c -> c.getPrecioBaseCompra())
+                    .reduce((a, b) -> a + b)
+                    .orElse(0d);
+
+            var listaJuegosNoJugados = bibliotecaUsuario.stream()
+                    .filter(b -> b.getTiempoJuegoBiblio() == 0d)
+                    .map(b -> juegoRepo.obtenerPorId(b.getIdJuegoBiblio()).get())
+                    .map(Mapper::mapaJuegoCompleto)
+                    .toList();
+
+            return new EstadisticasBibliotecaDto(idUsuario, bibliotecaUsuario.size(), totalHoras, listaJuegosInstalados,
+                    juegoMasJugado, valorTotalBiblioteca, listaJuegosNoJugados);
+
+        });
+        return estadisticas;
     }
 
-    static void main() throws ValidationException {
+    public static void main(String[] args) throws ValidationException {
 
         ITransactionManager transMgr = new HibernateTransactionManager();
         var c = new BibliotecaController(new BibliotecaRepoHibernate((ISessionManager) transMgr),
-                                        new UsuarioRepoHibernate((ISessionManager) transMgr),
-                                        new JuegoRepoHibernate((ISessionManager) transMgr),
-                                        new CompraRepoHibernate((ISessionManager) transMgr), transMgr);
+                new UsuarioRepoHibernate((ISessionManager) transMgr),
+                new JuegoRepoHibernate((ISessionManager) transMgr),
+                new CompraRepoHibernate((ISessionManager) transMgr), transMgr);
 
-        var bibliotecaForm = new BibliotecaForm(1L, 1L,
-                LocalDate.of(2023, 1, 1), 0.0, null,
-                TipoEstadoInstalacion.NO_INSTALADO);
+        //var bibliotecaForm = new BibliotecaForm(1L, 1L,
+        //        LocalDate.of(2023, 1, 1), 0.0, null,
+        //        TipoEstadoInstalacion.NO_INSTALADO);
 
-        var bibliotecaForm2 = new BibliotecaForm(1L, 2L,
-                LocalDate.of(2023, 2, 10), 0.0, null,
-                TipoEstadoInstalacion.NO_INSTALADO);
+        //var bibliotecaForm2 = new BibliotecaForm(1L, 2L,
+        //        LocalDate.of(2023, 2, 10), 0.0, null,
+        //        TipoEstadoInstalacion.NO_INSTALADO);
 
-        var biblioteca1 = c.anhadirJuegoABiblioteca(bibliotecaForm.getIdUsuarioBiblio(), bibliotecaForm.getIdJuegoBiblio());
-        var biblioteca2 = c.anhadirJuegoABiblioteca(bibliotecaForm2.getIdUsuarioBiblio(), bibliotecaForm2.getIdJuegoBiblio());
+        //var biblioteca1 = c.anhadirJuegoABiblioteca(bibliotecaForm.getIdUsuarioBiblio(),
+        //        bibliotecaForm.getIdJuegoBiblio());
+        //var biblioteca2 = c.anhadirJuegoABiblioteca(bibliotecaForm2.getIdUsuarioBiblio(),
+        //        bibliotecaForm2.getIdJuegoBiblio());
 
-        System.out.println(biblioteca1);
-        System.out.println(biblioteca2);
+        //System.out.println(biblioteca1);
+        //System.out.println(biblioteca2);
+
+        //System.out.println(c.verBibliotecaPersonal(1L, TipoOrden.ALFABETICO)); // NO FUNCIONA
+
+        //var juegoEliminado = c.eliminarJuegoDeBiblioteca(1L, 3L);
+        //System.out.println(juegoEliminado);
+
+        //var bibActualizada = c.actualizarTiempoJuego(1L, 3L, 1);
+        //System.out.println(bibActualizada);
+
+        //var ultimaSesion = c.consultarUltimaSesion(1L, 3L);
+        //System.out.println(ultimaSesion);
+        //var nuncaJugado = c.consultarUltimaSesion(1L, 1L);
+        //System.out.println(nuncaJugado);
+
+        //var estadisticas1 = c.verEstadisticasBiblioteca(1L);
+        //System.out.println(estadisticas1);
 
     }
 
