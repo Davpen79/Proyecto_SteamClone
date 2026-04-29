@@ -37,7 +37,7 @@ public class CompraRepoHibernate implements ICompraRepo {
 
         var compra = session.find(CompraEntity.class, id);
 
-        return Optional.of(compra);
+        return Optional.ofNullable(compra);
     }
 
     @Override

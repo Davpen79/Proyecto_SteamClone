@@ -37,7 +37,7 @@ public class ResenhaRepoHibernate implements IResenhaRepo {
         var session = sessionManager.getSession();
 
         var resenha = session.find(ResenhaEntity.class, id);
-        return Optional.of(resenha);
+        return Optional.ofNullable(resenha);
     }
 
     @Override

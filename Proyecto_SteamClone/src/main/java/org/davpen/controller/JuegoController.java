@@ -56,7 +56,7 @@ public class JuegoController {
             }
 
             if (!errores.isEmpty()) {
-                throw new IllegalArgumentException();
+                throw new ValidationException(errores);
             }
 
             var juegoOpt = juegoRepo.crear(juegoForm);

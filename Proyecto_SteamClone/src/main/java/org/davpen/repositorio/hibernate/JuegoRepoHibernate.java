@@ -38,7 +38,7 @@ public class JuegoRepoHibernate implements IJuegoRepo {
         var session = sessionManager.getSession();
 
         var juego = session.find(JuegoEntity.class, id);
-        return Optional.of(juego);
+        return Optional.ofNullable(juego);
     }
 
     @Override

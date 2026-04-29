@@ -28,6 +28,7 @@ import org.davpen.transaction.ITransactionManager;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Objects;
 import java.util.Optional;
 
 public class CompraController {
@@ -54,15 +55,17 @@ public class CompraController {
      * crea la compra y devuelve un DTO de la compra realizada.
      * Si encuentra algun error de validacion lanza ValidationException con la lista de errores
      *
-     * @param idUsuario  Identificador del usuario que realiza la compra.
-     * @param idJuego    Identificador del juego a comprar.
-     * @param metodoPago Metodo de pago seleccionado.
+     * @param compraForm  Identificador del usuario que realiza la compra.
      * @return CompraDto de la compra creada.
      * @throws ValidationException Si existen errores de validación; la excepción contiene la lista de errores.
      */
-    public CompraDto realizarCompra(Long idUsuario, Long idJuego, TipoMetodoPago metodoPago) throws ValidationException {
+    public CompraDto realizarCompra(CompraForm compraForm) throws ValidationException {
         //Validar
         var errores = new ArrayList<ErrorDto>();
+
+        var idUsuario = compraForm.getIdUsuarioCompra();
+        var idJuego = compraForm.getIdJuegoCompra();
+        var metodoPago = compraForm.getTipoPagoCompra();
 
         var compra = transMgr.inTransaction(() -> {
             //usuario existe y activo
@@ -101,9 +104,8 @@ public class CompraController {
             }
             var precioCompra = juegoRepo.obtenerPorId(idJuego).get().getPrecioBaseJuego();
 
-
-            var compraForm = new CompraForm(idUsuario, idJuego, LocalDate.now(), metodoPago, precioCompra,
-                    descuentoCompra, TipoEstadoCompra.PENDIENTE);
+            //var compraForm = new CompraForm(idUsuario, idJuego, LocalDate.now(), metodoPago, precioCompra,
+            //        descuentoCompra, TipoEstadoCompra.PENDIENTE);
 
             var compraEfectuada = compraRepo.crear(compraForm);
             return compraEfectuada;
@@ -218,7 +220,7 @@ public class CompraController {
             //verificar pertenencia de consultaCompra a usuario
 
             var idUsuarioEnCompra = compraConsultada.get().getIdUsuarioCompra();
-            if (idUsuarioEnCompra != idUsuario) {
+            if (!Objects.equals(idUsuarioEnCompra, idUsuario)) {
                 errores.add(new ErrorDto("id", ErrorType.NO_PERTENECE));
             }
 
@@ -253,11 +255,11 @@ public class CompraController {
      * @return UsuarioDto con el usuario actualizado tras el reembolso.
      * @throws ValidationException Si cualquiera de las validaciones falla; la excepción contiene la lista de errores.
      */
-    public UsuarioDto solicitarReembolso(Long idCompra) throws ValidationException {
+    public CompraDto solicitarReembolso(Long idCompra) throws ValidationException {
         //Validaciones
         var errores = new ArrayList<ErrorDto>();
 
-        var usuario = transMgr.inTransaction(() -> {
+        var compra = transMgr.inTransaction(() -> {
             //validar compra existe
             var compraAReembolsarOpt = compraRepo.obtenerPorId(idCompra);
             if (!compraAReembolsarOpt.isPresent()) {
@@ -312,16 +314,16 @@ public class CompraController {
                                         compraAReembolsar.getFechaCompra(), compraAReembolsar.getTipoPagoCompra(),
                                         compraAReembolsar.getPrecioBaseCompra(), compraAReembolsar.getDescuentoEnCompra(),
                                         TipoEstadoCompra.REEMBOLSADA);
-            compraRepo.actualizar(idCompra, compraReembolsadaForm);
+            var compraActualizada = compraRepo.actualizar(idCompra, compraReembolsadaForm);
 
-            var usuarioRepoActualizado = usuarioRepo.obtenerPorId(idUsuarioCompra);
-            return usuarioRepoActualizado;
+            //var usuarioRepoActualizado = usuarioRepo.obtenerPorId(idUsuarioCompra); // innecesario
+            return compraActualizada;
         });
         if (!errores.isEmpty()) {
             throw new ValidationException(errores);
         }
 
-        return Mapper.mapaUsuarioCompleto(usuario.orElse(null));
+        return Mapper.mapaCompraSimple(compra.orElse(null));
     }
 
     static void main() throws ValidationException {
@@ -332,17 +334,16 @@ public class CompraController {
                 new JuegoRepoHibernate((ISessionManager) transMgr),
                 new BibliotecaRepoHibernate((ISessionManager) transMgr), transMgr);
         //
-        //var compraForm = new CompraForm(2L, 1L,
-        //        LocalDate.now().minusDays(10), TipoMetodoPago.CARTERA_STEAM,
-        //        34.99, 0, TipoEstadoCompra.PENDIENTE);
-        //
-        //var compra1 = c.realizarCompra(compraForm.getIdUsuarioCompra(), compraForm.getIdJuegoCompra(),
-        //        compraForm.getTipoPagoCompra());
-        //
-        //System.out.println(compra1);
+        var compraForm = new CompraForm(2L, 1L,
+                LocalDate.now().minusDays(10), TipoMetodoPago.CARTERA_STEAM,
+                34.99, 110, TipoEstadoCompra.PENDIENTE);
 
-        System.out.println(c.consultarCompra(1L, 1L));
-        System.out.println(c.consultarCompra(2L, 2L));
+        var compra1 = c.realizarCompra(compraForm);
+
+        System.out.println(compra1);
+
+        //System.out.println(c.consultarCompra(1L, 1L));
+        //System.out.println(c.consultarCompra(2L, 2L));
 
         //var resultado = c.procesarPago(1L, TipoMetodoPago.CARTERA_STEAM);
         //System.out.println(resultado.getEstadoCompra());

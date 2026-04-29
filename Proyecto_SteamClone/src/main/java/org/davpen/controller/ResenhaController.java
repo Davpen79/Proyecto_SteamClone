@@ -181,7 +181,6 @@ public class ResenhaController {
         var errores = new ArrayList<ErrorDto>();
 
         var resenhaEliminada = transMgr.inTransaction(() -> {
-
             //validar modelo
             //validar reseña existe
             var resenhaOpt = resenhaRepo.obtenerPorId(idResenha);
@@ -192,7 +191,8 @@ public class ResenhaController {
             //validar reseña es de usuario
             var listaResenhas = resenhaRepo.obtenerTodos();
             var resenhasAUsuario = resenhaRepo.obtenerTodasPorIdUsuario(idUsuario, listaResenhas);
-            var resenhaAEliminarEsDeUsuario = resenhasAUsuario.stream().anyMatch(r -> r.getIdResenha().equals(idResenha));
+            var resenhaAEliminarEsDeUsuario =
+                    resenhasAUsuario.stream().anyMatch(r -> r.getIdResenha().equals(idResenha));
             if (!resenhaAEliminarEsDeUsuario) {
                 errores.add(new ErrorDto("id_resenha", ErrorType.NO_ENCONTRADO));
             }
@@ -226,49 +226,53 @@ public class ResenhaController {
     public List<ResenhaDto> verResenhasJuego(Long idJuego, Optional<TipoRecomendacionJuego> tipoRecomendacion) throws ValidationException {
         this.tipoRecomendacion = tipoRecomendacion;
         var errores = new ArrayList<ErrorDto>();
-        //Validar juego existe
-        var listaJuegos = juegoRepo.obtenerTodos();
-        var juegoExiste = listaJuegos.stream().anyMatch(j -> j.getIdJuego().equals(idJuego));
-        if (!juegoExiste) {
-            errores.add(new ErrorDto("id_juego", ErrorType.NO_ENCONTRADO));
-        }
-        if (!errores.isEmpty()) {
-            throw new ValidationException(errores);
-        }
-        var listaResenhas = resenhaRepo.obtenerTodos();
-        var listaResenhasJuego = resenhaRepo.obtenerTodasPorIdJuego(idJuego, listaResenhas);
-        List<ResenhaDto> listaResenhasDtoJuego = List.of();
 
-        if (!tipoRecomendacion.isPresent()) {
+        var listaResenhasJuego = transMgr.inTransaction(() -> {
+            //Validar juego existe
+            var listaJuegos = juegoRepo.obtenerTodos();
+            var juegoExiste = listaJuegos.stream().anyMatch(j -> j.getIdJuego().equals(idJuego));
+            if (!juegoExiste) {
+                errores.add(new ErrorDto("id_juego", ErrorType.NO_ENCONTRADO));
+            }
+            if (!errores.isEmpty()) {
+                throw new ValidationException(errores);
+            }
+            var listaResenhas = resenhaRepo.obtenerTodos();
+            var listaResenhasEntJuego = resenhaRepo.obtenerTodasPorIdJuego(idJuego, listaResenhas);
+            List<ResenhaDto> listaResenhasDtoJuego = List.of();
 
-            listaResenhasDtoJuego = listaResenhasJuego.stream()
-                    //filtramos para quedarnos solo con las reseñas que no esten ocultas
-                    .filter(r -> !r.getEstadoResenha().equals(TipoEstadoResenha.OCULTA))
-                    //Ordenamos priorizando las reseñas mas recientes como mas utiles
-                    .sorted(Comparator.comparing(ResenhaEntity::getFechaPublicacionResenha).reversed())
-                    .map(resenha -> Mapper.mapaSimple(resenha))
-                    .toList();
+            if (!tipoRecomendacion.isPresent()) {
 
-        } else if (tipoRecomendacion.get().equals(TipoRecomendacionJuego.RECOMENDADO)) {
-            listaResenhasDtoJuego = listaResenhasJuego.stream()
-                    //filtramos para quedarnos solo con las reseñas que no esten ocultas
-                    .filter(r -> !r.getEstadoResenha().equals(TipoEstadoResenha.OCULTA))
-                    .filter(r -> r.isRecomendacionResenha())
-                    .sorted(Comparator.comparing(ResenhaEntity::getFechaPublicacionResenha).reversed())
-                    .map(resenha -> Mapper.mapaSimple(resenha))
-                    .toList();
+                listaResenhasDtoJuego = listaResenhasEntJuego.stream()
+                        //filtramos para quedarnos solo con las reseñas que no esten ocultas
+                        .filter(r -> !r.getEstadoResenha().equals(TipoEstadoResenha.OCULTA))
+                        //Ordenamos priorizando las reseñas mas recientes como mas utiles
+                        .sorted(Comparator.comparing(ResenhaEntity::getFechaPublicacionResenha).reversed())
+                        .map(resenha -> Mapper.mapaSimple(resenha))
+                        .toList();
 
-        } else if (tipoRecomendacion.get().equals(TipoRecomendacionJuego.NO_RECOMENDADO)) {
-            listaResenhasDtoJuego = listaResenhasJuego.stream()
-                    //filtramos para quedarnos solo con las reseñas que no esten ocultas
-                    .filter(r -> !r.getEstadoResenha().equals(TipoEstadoResenha.OCULTA))
-                    .filter(r -> !r.isRecomendacionResenha())
-                    .sorted(Comparator.comparing(ResenhaEntity::getFechaPublicacionResenha).reversed())
-                    .map(resenha -> Mapper.mapaSimple(resenha))
-                    .toList();
-        }
+            } else if (tipoRecomendacion.get().equals(TipoRecomendacionJuego.RECOMENDADO)) {
+                listaResenhasDtoJuego = listaResenhasEntJuego.stream()
+                        //filtramos para quedarnos solo con las reseñas que no esten ocultas
+                        .filter(r -> !r.getEstadoResenha().equals(TipoEstadoResenha.OCULTA))
+                        .filter(r -> r.isRecomendacionResenha())
+                        .sorted(Comparator.comparing(ResenhaEntity::getFechaPublicacionResenha).reversed())
+                        .map(resenha -> Mapper.mapaSimple(resenha))
+                        .toList();
 
-        return listaResenhasDtoJuego;
+            } else if (tipoRecomendacion.get().equals(TipoRecomendacionJuego.NO_RECOMENDADO)) {
+                listaResenhasDtoJuego = listaResenhasEntJuego.stream()
+                        //filtramos para quedarnos solo con las reseñas que no esten ocultas
+                        .filter(r -> !r.getEstadoResenha().equals(TipoEstadoResenha.OCULTA))
+                        .filter(r -> !r.isRecomendacionResenha())
+                        .sorted(Comparator.comparing(ResenhaEntity::getFechaPublicacionResenha).reversed())
+                        .map(resenha -> Mapper.mapaSimple(resenha))
+                        .toList();
+            }
+            return listaResenhasDtoJuego;
+        });
+
+        return listaResenhasJuego;
     }
 
     /**
@@ -282,50 +286,54 @@ public class ResenhaController {
      */
     public List<ResenhaDto> verResenhasUsuario(Long idUsuario, Optional<TipoEstadoResenha> tipoEstadoResenha) throws ValidationException {
         var errores = new ArrayList<ErrorDto>();
-        //Validar usuario existe
-        var listaUsuarios = usuarioRepo.obtenerTodos();
-        var usuarioExiste = listaUsuarios.stream().anyMatch(u -> u.getIdUsuario().equals(idUsuario));
-        if (!usuarioExiste) {
-            errores.add(new ErrorDto("id_usuario", ErrorType.NO_ENCONTRADO));
-        }
-        if (!errores.isEmpty()) {
-            throw new ValidationException(errores);
-        }
-        var listaResenhas = resenhaRepo.obtenerTodos();
-        var listaResenhasUsuario = resenhaRepo.obtenerTodasPorIdUsuario(idUsuario, listaResenhas);
-        List<ResenhaDto> listaResenhasDtoUsuario = List.of();
 
-        if (!tipoEstadoResenha.isPresent()) {
-            listaResenhasDtoUsuario = listaResenhasUsuario.stream()
-                    //Mostramos todas las reseñas publicadas
-                    .map(resenha -> Mapper.mapaSimple(resenha))
-                    .toList();
+        var listaResenhasUsuario = transMgr.inTransaction(() -> {
+            //Validar usuario existe
+            var listaUsuarios = usuarioRepo.obtenerTodos();
+            var usuarioExiste = listaUsuarios.stream().anyMatch(u -> u.getIdUsuario().equals(idUsuario));
+            if (!usuarioExiste) {
+                errores.add(new ErrorDto("id_usuario", ErrorType.NO_ENCONTRADO));
+            }
+            if (!errores.isEmpty()) {
+                throw new ValidationException(errores);
+            }
+            var listaResenhas = resenhaRepo.obtenerTodos();
+            var listaResenhasEntUsuario = resenhaRepo.obtenerTodasPorIdUsuario(idUsuario, listaResenhas);
+            List<ResenhaDto> listaResenhasDtoUsuario = List.of();
 
-        } else if (tipoEstadoResenha.get().equals(TipoEstadoResenha.PUBLICADA)) {
-            listaResenhasDtoUsuario = listaResenhasUsuario.stream()
-                    //Filtramos para mostrar solo las reseñas publicadas
-                    .filter(r -> r.getEstadoResenha().equals(TipoEstadoResenha.PUBLICADA))
-                    .map(resenha -> Mapper.mapaSimple(resenha))
-                    .toList();
+            if (!tipoEstadoResenha.isPresent()) {
+                listaResenhasDtoUsuario = listaResenhasEntUsuario.stream()
+                        //Mostramos todas las reseñas publicadas
+                        .map(resenha -> Mapper.mapaSimple(resenha))
+                        .toList();
 
-        } else if (tipoEstadoResenha.get().equals(TipoEstadoResenha.OCULTA)) {
-            listaResenhasDtoUsuario = listaResenhasUsuario.stream()
-                    //Filtramos para mostrar solo las reseñas ocultas
-                    .filter(r -> r.getEstadoResenha().equals(TipoEstadoResenha.OCULTA))
-                    .map(resenha -> Mapper.mapaSimple(resenha))
-                    .toList();
+            } else if (tipoEstadoResenha.get().equals(TipoEstadoResenha.PUBLICADA)) {
+                listaResenhasDtoUsuario = listaResenhasEntUsuario.stream()
+                        //Filtramos para mostrar solo las reseñas publicadas
+                        .filter(r -> r.getEstadoResenha().equals(TipoEstadoResenha.PUBLICADA))
+                        .map(resenha -> Mapper.mapaSimple(resenha))
+                        .toList();
 
-        }
-        return listaResenhasDtoUsuario;
+            } else if (tipoEstadoResenha.get().equals(TipoEstadoResenha.OCULTA)) {
+                listaResenhasDtoUsuario = listaResenhasEntUsuario.stream()
+                        //Filtramos para mostrar solo las reseñas ocultas
+                        .filter(r -> r.getEstadoResenha().equals(TipoEstadoResenha.OCULTA))
+                        .map(resenha -> Mapper.mapaSimple(resenha))
+                        .toList();
+            }
+            return listaResenhasDtoUsuario;
+        });
+
+        return listaResenhasUsuario;
     }
 
     static void main() throws ValidationException {
 
         ITransactionManager transMgr = new HibernateTransactionManager();
         var c = new ResenhaController(new ResenhaRepoHibernate((ISessionManager) transMgr),
-                                    new UsuarioRepoHibernate((ISessionManager) transMgr),
-                                    new JuegoRepoHibernate((ISessionManager) transMgr),
-                                    new BibliotecaRepoHibernate((ISessionManager) transMgr), transMgr);
+                new UsuarioRepoHibernate((ISessionManager) transMgr),
+                new JuegoRepoHibernate((ISessionManager) transMgr),
+                new BibliotecaRepoHibernate((ISessionManager) transMgr), transMgr);
 
         var resenhaForm = new ResenhaForm(1L, 1L, true,
                 "Excelente juego,Excelente juego,Excelente juego,Excelente juego,Excelente juego",
@@ -342,7 +350,7 @@ public class ResenhaController {
         //System.out.println(resenha1);
         //System.out.println(resenha2);
 
-        c.eliminarResenha(2L,1L);
+        c.eliminarResenha(2L, 1L);
 
         //c.ocultarResenha(2L, 1L);
 
