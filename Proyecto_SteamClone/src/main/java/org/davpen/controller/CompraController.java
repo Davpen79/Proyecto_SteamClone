@@ -55,7 +55,7 @@ public class CompraController {
      * crea la compra y devuelve un DTO de la compra realizada.
      * Si encuentra algun error de validacion lanza ValidationException con la lista de errores
      *
-     * @param compraForm  Identificador del usuario que realiza la compra.
+     * @param compraForm Formulario de la compra.
      * @return CompraDto de la compra creada.
      * @throws ValidationException Si existen errores de validación; la excepción contiene la lista de errores.
      */
@@ -91,7 +91,7 @@ public class CompraController {
                 errores.add(new ErrorDto("id_juego", ErrorType.DUPLICADO));
             }
             //Comprobar Descuento
-            var descuentoCompra = juegoRepo.obtenerPorId(idJuego).get().getDescuentoActualJuego();
+            var descuentoCompra = compraForm.getDescuentoEnCompra();
             if (descuentoCompra > DESCUENTO_MAX) {
                 errores.add(new ErrorDto("descuento", ErrorType.VALOR_DEMASIADO_ALTO));
             }
@@ -102,8 +102,8 @@ public class CompraController {
             if (!errores.isEmpty()) {
                 throw new ValidationException(errores);
             }
-            var precioCompra = juegoRepo.obtenerPorId(idJuego).get().getPrecioBaseJuego();
 
+            //var precioCompra = juegoRepo.obtenerPorId(idJuego).get().getPrecioBaseJuego();
             //var compraForm = new CompraForm(idUsuario, idJuego, LocalDate.now(), metodoPago, precioCompra,
             //        descuentoCompra, TipoEstadoCompra.PENDIENTE);
 
