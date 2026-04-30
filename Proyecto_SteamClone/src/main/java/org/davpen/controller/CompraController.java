@@ -61,7 +61,7 @@ public class CompraController {
      */
     public CompraDto realizarCompra(CompraForm compraForm) throws ValidationException {
         //Validar
-        var errores = new ArrayList<ErrorDto>();
+        var errores = compraForm.validar();
 
         var idUsuario = compraForm.getIdUsuarioCompra();
         var idJuego = compraForm.getIdJuegoCompra();
@@ -284,7 +284,7 @@ public class CompraController {
                     .findFirst();
             if (entradaBiblioteca.isPresent()) {
                 var tiempoJugado = entradaBiblioteca.get().getTiempoJuegoBiblio();
-                if (tiempoJugado > 2.00) {
+                if (tiempoJugado >= 2.00) {
                     errores.add(new ErrorDto("tiempo_jugado", ErrorType.TIEMPO_SUPERADO));
                 }
             } else {
@@ -333,14 +333,14 @@ public class CompraController {
                 new UsuarioRepoHibernate((ISessionManager) transMgr),
                 new JuegoRepoHibernate((ISessionManager) transMgr),
                 new BibliotecaRepoHibernate((ISessionManager) transMgr), transMgr);
-        //
-        var compraForm = new CompraForm(2L, 1L,
-                LocalDate.now().minusDays(10), TipoMetodoPago.CARTERA_STEAM,
-                34.99, 110, TipoEstadoCompra.PENDIENTE);
 
-        var compra1 = c.realizarCompra(compraForm);
+        //var compraForm = new CompraForm(2L, 1L,
+        //        LocalDate.now().minusDays(10), TipoMetodoPago.CARTERA_STEAM,
+        //        34.99, 110, TipoEstadoCompra.PENDIENTE);
 
-        System.out.println(compra1);
+        //var compra1 = c.realizarCompra(compraForm);
+
+        //System.out.println(compra1);
 
         //System.out.println(c.consultarCompra(1L, 1L));
         //System.out.println(c.consultarCompra(2L, 2L));
