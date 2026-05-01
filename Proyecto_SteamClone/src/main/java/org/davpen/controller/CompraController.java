@@ -1,18 +1,12 @@
 package org.davpen.controller;
 
-import org.davpen.enums.TipoEstadoCompra;
-import org.davpen.enums.TipoEstadoCuenta;
-import org.davpen.enums.TipoEstadoJuego;
-import org.davpen.enums.TipoMetodoPago;
+import org.davpen.enums.*;
 import org.davpen.excepciones.ValidationException;
 import org.davpen.mapper.Mapper;
 import org.davpen.modelo.dto.CompraDto;
 import org.davpen.modelo.dto.UsuarioDto;
 import org.davpen.modelo.entity.CompraEntity;
-import org.davpen.modelo.form.CompraForm;
-import org.davpen.modelo.form.ErrorDto;
-import org.davpen.modelo.form.ErrorType;
-import org.davpen.modelo.form.UsuarioForm;
+import org.davpen.modelo.form.*;
 import org.davpen.pagos.*;
 import org.davpen.repositorio.hibernate.BibliotecaRepoHibernate;
 import org.davpen.repositorio.hibernate.CompraRepoHibernate;
@@ -183,6 +177,10 @@ public class CompraController {
                         compraAProcesar.getTipoPagoCompra(), compraAProcesar.getPrecioBaseCompra(),
                         compraAProcesar.getDescuentoEnCompra(),
                         TipoEstadoCompra.COMPLETADA);
+                //Añado el juego recién comprado a la biblioteca del usuario
+                bibliotecaRepo.crear(new BibliotecaForm(idUsuario, compraAProcesar.getIdJuegoCompra(),
+                        compraAProcesar.getFechaCompra(), 0.0d, null,
+                        TipoEstadoInstalacion.NO_INSTALADO));
 
                 return compraRepo.actualizar(idCompra, compraActualizadaForm);
             }
@@ -316,7 +314,9 @@ public class CompraController {
                                         TipoEstadoCompra.REEMBOLSADA);
             var compraActualizada = compraRepo.actualizar(idCompra, compraReembolsadaForm);
 
-            //var usuarioRepoActualizado = usuarioRepo.obtenerPorId(idUsuarioCompra); // innecesario
+            //Tras el reembolso elimino el juego de la biblioteca del usuario
+            bibliotecaRepo.eliminar(entradaBiblioteca.get().getIdBiblio());
+
             return compraActualizada;
         });
         if (!errores.isEmpty()) {
