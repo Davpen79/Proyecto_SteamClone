@@ -24,6 +24,10 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalUnit;
 import java.util.*;
 
 public class CompraController {
@@ -329,34 +333,35 @@ public class CompraController {
         return Mapper.mapaCompraSimple(compra.orElse(null));
     }
 
-    public void escribirFactura(Path path, List<String> lista) throws IOException {
-        var idFactura = lista.get(0);
-        var fullPath = path + "/Factura nª " + idFactura;
-
-        Files.write(Path.of(fullPath), lista, StandardCharsets.UTF_8);
-
-    }
-
-    public List<String> crearFactura(Long compraId) throws ValidationException {
+    public void crearFactura(Long compraId, Path path) throws ValidationException, IOException {
+        var fullPath = path + "/Factura nª " + compraId;
 
         var listaLineasFactura = transMgr.inTransaction(() -> {
             var compraEntity = compraRepo.obtenerPorId(compraId).get();
+            var estadoCompra = compraEntity.getEstadoCompra();
 
             var lineasFactura = new ArrayList<String>();
-            lineasFactura.add(compraId.toString());
-            lineasFactura.add((usuarioRepo.obtenerPorId(compraEntity.getIdUsuarioCompra()).get()).getNombreCuentaUsuario());
-            lineasFactura.add((juegoRepo.obtenerPorId(compraEntity.getIdJuegoCompra()).get()).getTituloJuego());
+            lineasFactura.add("Factura de compra nº : " + (compraId.toString()));
+            lineasFactura.add("Fecha de emisión de Factura : " + LocalDateTime.now()
+                    .format(DateTimeFormatter.ofPattern("dd-MM-yy hh:mm")));
+            lineasFactura.add("Cuenta de Cliente : " +
+                    ((usuarioRepo.obtenerPorId(compraEntity.getIdUsuarioCompra()).get()).getNombreCuentaUsuario()));
+            lineasFactura.add("Juego Comprado : " +
+                    ((juegoRepo.obtenerPorId(compraEntity.getIdJuegoCompra()).get()).getTituloJuego()));
             var precioBase = compraEntity.getPrecioBaseCompra();
-            lineasFactura.add(String.valueOf(compraEntity.getPrecioBaseCompra()));
+            lineasFactura.add("Precio Original : " + (compraEntity.getPrecioBaseCompra()));
             var descuento = compraEntity.getDescuentoEnCompra();
-            lineasFactura.add(String.valueOf(compraEntity.getDescuentoEnCompra()));
-            lineasFactura.add(String.valueOf(precioBase - (precioBase * descuento / 100)));
-            lineasFactura.add(compraEntity.getFechaCompra().toString());
-
+            lineasFactura.add("Descuento Aplicado : " + (compraEntity.getDescuentoEnCompra()));
+            lineasFactura.add("Importe Final : " + ((precioBase - (precioBase * descuento / 100))));
+            lineasFactura.add("Método de pago utilizado : " + (compraEntity.getTipoPagoCompra()));
+            lineasFactura.add("Estado de la compra : " + (compraEntity.getEstadoCompra()));
+            if (!(estadoCompra == TipoEstadoCompra.PENDIENTE)) {
+                lineasFactura.add("Fecha de Adquisición : " + (compraEntity.getFechaCompra().toString()));
+            }
             return lineasFactura;
         });
 
-        return listaLineasFactura;
+        Files.write(Path.of(fullPath), listaLineasFactura, StandardCharsets.UTF_8);
     }
 
 
@@ -383,8 +388,10 @@ public class CompraController {
         //System.out.println(resultado.getEstadoCompra());
 
         //c.solicitarReembolso(1L);
-        var lista = c.crearFactura(2L);
-        c.escribirFactura(RUTA_FACTURA, lista);
+
+        c.crearFactura(2L, RUTA_FACTURA);
+        c.crearFactura(3L, RUTA_FACTURA);
+        c.crearFactura(1L, RUTA_FACTURA);
 
     }
 
