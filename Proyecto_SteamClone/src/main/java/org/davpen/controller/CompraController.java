@@ -4,7 +4,6 @@ import org.davpen.enums.*;
 import org.davpen.excepciones.ValidationException;
 import org.davpen.mapper.Mapper;
 import org.davpen.modelo.dto.CompraDto;
-import org.davpen.modelo.dto.UsuarioDto;
 import org.davpen.modelo.entity.CompraEntity;
 import org.davpen.modelo.form.*;
 import org.davpen.pagos.*;
@@ -20,10 +19,12 @@ import org.davpen.transaction.HibernateTransactionManager;
 import org.davpen.transaction.ISessionManager;
 import org.davpen.transaction.ITransactionManager;
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 public class CompraController {
 
@@ -34,6 +35,7 @@ public class CompraController {
     private final IJuegoRepo juegoRepo;
     private final IBibliotecaRepo bibliotecaRepo;
     public ITransactionManager transMgr;
+    public static final Path RUTA_FACTURA = Path.of("data");
 
     public CompraController(ICompraRepo compraRepo, IUsuarioRepo usuarioRepo, IJuegoRepo juegoRepo,
                             IBibliotecaRepo bibliotecaRepo, ITransactionManager transMgr) {
@@ -308,10 +310,11 @@ public class CompraController {
 
             //Modifica estado compra a Reembolsada
             var compraAReembolsar = compraAReembolsarOpt.get();
-            var compraReembolsadaForm = new CompraForm(compraAReembolsar.getIdUsuarioCompra(), compraAReembolsar.getIdJuegoCompra(),
-                                        compraAReembolsar.getFechaCompra(), compraAReembolsar.getTipoPagoCompra(),
-                                        compraAReembolsar.getPrecioBaseCompra(), compraAReembolsar.getDescuentoEnCompra(),
-                                        TipoEstadoCompra.REEMBOLSADA);
+            var compraReembolsadaForm = new CompraForm(compraAReembolsar.getIdUsuarioCompra(),
+                    compraAReembolsar.getIdJuegoCompra(),
+                    compraAReembolsar.getFechaCompra(), compraAReembolsar.getTipoPagoCompra(),
+                    compraAReembolsar.getPrecioBaseCompra(), compraAReembolsar.getDescuentoEnCompra(),
+                    TipoEstadoCompra.REEMBOLSADA);
             var compraActualizada = compraRepo.actualizar(idCompra, compraReembolsadaForm);
 
             //Tras el reembolso elimino el juego de la biblioteca del usuario
@@ -326,7 +329,38 @@ public class CompraController {
         return Mapper.mapaCompraSimple(compra.orElse(null));
     }
 
-    static void main() throws ValidationException {
+    public void escribirFactura(Path path, List<String> lista) throws IOException {
+        var idFactura = lista.get(0);
+        var fullPath = path + "/Factura nª " + idFactura;
+
+        Files.write(Path.of(fullPath), lista, StandardCharsets.UTF_8);
+
+    }
+
+    public List<String> crearFactura(Long compraId) throws ValidationException {
+
+        var listaLineasFactura = transMgr.inTransaction(() -> {
+            var compraEntity = compraRepo.obtenerPorId(compraId).get();
+
+            var lineasFactura = new ArrayList<String>();
+            lineasFactura.add(compraId.toString());
+            lineasFactura.add((usuarioRepo.obtenerPorId(compraEntity.getIdUsuarioCompra()).get()).getNombreCuentaUsuario());
+            lineasFactura.add((juegoRepo.obtenerPorId(compraEntity.getIdJuegoCompra()).get()).getTituloJuego());
+            var precioBase = compraEntity.getPrecioBaseCompra();
+            lineasFactura.add(String.valueOf(compraEntity.getPrecioBaseCompra()));
+            var descuento = compraEntity.getDescuentoEnCompra();
+            lineasFactura.add(String.valueOf(compraEntity.getDescuentoEnCompra()));
+            lineasFactura.add(String.valueOf(precioBase - (precioBase * descuento / 100)));
+            lineasFactura.add(compraEntity.getFechaCompra().toString());
+
+            return lineasFactura;
+        });
+
+        return listaLineasFactura;
+    }
+
+
+    static void main() throws ValidationException, IOException {
 
         ITransactionManager transMgr = new HibernateTransactionManager();
         var c = new CompraController(new CompraRepoHibernate((ISessionManager) transMgr),
@@ -349,6 +383,8 @@ public class CompraController {
         //System.out.println(resultado.getEstadoCompra());
 
         //c.solicitarReembolso(1L);
+        var lista = c.crearFactura(2L);
+        c.escribirFactura(RUTA_FACTURA, lista);
 
     }
 
