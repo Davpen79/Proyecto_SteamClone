@@ -33,7 +33,6 @@ public class ResenhaController {
     private final IUsuarioRepo usuarioRepo;
     private final IJuegoRepo juegoRepo;
     private final IBibliotecaRepo bibliotecaRepo;
-    private Optional<TipoRecomendacionJuego> tipoRecomendacion;
     private ITransactionManager transMgr;
 
     public ResenhaController(IResenhaRepo resenhaRepo, IUsuarioRepo usuarioRepo, IJuegoRepo juegoRepo,
@@ -52,7 +51,7 @@ public class ResenhaController {
      *
      * @param resenhaForm Formulario de datos de una reseña
      * @return ResenhaDto
-     * @throws ValidationException
+     * @throws ValidationException Si encuentra errores de validacion lanza Validation Exception
      */
     public ResenhaDto escribirResenha(ResenhaForm resenhaForm) throws ValidationException {
         //Validaciones
@@ -118,7 +117,7 @@ public class ResenhaController {
      * @param idResenha Identificador de Reseña
      * @param idUsuario Identificador de Usuario
      * @return ResenhaDto
-     * @throws ValidationException
+     * @throws ValidationException Si encuentra errores de validacion lanza Validation Exception
      */
     public ResenhaDto ocultarResenha(Long idResenha, Long idUsuario) throws ValidationException {
 
@@ -174,7 +173,7 @@ public class ResenhaController {
      * @param idResenha Identificador de Resenha
      * @param idUsuario Identificador de Usuario
      * @return true si la eliminacion fue exitosa
-     * @throws ValidationException
+     * @throws ValidationException Si encuentra errores de validacion lanza Validation Exception
      */
     public boolean eliminarResenha(Long idResenha, Long idUsuario) throws ValidationException {
 
@@ -221,10 +220,10 @@ public class ResenhaController {
      * @param idJuego           Identificador de Juego
      * @param tipoRecomendacion Optional de TipoRecomendacionJuego
      * @return Lista ordenada de reseñas de un Juego
-     * @throws ValidationException
+     * @throws ValidationException Si encuentra errores de validacion lanza Validation Exception
      */
+
     public List<ResenhaDto> verResenhasJuego(Long idJuego, Optional<TipoRecomendacionJuego> tipoRecomendacion) throws ValidationException {
-        this.tipoRecomendacion = tipoRecomendacion;
         var errores = new ArrayList<ErrorDto>();
 
         var listaResenhasJuego = transMgr.inTransaction(() -> {
@@ -282,7 +281,7 @@ public class ResenhaController {
      * @param idUsuario         Identificador de Usuario
      * @param tipoEstadoResenha Optional de TipoEstadoResenha
      * @return Lista de reseñas publicadas por un Usuario
-     * @throws ValidationException
+     * @throws ValidationException Si encuentra errores de validacion lanza Validation Exception
      */
     public List<ResenhaDto> verResenhasUsuario(Long idUsuario, Optional<TipoEstadoResenha> tipoEstadoResenha) throws ValidationException {
         var errores = new ArrayList<ErrorDto>();
@@ -344,15 +343,7 @@ public class ResenhaController {
                 20.5, LocalDate.of(2024, 3, 20), null, TipoEstadoResenha.PUBLICADA);
 
 
-        //var resenha1 = c.escribirResenha(resenhaForm);
-        //var resenha2 = c.escribirResenha(resenhaForm2);
-
-        //System.out.println(resenha1);
-        //System.out.println(resenha2);
-
         c.eliminarResenha(2L, 1L);
-
-        //c.ocultarResenha(2L, 1L);
 
     }
 

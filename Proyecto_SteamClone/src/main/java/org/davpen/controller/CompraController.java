@@ -25,10 +25,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.Year;
 import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoUnit;
-import java.time.temporal.TemporalUnit;
 import java.util.*;
 
 public class CompraController {
@@ -335,14 +332,16 @@ public class CompraController {
     }
 
     /**
-     * Crea una factura de una compra. Comprueba
+     * Crea una factura de una compra. Comprueba que la compra existe y se ha completado. Si no existe lanza una Validation
+     * Exception. Si no se ha completado, manda un mensaje de error. Si existe y se ha completado crea un archivo de texto
+     * con toda la informacion pertinente sobre la misma.
      *
-     * @param compraId
-     * @param path
-     * @throws ValidationException
+     * @param compraId El id de la compra de la que se quiere sacar la factura
+     * @param path El directorio donde se guardará el archivo de texto generado
+     * @throws ValidationException Si la validacion falla; la excepción contiene la lista de errores.
      */
     public void crearFactura(Long compraId, Path path) throws ValidationException {
-        var fullPath = path + "/Factura nª " + compraId;
+        var fullPath = path + "/Factura nª " + compraId + ".txt";
         var errores = new ArrayList<ErrorDto>();
 
         var listaLineasFactura = transMgr.inTransaction(() -> {
@@ -363,7 +362,8 @@ public class CompraController {
 
             if (estadoCompra != TipoEstadoCompra.COMPLETADA) {
                 System.err.println("No se puede generar la factura");
-                return lineasFactura;
+                errores.add(new ErrorDto("estado_compra", ErrorType.COMPRA_INCOMPLETA));
+                throw new ValidationException(errores);
             } else {
                 lineasFactura.add(formatoBorde);
                 lineasFactura.add(String.format(formatoLinea, "Factura de compra nº : ", (compraId.toString()) + "/"
@@ -411,25 +411,11 @@ public class CompraController {
                 new JuegoRepoHibernate((ISessionManager) transMgr),
                 new BibliotecaRepoHibernate((ISessionManager) transMgr), transMgr);
 
-        //var compraForm = new CompraForm(2L, 1L,
-        //        LocalDate.now().minusDays(10), TipoMetodoPago.CARTERA_STEAM,
-        //        34.99, 110, TipoEstadoCompra.PENDIENTE);
-
-        //var compra1 = c.realizarCompra(compraForm);
-
-        //System.out.println(compra1);
-
-        //System.out.println(c.consultarCompra(1L, 1L));
-        //System.out.println(c.consultarCompra(2L, 2L));
-
-        //var resultado = c.procesarPago(1L, TipoMetodoPago.CARTERA_STEAM);
-        //System.out.println(resultado.getEstadoCompra());
-
-        //c.solicitarReembolso(1L);
-
         c.crearFactura(2L, RUTA_FACTURA);
         c.crearFactura(3L, RUTA_FACTURA);
         c.crearFactura(1L, RUTA_FACTURA);
+        c.crearFactura(4L, RUTA_FACTURA);
+        c.crearFactura(5L, RUTA_FACTURA);
 
     }
 

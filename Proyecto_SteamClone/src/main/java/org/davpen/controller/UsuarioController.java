@@ -241,41 +241,6 @@ public class UsuarioController {
         ITransactionManager transMgr = new HibernateTransactionManager();
         var c = new UsuarioController(new UsuarioRepoHibernate((ISessionManager) transMgr), transMgr);
 
-        //var usuario1Form = new UsuarioForm("JugadorTotal", "usuario@email.com", "Aa1!nnnnnn", "Pedro",
-        //        "Portugal", LocalDate.of(1982, 10, 5), LocalDate.of(2024, 4, 6), "avatar", 5.00,
-        //        TipoEstadoCuenta.ACTIVA);
-
-        //var usuario2Form = new UsuarioForm("JugadorBasico", "usuario2@email.com", "Ab1!nnnnnn",
-        //        "Paco",
-        //        "Portugal", LocalDate.of(1982, 11, 5), LocalDate.of(2024, 5, 6), "avatar", 5.00,
-        //        TipoEstadoCuenta.ACTIVA);
-
-        //var usuario3Form = new UsuarioForm("Jugador3", "usuario3@email.com",
-        //        "Ab1!nnnnnn", "Pablo", "Portugal",
-        //        LocalDate.of(1982, 11, 5), LocalDate.of(2024, 5, 6),
-        //        "avatar", 15.00, TipoEstadoCuenta.ACTIVA);
-
-        //var usuario1 = c.registrarUsuario(usuario1Form);
-        //System.out.println(usuario1);
-        //var usuario2 = c.registrarUsuario(usuario2Form);
-        //System.out.println(usuario2);
-        //var usuario3 = c.registrarUsuario(usuario3Form);
-        //var usuarioRepetido = c.registrarUsuario(usuario1Form);
-        //System.out.println(usuarioRepetido);
-
-        //System.out.println(c.consultarPerfil(2L));
-        //System.out.println(c.consultarPerfil("JugadorTotal"));
-
-
-        //System.out.println(c.consultarSaldo(2L));
-
-        //System.out.println(c.consultarSaldo(1L));
-        //System.out.println(c.consultarSaldo(5L));
-
-        //c.anhadirSaldo(5L, 5.00d);
-        //System.out.println(c.consultarSaldo(5L));
-
-        //System.out.println(c.consultarPerfil(1L));
         System.out.println(c.consultarPerfil(9999L));
 
     }

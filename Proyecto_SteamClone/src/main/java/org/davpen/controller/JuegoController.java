@@ -41,7 +41,7 @@ public class JuegoController {
      *
      * @param juegoForm Identificador de Juego
      * @return JuegoDto
-     * @throws ValidationException
+     * @throws ValidationException Si encuentra un error de validacion lanza Validation Exception
      */
     public JuegoDto anhadirJuego(JuegoForm juegoForm) throws ValidationException {
         //validar formato
@@ -343,70 +343,6 @@ public class JuegoController {
     static void main() throws ValidationException {
         ITransactionManager transMgr = new HibernateTransactionManager();
         var c = new JuegoController(new JuegoRepoHibernate((ISessionManager) transMgr), transMgr);
-
-        //var juegoForm = new JuegoForm("Elden Ring", "RPG de acción épico", "FromSoftware",
-        //        LocalDate.of(2022, 2, 25), 60d, 0, TipoCategoriaJuego.RPG,
-        //        TipoClasificacionEdades.PEGI_16, new ArrayList<>(List.of("Español", "Inglés")),
-        //        TipoEstadoJuego.DISPONIBLE);
-        //var juego2Form = new JuegoForm("Hades", "Roguelike indie", "Supergiant Games",
-        //        LocalDate.of(2020, 9, 17), 24.99, 10, TipoCategoriaJuego.ACCION,
-        //        TipoClasificacionEdades.PEGI_12, new ArrayList<>(List.of("Español", "Inglés")),
-        //        TipoEstadoJuego.DISPONIBLE);
-        //var juego3Form = new JuegoForm("Chess Game", "Ajedrez online", "Chess Dev",
-        //        LocalDate.of(2019, 5, 10), 0.00, 0, TipoCategoriaJuego.ESTRATEGIA,
-        //        TipoClasificacionEdades.PEGI_3, new ArrayList<>(List.of("Español", "Inglés")),
-        //        TipoEstadoJuego.NO_DISPONIBLE);
-
-        //var juego1 = c.anhadirJuego(juegoForm);
-        //System.out.println(juego1);
-        //var juego2 = c.anhadirJuego(juego2Form);
-        //System.out.println(juego2);
-        //var juego3 = c.anhadirJuego(juego3Form);
-        //System.out.println(juego3);
-        //var juegoRepetido = c.anhadirJuego(juegoForm);
-        //System.out.println(juegoRepetido);
-
-        //var juego = c.detalleJuego(2L);
-        //System.out.println(juego.getEstadoJuego());
-        //c.cambiarEstadoJuego(2L, TipoEstadoJuego.ACCESO_ANTICIPADO);
-        //System.out.println("Tras cambio");
-        //var juegoCambiado = c.detalleJuego(2L);
-        //System.out.println(juegoCambiado.getEstadoJuego());
-
-        //var juego = c.detalleJuego(1L);
-        //System.out.println(juego.getDescuentoActualJuego());
-        //c.aplicarDescuento(1L, 15);
-        //System.out.println("Tras modificacion");
-        //var juegoCambiado = c.detalleJuego(1L);
-        //System.out.println(juegoCambiado.getDescuentoActualJuego());
-
-        //System.out.println(c.listaCatalogoCompleto(TipoConsultaCatalogo.ALFABETICO));
-        //System.out.println(c.listaCatalogoCompleto(TipoConsultaCatalogo.PRECIO));
-        //System.out.println(c.listaCatalogoCompleto(TipoConsultaCatalogo.FECHA));
-
-        //System.out.println(c.listaJuegosPorPalabraEnDescripcion("online"));
-        //System.out.println("Se han encontrado "+ c.listaJuegosPorPalabraEnDescripcion("online").size() +" juegos");
-
-        //System.out.println(c.listaJuegosPorEstado(TipoEstadoJuego.DISPONIBLE));
-        //System.out.println(c.listaJuegosPorEstado(TipoEstadoJuego.NO_DISPONIBLE));
-        //System.out.println(c.listaJuegosPorEstado(TipoEstadoJuego.ACCESO_ANTICIPADO));
-        //System.out.println(c.listaJuegosPorEstado(TipoEstadoJuego.PREVENTA));
-        //System.out.println(c.listaJuegosPorEstado(TipoEstadoJuego.valueOf("")));
-
-        //System.out.println(c.listaJuegosPorClasificacion(TipoClasificacionEdades.PEGI_16));
-        //System.out.println(c.listaJuegosPorClasificacion(TipoClasificacionEdades.PEGI_12));
-        //System.out.println(c.listaJuegosPorClasificacion(TipoClasificacionEdades.PEGI_3));
-        //System.out.println(c.listaJuegosPorClasificacion(TipoClasificacionEdades.PEGI_18));
-
-        //System.out.println(c.listaJuegosPorRangoPrecio(0d, 50d));
-        //System.out.println(c.listaJuegosPorRangoPrecio(0d, 25));
-        //System.out.println(c.listaJuegosPorRangoPrecio(500d, 20d));
-
-        //System.out.println(c.listaJuegosPorCategoria(TipoCategoriaJuego.RPG));
-        //System.out.println(c.listaJuegosPorCategoria(TipoCategoriaJuego.ACCION));
-        //System.out.println(c.listaJuegosPorCategoria(TipoCategoriaJuego.ESTRATEGIA));
-        //System.out.println(c.listaJuegosPorCategoria(TipoCategoriaJuego.FPS));
-
 
     }
 

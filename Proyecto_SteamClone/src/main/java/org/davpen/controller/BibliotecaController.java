@@ -420,40 +420,10 @@ public class BibliotecaController {
                 new JuegoRepoHibernate((ISessionManager) transMgr),
                 new CompraRepoHibernate((ISessionManager) transMgr), transMgr);
 
-        //var bibliotecaForm = new BibliotecaForm(1L, 1L,
-        //        LocalDate.of(2023, 1, 1), 0.0, null,
-        //        TipoEstadoInstalacion.NO_INSTALADO);
-
-        //var bibliotecaForm2 = new BibliotecaForm(1L, 2L,
-        //        LocalDate.of(2023, 2, 10), 0.0, null,
-        //        TipoEstadoInstalacion.NO_INSTALADO);
-
-        //var biblioteca1 = c.anhadirJuegoABiblioteca(bibliotecaForm.getIdUsuarioBiblio(),
-        //        bibliotecaForm.getIdJuegoBiblio());
-        //var biblioteca2 = c.anhadirJuegoABiblioteca(bibliotecaForm2.getIdUsuarioBiblio(),
-        //        bibliotecaForm2.getIdJuegoBiblio());
-
-        //System.out.println(biblioteca1);
-        //System.out.println(biblioteca2);
-
         System.out.println("Alfabetico: " + c.verBibliotecaPersonal(1L, TipoOrden.ALFABETICO)); // NO FUNCIONA
         System.out.println("Fecha Adquisicion: " + c.verBibliotecaPersonal(1L, TipoOrden.FECHA_ADQUISICION));
         System.out.println("Tiempo Juego: " + c.verBibliotecaPersonal(1L, TipoOrden.TIEMPO_JUEGO));
         System.out.println("Ultima Sesion: " + c.verBibliotecaPersonal(1L, TipoOrden.ULTIMA_SESION));
-
-        //var juegoEliminado = c.eliminarJuegoDeBiblioteca(1L, 3L);
-        //System.out.println(juegoEliminado);
-
-        //var bibActualizada = c.actualizarTiempoJuego(1L, 3L, 1);
-        //System.out.println(bibActualizada);
-
-        //var ultimaSesion = c.consultarUltimaSesion(1L, 3L);
-        //System.out.println(ultimaSesion);
-        //var nuncaJugado = c.consultarUltimaSesion(1L, 1L);
-        //System.out.println(nuncaJugado);
-
-        //var estadisticas1 = c.verEstadisticasBiblioteca(1L);
-        //System.out.println(estadisticas1);
 
     }
 
