@@ -25,6 +25,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.Year;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalUnit;
@@ -333,39 +334,76 @@ public class CompraController {
         return Mapper.mapaCompraSimple(compra.orElse(null));
     }
 
-    public void crearFactura(Long compraId, Path path) throws ValidationException, IOException {
+    /**
+     * Crea una factura de una compra. Comprueba
+     *
+     * @param compraId
+     * @param path
+     * @throws ValidationException
+     */
+    public void crearFactura(Long compraId, Path path) throws ValidationException {
         var fullPath = path + "/Factura nª " + compraId;
+        var errores = new ArrayList<ErrorDto>();
 
         var listaLineasFactura = transMgr.inTransaction(() -> {
+
+            var lineasFactura = new ArrayList<String>();
+
+            String formatoBorde = "=".repeat(77);
+            String formatoLinea = "| %-35s | %35s |";
+            String formatoSeparador = "-".repeat(77);
+
+            if (!compraRepo.obtenerPorId(compraId).isPresent()) {
+                errores.add(new ErrorDto("compra", ErrorType.NO_ENCONTRADO));
+                throw new ValidationException(errores);
+            }
+
             var compraEntity = compraRepo.obtenerPorId(compraId).get();
             var estadoCompra = compraEntity.getEstadoCompra();
 
-            var lineasFactura = new ArrayList<String>();
-            lineasFactura.add("Factura de compra nº : " + (compraId.toString()));
-            lineasFactura.add("Fecha de emisión de Factura : " + LocalDateTime.now()
-                    .format(DateTimeFormatter.ofPattern("dd-MM-yy hh:mm")));
-            lineasFactura.add("Cuenta de Cliente : " +
-                    ((usuarioRepo.obtenerPorId(compraEntity.getIdUsuarioCompra()).get()).getNombreCuentaUsuario()));
-            lineasFactura.add("Juego Comprado : " +
-                    ((juegoRepo.obtenerPorId(compraEntity.getIdJuegoCompra()).get()).getTituloJuego()));
-            var precioBase = compraEntity.getPrecioBaseCompra();
-            lineasFactura.add("Precio Original : " + (compraEntity.getPrecioBaseCompra()));
-            var descuento = compraEntity.getDescuentoEnCompra();
-            lineasFactura.add("Descuento Aplicado : " + (compraEntity.getDescuentoEnCompra()));
-            lineasFactura.add("Importe Final : " + ((precioBase - (precioBase * descuento / 100))));
-            lineasFactura.add("Método de pago utilizado : " + (compraEntity.getTipoPagoCompra()));
-            lineasFactura.add("Estado de la compra : " + (compraEntity.getEstadoCompra()));
-            if (!(estadoCompra == TipoEstadoCompra.PENDIENTE)) {
-                lineasFactura.add("Fecha de Adquisición : " + (compraEntity.getFechaCompra().toString()));
+            if (estadoCompra != TipoEstadoCompra.COMPLETADA) {
+                System.err.println("No se puede generar la factura");
+                return lineasFactura;
+            } else {
+                lineasFactura.add(formatoBorde);
+                lineasFactura.add(String.format(formatoLinea, "Factura de compra nº : ", (compraId.toString()) + "/"
+                        + compraEntity.getFechaCompra().getYear()));
+                lineasFactura.add(formatoSeparador);
+                lineasFactura.add(String.format(formatoLinea, "Fecha de emisión de Factura : ", LocalDateTime.now()
+                        .format(DateTimeFormatter.ofPattern("dd-MM-yy hh:mm"))));
+                lineasFactura.add(String.format(formatoLinea, "Cuenta de Cliente : ",
+                        ((usuarioRepo.obtenerPorId(compraEntity.getIdUsuarioCompra()).get()).getNombreCuentaUsuario())));
+                lineasFactura.add(String.format(formatoLinea, "Juego Comprado : ",
+                        ((juegoRepo.obtenerPorId(compraEntity.getIdJuegoCompra()).get()).getTituloJuego())));
+                var precioBase = compraEntity.getPrecioBaseCompra();
+                lineasFactura.add(String.format(formatoLinea, "Precio Original : ",
+                        (compraEntity.getPrecioBaseCompra())));
+                var descuento = compraEntity.getDescuentoEnCompra();
+                lineasFactura.add(String.format(formatoLinea, "Descuento Aplicado : ",
+                        (compraEntity.getDescuentoEnCompra())));
+                lineasFactura.add(String.format(formatoLinea, "Importe Final : ",
+                        ((precioBase - (precioBase * descuento / 100)))));
+                lineasFactura.add(String.format(formatoLinea, "Método de pago utilizado : ",
+                        (compraEntity.getTipoPagoCompra())));
+                lineasFactura.add(String.format(formatoLinea, "Fecha de la compra : ",
+                        (compraEntity.getFechaCompra())));
+                lineasFactura.add(formatoBorde);
+
+                return lineasFactura;
             }
-            return lineasFactura;
         });
 
-        Files.write(Path.of(fullPath), listaLineasFactura, StandardCharsets.UTF_8);
+        try {
+            if (!listaLineasFactura.isEmpty()) {
+                Files.write(Path.of(fullPath), listaLineasFactura, StandardCharsets.UTF_8);
+            }
+        } catch (IOException e) {
+            System.err.println("Se ha producido un error al generar la factura nº " + compraId);
+        }
     }
 
 
-    static void main() throws ValidationException, IOException {
+    static void main() throws ValidationException{
 
         ITransactionManager transMgr = new HibernateTransactionManager();
         var c = new CompraController(new CompraRepoHibernate((ISessionManager) transMgr),
