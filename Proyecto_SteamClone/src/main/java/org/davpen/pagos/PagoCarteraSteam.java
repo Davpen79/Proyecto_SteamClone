@@ -13,9 +13,9 @@ import java.util.ArrayList;
 
 public class PagoCarteraSteam implements IPlataformaPago {
 
-    private Long idUsuario;
-    private IUsuarioRepo usuarioRepo;
-    private ICompraRepo compraRepo;
+    private final Long idUsuario;
+    private final IUsuarioRepo usuarioRepo;
+    private final ICompraRepo compraRepo;
 
     public PagoCarteraSteam(Long idUsuario, IUsuarioRepo usuarioRepo, ICompraRepo compraRepo) {
         this.idUsuario = idUsuario;

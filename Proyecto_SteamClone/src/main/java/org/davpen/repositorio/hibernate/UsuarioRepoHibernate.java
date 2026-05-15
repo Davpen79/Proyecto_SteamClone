@@ -15,7 +15,7 @@ import java.util.Optional;
 
 public class UsuarioRepoHibernate implements IUsuarioRepo {
 
-    private ISessionManager sessionManager;
+    private final ISessionManager sessionManager;
     public UsuarioRepoHibernate(ISessionManager sm){
         this.sessionManager = sm;
     }

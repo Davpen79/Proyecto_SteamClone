@@ -13,7 +13,7 @@ import java.util.Optional;
 
 public class JuegoRepoHibernate implements IJuegoRepo {
 
-    private ISessionManager sessionManager;
+    private final ISessionManager sessionManager;
 
     public JuegoRepoHibernate(ISessionManager sm) {
         this.sessionManager = sm;

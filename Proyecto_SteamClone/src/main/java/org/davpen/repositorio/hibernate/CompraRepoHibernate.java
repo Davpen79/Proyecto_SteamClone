@@ -13,7 +13,7 @@ import java.util.Optional;
 
 public class CompraRepoHibernate implements ICompraRepo {
 
-    private ISessionManager sessionManager;
+    private final ISessionManager sessionManager;
 
     public CompraRepoHibernate(ISessionManager sm) {
         this.sessionManager = sm;

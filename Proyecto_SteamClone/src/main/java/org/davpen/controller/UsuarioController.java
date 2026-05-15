@@ -8,15 +8,10 @@ import org.davpen.modelo.entity.UsuarioEntity;
 import org.davpen.modelo.form.ErrorDto;
 import org.davpen.modelo.form.ErrorType;
 import org.davpen.modelo.form.UsuarioForm;
-import org.davpen.repositorio.hibernate.JuegoRepoHibernate;
-import org.davpen.repositorio.hibernate.UsuarioRepoHibernate;
 import org.davpen.repositorio.inmemory.UsuarioRepoInMemory;
 import org.davpen.repositorio.interfaces.IUsuarioRepo;
-import org.davpen.transaction.HibernateTransactionManager;
-import org.davpen.transaction.ISessionManager;
 import org.davpen.transaction.ITransactionManager;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Optional;
 
@@ -234,14 +229,6 @@ public class UsuarioController {
         }
 
         return Mapper.mapaUsuarioCompleto(usuario.orElse(null));
-
-    }
-
-    public static void main(String[] args) throws ValidationException {
-        ITransactionManager transMgr = new HibernateTransactionManager();
-        var c = new UsuarioController(new UsuarioRepoHibernate((ISessionManager) transMgr), transMgr);
-
-        System.out.println(c.consultarPerfil(9999L));
 
     }
 

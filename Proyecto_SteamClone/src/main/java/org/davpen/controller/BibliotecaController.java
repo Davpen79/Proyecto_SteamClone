@@ -10,16 +10,10 @@ import org.davpen.modelo.entity.BibliotecaEntity;
 import org.davpen.modelo.form.BibliotecaForm;
 import org.davpen.modelo.form.ErrorDto;
 import org.davpen.modelo.form.ErrorType;
-import org.davpen.repositorio.hibernate.BibliotecaRepoHibernate;
-import org.davpen.repositorio.hibernate.CompraRepoHibernate;
-import org.davpen.repositorio.hibernate.JuegoRepoHibernate;
-import org.davpen.repositorio.hibernate.UsuarioRepoHibernate;
 import org.davpen.repositorio.interfaces.IBibliotecaRepo;
 import org.davpen.repositorio.interfaces.ICompraRepo;
 import org.davpen.repositorio.interfaces.IJuegoRepo;
 import org.davpen.repositorio.interfaces.IUsuarioRepo;
-import org.davpen.transaction.HibernateTransactionManager;
-import org.davpen.transaction.ISessionManager;
 import org.davpen.transaction.ITransactionManager;
 
 import java.time.LocalDate;
@@ -103,7 +97,7 @@ public class BibliotecaController {
                         .toList();
 
             }
-            //lista ordenada por
+            //lista ordenada por fecha de ultima sesion
             else if (tipoOrden == TipoOrden.ULTIMA_SESION) {
                 bibliotecaOrd = bibliotecaRepo.obtenerTodos().stream()
                         .filter(b -> b.getIdUsuarioBiblio().equals(idUsuario))
@@ -315,7 +309,7 @@ public class BibliotecaController {
         var errores = new ArrayList<ErrorDto>();
 
         var ultimaSesion = transMgr.inTransaction(() -> {
-            //Validar Usuario && Juego existen
+            //Validar Usuario y Juego existen
             var usuarioExiste = usuarioRepo.obtenerPorId(idUsuario).isPresent();
             var juegoExiste = juegoRepo.obtenerPorId(idJuego).isPresent();
             if (!usuarioExiste || !juegoExiste) {
@@ -410,21 +404,6 @@ public class BibliotecaController {
 
         });
         return estadisticas;
-    }
-
-    public static void main(String[] args) throws ValidationException {
-
-        ITransactionManager transMgr = new HibernateTransactionManager();
-        var c = new BibliotecaController(new BibliotecaRepoHibernate((ISessionManager) transMgr),
-                new UsuarioRepoHibernate((ISessionManager) transMgr),
-                new JuegoRepoHibernate((ISessionManager) transMgr),
-                new CompraRepoHibernate((ISessionManager) transMgr), transMgr);
-
-        System.out.println("Alfabetico: " + c.verBibliotecaPersonal(1L, TipoOrden.ALFABETICO)); // NO FUNCIONA
-        System.out.println("Fecha Adquisicion: " + c.verBibliotecaPersonal(1L, TipoOrden.FECHA_ADQUISICION));
-        System.out.println("Tiempo Juego: " + c.verBibliotecaPersonal(1L, TipoOrden.TIEMPO_JUEGO));
-        System.out.println("Ultima Sesion: " + c.verBibliotecaPersonal(1L, TipoOrden.ULTIMA_SESION));
-
     }
 
 }

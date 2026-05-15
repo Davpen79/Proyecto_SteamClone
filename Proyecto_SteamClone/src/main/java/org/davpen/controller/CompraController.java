@@ -7,16 +7,10 @@ import org.davpen.modelo.dto.CompraDto;
 import org.davpen.modelo.entity.CompraEntity;
 import org.davpen.modelo.form.*;
 import org.davpen.pagos.*;
-import org.davpen.repositorio.hibernate.BibliotecaRepoHibernate;
-import org.davpen.repositorio.hibernate.CompraRepoHibernate;
-import org.davpen.repositorio.hibernate.JuegoRepoHibernate;
-import org.davpen.repositorio.hibernate.UsuarioRepoHibernate;
 import org.davpen.repositorio.interfaces.IBibliotecaRepo;
 import org.davpen.repositorio.interfaces.ICompraRepo;
 import org.davpen.repositorio.interfaces.IJuegoRepo;
 import org.davpen.repositorio.interfaces.IUsuarioRepo;
-import org.davpen.transaction.HibernateTransactionManager;
-import org.davpen.transaction.ISessionManager;
 import org.davpen.transaction.ITransactionManager;
 
 import java.io.IOException;
@@ -37,7 +31,6 @@ public class CompraController {
     private final IJuegoRepo juegoRepo;
     private final IBibliotecaRepo bibliotecaRepo;
     public ITransactionManager transMgr;
-    public static final Path RUTA_FACTURA = Path.of("data");
 
     public CompraController(ICompraRepo compraRepo, IUsuarioRepo usuarioRepo, IJuegoRepo juegoRepo,
                             IBibliotecaRepo bibliotecaRepo, ITransactionManager transMgr) {
@@ -63,7 +56,6 @@ public class CompraController {
 
         var idUsuario = compraForm.getIdUsuarioCompra();
         var idJuego = compraForm.getIdJuegoCompra();
-        var metodoPago = compraForm.getTipoPagoCompra();
 
         var compra = transMgr.inTransaction(() -> {
             //usuario existe y activo
@@ -100,10 +92,6 @@ public class CompraController {
             if (!errores.isEmpty()) {
                 throw new ValidationException(errores);
             }
-
-            //var precioCompra = juegoRepo.obtenerPorId(idJuego).get().getPrecioBaseJuego();
-            //var compraForm = new CompraForm(idUsuario, idJuego, LocalDate.now(), metodoPago, precioCompra,
-            //        descuentoCompra, TipoEstadoCompra.PENDIENTE);
 
             var compraEfectuada = compraRepo.crear(compraForm);
             return compraEfectuada;
@@ -340,7 +328,12 @@ public class CompraController {
      * @param path El directorio donde se guardará el archivo de texto generado
      * @throws ValidationException Si la validacion falla; la excepción contiene la lista de errores.
      */
-    public void crearFactura(Long compraId, Path path) throws ValidationException {
+    public void crearFactura(Long compraId, Path path) throws ValidationException, IOException {
+
+        if (!path.toFile().exists()){
+            Files.createDirectories(path);
+        }
+
         var fullPath = path + "/Factura nª " + compraId + ".txt";
         var errores = new ArrayList<ErrorDto>();
 
@@ -401,23 +394,5 @@ public class CompraController {
             System.err.println("Se ha producido un error al generar la factura nº " + compraId);
         }
     }
-
-
-    static void main() throws ValidationException{
-
-        ITransactionManager transMgr = new HibernateTransactionManager();
-        var c = new CompraController(new CompraRepoHibernate((ISessionManager) transMgr),
-                new UsuarioRepoHibernate((ISessionManager) transMgr),
-                new JuegoRepoHibernate((ISessionManager) transMgr),
-                new BibliotecaRepoHibernate((ISessionManager) transMgr), transMgr);
-
-        c.crearFactura(2L, RUTA_FACTURA);
-        c.crearFactura(3L, RUTA_FACTURA);
-        c.crearFactura(1L, RUTA_FACTURA);
-        c.crearFactura(4L, RUTA_FACTURA);
-        c.crearFactura(5L, RUTA_FACTURA);
-
-    }
-
 
 }

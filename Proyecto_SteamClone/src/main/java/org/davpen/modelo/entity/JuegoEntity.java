@@ -1,6 +1,5 @@
 package org.davpen.modelo.entity;
 
-import org.davpen.dbconfig.HibernateUtil;
 import org.davpen.enums.TipoCategoriaJuego;
 import org.davpen.enums.TipoClasificacionEdades;
 import org.davpen.enums.TipoEstadoJuego;

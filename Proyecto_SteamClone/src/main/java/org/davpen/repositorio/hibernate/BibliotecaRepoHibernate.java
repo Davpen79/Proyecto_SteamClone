@@ -13,7 +13,7 @@ import java.util.Optional;
 
 public class BibliotecaRepoHibernate implements IBibliotecaRepo {
 
-    private ISessionManager sessionManager;
+    private final ISessionManager sessionManager;
 
     public BibliotecaRepoHibernate(ISessionManager sm) {
         this.sessionManager = sm;

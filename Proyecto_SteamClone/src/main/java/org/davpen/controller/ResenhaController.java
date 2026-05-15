@@ -9,19 +9,12 @@ import org.davpen.modelo.entity.ResenhaEntity;
 import org.davpen.modelo.form.ErrorDto;
 import org.davpen.modelo.form.ErrorType;
 import org.davpen.modelo.form.ResenhaForm;
-import org.davpen.repositorio.hibernate.BibliotecaRepoHibernate;
-import org.davpen.repositorio.hibernate.JuegoRepoHibernate;
-import org.davpen.repositorio.hibernate.ResenhaRepoHibernate;
-import org.davpen.repositorio.hibernate.UsuarioRepoHibernate;
 import org.davpen.repositorio.interfaces.IBibliotecaRepo;
 import org.davpen.repositorio.interfaces.IJuegoRepo;
 import org.davpen.repositorio.interfaces.IResenhaRepo;
 import org.davpen.repositorio.interfaces.IUsuarioRepo;
-import org.davpen.transaction.HibernateTransactionManager;
-import org.davpen.transaction.ISessionManager;
 import org.davpen.transaction.ITransactionManager;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -324,27 +317,6 @@ public class ResenhaController {
         });
 
         return listaResenhasUsuario;
-    }
-
-    static void main() throws ValidationException {
-
-        ITransactionManager transMgr = new HibernateTransactionManager();
-        var c = new ResenhaController(new ResenhaRepoHibernate((ISessionManager) transMgr),
-                new UsuarioRepoHibernate((ISessionManager) transMgr),
-                new JuegoRepoHibernate((ISessionManager) transMgr),
-                new BibliotecaRepoHibernate((ISessionManager) transMgr), transMgr);
-
-        var resenhaForm = new ResenhaForm(1L, 1L, true,
-                "Excelente juego,Excelente juego,Excelente juego,Excelente juego,Excelente juego",
-                20.5, LocalDate.of(2024, 3, 20), null, TipoEstadoResenha.PUBLICADA);
-
-        var resenhaForm2 = new ResenhaForm(1L, 2L, true,
-                "Excelente juego,Excelente juego,Excelente juego,Excelente juego,Excelente juego",
-                20.5, LocalDate.of(2024, 3, 20), null, TipoEstadoResenha.PUBLICADA);
-
-
-        c.eliminarResenha(2L, 1L);
-
     }
 
 }

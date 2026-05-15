@@ -11,10 +11,7 @@ import org.davpen.modelo.entity.JuegoEntity;
 import org.davpen.modelo.form.ErrorDto;
 import org.davpen.modelo.form.ErrorType;
 import org.davpen.modelo.form.JuegoForm;
-import org.davpen.repositorio.hibernate.JuegoRepoHibernate;
 import org.davpen.repositorio.interfaces.IJuegoRepo;
-import org.davpen.transaction.HibernateTransactionManager;
-import org.davpen.transaction.ISessionManager;
 import org.davpen.transaction.ITransactionManager;
 
 import java.util.ArrayList;
@@ -67,7 +64,7 @@ public class JuegoController {
             throw new ValidationException(errores);
         }
 
-        return Mapper.mapaJuegoCompleto(juego.orElse(null));//corregir en todo_ el código
+        return Mapper.mapaJuegoCompleto(juego.orElse(null));
     }
 
     /**
@@ -338,12 +335,6 @@ public class JuegoController {
         });
 
         return Mapper.mapaJuegoCompleto(juego.orElse(null));
-    }
-
-    static void main() throws ValidationException {
-        ITransactionManager transMgr = new HibernateTransactionManager();
-        var c = new JuegoController(new JuegoRepoHibernate((ISessionManager) transMgr), transMgr);
-
     }
 
 }

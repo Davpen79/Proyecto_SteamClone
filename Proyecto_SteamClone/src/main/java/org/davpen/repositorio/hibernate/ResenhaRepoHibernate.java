@@ -13,7 +13,7 @@ import java.util.Optional;
 
 public class ResenhaRepoHibernate implements IResenhaRepo {
 
-    private ISessionManager sessionManager;
+    private final ISessionManager sessionManager;
 
     public ResenhaRepoHibernate(ISessionManager sm) {
         this.sessionManager = sm;
