@@ -1,28 +1,58 @@
 package org.davpen.modelo.entity;
 
+import jakarta.persistence.*;
 import org.davpen.enums.TipoEstadoResenha;
 
 import java.time.LocalDate;
 import java.util.Objects;
 
+@Table(name = "reseñas")
+@Entity
 public class ResenhaEntity {
 
     //Atributos
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idResenha;
+    @Column(name = "idUsuarioResenha")
     private Long idUsuarioResenha;
+    @Column(name = "idJuegoResenha")
     private Long idJuegoResenha;
+    @Column(name = "recomendacionResenha")
     private boolean recomendacionResenha;
+    @Column(name = "textoResenha")
     private String textoResenha;
+    @Column(name = "tiempoJugadoResenha")
     private double tiempoJugadoResenha;
+    @Column(name = "fechaPublicacionResenha")
     private LocalDate fechaPublicacionResenha;
+    @Column(name = "fechaUltiEdicResenha")
     private LocalDate fechaUltiEdicResenha;
+    @Column(name = "estadoResenha")
     private TipoEstadoResenha estadoResenha;
+
+    //Constructor
+    public ResenhaEntity(){}
 
     //Constructor
     public ResenhaEntity(Long idResenha, Long idUsuarioResenha, Long idJuegoResenha, boolean recomendacionResenha,
                          String textoResenha, double tiempoJugadoResenha, LocalDate fechaPublicacionResenha,
                          LocalDate fechaUltiEdicResenha, TipoEstadoResenha estadoResenha) {
         this.idResenha = idResenha;
+        this.idUsuarioResenha = idUsuarioResenha;
+        this.idJuegoResenha = idJuegoResenha;
+        this.recomendacionResenha = recomendacionResenha;
+        this.textoResenha = textoResenha;
+        this.tiempoJugadoResenha = tiempoJugadoResenha;
+        this.fechaPublicacionResenha = fechaPublicacionResenha;
+        this.fechaUltiEdicResenha = fechaUltiEdicResenha;
+        this.estadoResenha = estadoResenha;
+    }
+
+    //Constructor
+    public ResenhaEntity(Long idUsuarioResenha, Long idJuegoResenha, boolean recomendacionResenha,
+                         String textoResenha, double tiempoJugadoResenha, LocalDate fechaPublicacionResenha,
+                         LocalDate fechaUltiEdicResenha, TipoEstadoResenha estadoResenha) {
         this.idUsuarioResenha = idUsuarioResenha;
         this.idJuegoResenha = idJuegoResenha;
         this.recomendacionResenha = recomendacionResenha;

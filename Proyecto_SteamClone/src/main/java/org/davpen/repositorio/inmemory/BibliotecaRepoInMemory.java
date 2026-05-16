@@ -2,7 +2,7 @@ package org.davpen.repositorio.inmemory;
 
 import org.davpen.modelo.entity.BibliotecaEntity;
 import org.davpen.modelo.form.BibliotecaForm;
-import org.davpen.repositorio.intefaces.IBibliotecaRepo;
+import org.davpen.repositorio.interfaces.IBibliotecaRepo;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -2,7 +2,7 @@ package org.davpen.repositorio.inmemory;
 
 import org.davpen.modelo.entity.JuegoEntity;
 import org.davpen.modelo.form.JuegoForm;
-import org.davpen.repositorio.intefaces.IJuegoRepo;
+import org.davpen.repositorio.interfaces.IJuegoRepo;
 
 import java.util.ArrayList;
 import java.util.List;

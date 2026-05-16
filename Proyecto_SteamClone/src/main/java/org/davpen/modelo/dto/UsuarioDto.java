@@ -97,4 +97,20 @@ public class UsuarioDto {
         return Objects.hash(idUsuario, nombreCuentaUsuario, emailUsuario, nombreRealUsuario, paisUsuario,
                 fechaNacUsuario, fechaRegUsuario, avatarUsuario, saldoUsuario, estadoCuentaUsuario);
     }
+
+    @Override
+    public String toString() {
+        return "UsuarioDto{" +
+                "idUsuario=" + idUsuario +
+                ", nombreCuentaUsuario='" + nombreCuentaUsuario + '\'' +
+                ", emailUsuario='" + emailUsuario + '\'' +
+                ", nombreRealUsuario='" + nombreRealUsuario + '\'' +
+                ", paisUsuario='" + paisUsuario + '\'' +
+                ", fechaNacUsuario=" + fechaNacUsuario +
+                ", fechaRegUsuario=" + fechaRegUsuario +
+                ", avatarUsuario='" + avatarUsuario + '\'' +
+                ", saldoUsuario=" + saldoUsuario +
+                ", estadoCuentaUsuario=" + estadoCuentaUsuario +
+                '}';
+    }
 }

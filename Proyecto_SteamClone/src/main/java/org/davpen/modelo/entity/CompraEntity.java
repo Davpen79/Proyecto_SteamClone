@@ -1,28 +1,56 @@
 package org.davpen.modelo.entity;
 
+import jakarta.persistence.*;
 import org.davpen.enums.TipoEstadoCompra;
 import org.davpen.enums.TipoMetodoPago;
 
 import java.time.LocalDate;
 import java.util.Objects;
 
+@Table(name = "compras")
+@Entity
 public class CompraEntity {
 
     //Atributos
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idCompra;
+    @Column(name = "idUsuarioCompra")
     private Long idUsuarioCompra;
+    @Column(name = "idJuegoCompra")
     private Long idJuegoCompra;
+    @Column(name = "fechaCompra")
     private LocalDate fechaCompra;
+    @Column(name = "tipoPagoCompra")
     private TipoMetodoPago tipoPagoCompra;
+    @Column(name = "precioBaseCompra")
     private double precioBaseCompra;
+    @Column(name = "descuentoEnCompra")
     private int descuentoEnCompra;
+    @Column(name = "estadoCompra")
     private TipoEstadoCompra estadoCompra;
+
+    //Constructor
+    public CompraEntity(){}
 
     //Constructor
     public CompraEntity(Long idCompra, Long idUsuarioCompra, Long idJuegoCompra, LocalDate fechaCompra,
                         TipoMetodoPago tipoPagoCompra, double precioBaseCompra, int descuentoEnCompra,
                         TipoEstadoCompra estadoCompra) {
         this.idCompra = idCompra;
+        this.idUsuarioCompra = idUsuarioCompra;
+        this.idJuegoCompra = idJuegoCompra;
+        this.fechaCompra = fechaCompra;
+        this.tipoPagoCompra = tipoPagoCompra;
+        this.precioBaseCompra = precioBaseCompra;
+        this.descuentoEnCompra = descuentoEnCompra;
+        this.estadoCompra = estadoCompra;
+    }
+
+    //Constructor
+    public CompraEntity(Long idUsuarioCompra, Long idJuegoCompra, LocalDate fechaCompra,
+                        TipoMetodoPago tipoPagoCompra, double precioBaseCompra, int descuentoEnCompra,
+                        TipoEstadoCompra estadoCompra) {
         this.idUsuarioCompra = idUsuarioCompra;
         this.idJuegoCompra = idJuegoCompra;
         this.fechaCompra = fechaCompra;

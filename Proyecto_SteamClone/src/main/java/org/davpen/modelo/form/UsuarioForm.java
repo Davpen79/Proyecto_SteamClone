@@ -104,7 +104,7 @@ public class UsuarioForm {
             errores.add(new ErrorDto("Nombre_Cuenta", ErrorType.DEMASIADO_LARGO));
         }
 
-        if (nombreCuentaUsuario != null && Character.isDigit(nombreCuentaUsuario.charAt(0))) {
+        if (nombreCuentaUsuario != null && !nombreCuentaUsuario.isBlank() && Character.isDigit(nombreCuentaUsuario.charAt(0))) {
             errores.add(new ErrorDto("Nombre_Cuenta", ErrorType.FORMATO_INVALIDO));
         }
 

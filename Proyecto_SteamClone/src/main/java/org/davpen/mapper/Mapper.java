@@ -64,6 +64,24 @@ public class Mapper {
                 biblioteca.getEstadoInstJuegoBiblio());
     }
 
+    public static BibliotecaDto mapaCompleto(BibliotecaEntity biblioteca, UsuarioEntity usuario, JuegoEntity juego) {
+
+        if (biblioteca == null) {
+            return null;
+        }
+
+        return new BibliotecaDto(
+                biblioteca.getIdBiblio(),
+                biblioteca.getIdUsuarioBiblio(),
+                Optional.of(mapaUsuarioCompleto(usuario)),
+                biblioteca.getIdJuegoBiblio(),
+                Optional.of(mapaJuegoCompleto(juego)),
+                biblioteca.getFechaCompraJuegoBiblio(),
+                biblioteca.getTiempoJuegoBiblio(),
+                biblioteca.getUltiFechaJuegoBiblio(),
+                biblioteca.getEstadoInstJuegoBiblio());
+    }
+
     public static CompraDto mapaCompraSimple(CompraEntity compra) {
 
         if (compra == null) {

@@ -2,7 +2,7 @@ package org.davpen.repositorio.inmemory;
 
 import org.davpen.modelo.entity.CompraEntity;
 import org.davpen.modelo.form.CompraForm;
-import org.davpen.repositorio.intefaces.ICompraRepo;
+import org.davpen.repositorio.interfaces.ICompraRepo;
 
 import java.util.ArrayList;
 import java.util.List;

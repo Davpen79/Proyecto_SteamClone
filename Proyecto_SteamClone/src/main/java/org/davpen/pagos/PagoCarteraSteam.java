@@ -1,23 +1,21 @@
 package org.davpen.pagos;
 
-import org.davpen.enums.TipoEstadoCompra;
 import org.davpen.excepciones.ValidationException;
 import org.davpen.modelo.entity.CompraEntity;
 import org.davpen.modelo.entity.UsuarioEntity;
-import org.davpen.modelo.form.CompraForm;
 import org.davpen.modelo.form.ErrorDto;
 import org.davpen.modelo.form.ErrorType;
 import org.davpen.modelo.form.UsuarioForm;
-import org.davpen.repositorio.intefaces.ICompraRepo;
-import org.davpen.repositorio.intefaces.IUsuarioRepo;
+import org.davpen.repositorio.interfaces.ICompraRepo;
+import org.davpen.repositorio.interfaces.IUsuarioRepo;
 
 import java.util.ArrayList;
 
 public class PagoCarteraSteam implements IPlataformaPago {
 
-    private Long idUsuario;
-    private IUsuarioRepo usuarioRepo;
-    private ICompraRepo compraRepo;
+    private final Long idUsuario;
+    private final IUsuarioRepo usuarioRepo;
+    private final ICompraRepo compraRepo;
 
     public PagoCarteraSteam(Long idUsuario, IUsuarioRepo usuarioRepo, ICompraRepo compraRepo) {
         this.idUsuario = idUsuario;

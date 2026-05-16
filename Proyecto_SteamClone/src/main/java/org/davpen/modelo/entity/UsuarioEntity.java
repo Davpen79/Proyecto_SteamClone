@@ -1,23 +1,42 @@
 package org.davpen.modelo.entity;
 
+import jakarta.persistence.*;
 import org.davpen.enums.TipoEstadoCuenta;
 
 import java.time.LocalDate;
 import java.util.Objects;
 
+@Table(name = "usuarios")
+@Entity
 public class UsuarioEntity {
+
     //Atributos
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idUsuario;
+    @Column(name = "nombreCuentaUsuario")
     private String nombreCuentaUsuario;
+    @Column(name = "emailUsuario")
     private String emailUsuario;
+    @Column(name = "passwordUsuario")
     private String passwordUsuario;
+    @Column(name = "nombreRealUsuario")
     private String nombreRealUsuario;
+    @Column(name = "paisUsuario")
     private String paisUsuario;
+    @Column(name = "fechaNacUsuario")
     private LocalDate fechaNacUsuario;
+    @Column(name = "fechaRegUsuario")
     private LocalDate fechaRegUsuario;
+    @Column(name = "avatarUsuario")
     private String avatarUsuario;
+    @Column(name = "saldoUsuario")
     private double saldoUsuario;
+    @Column(name = "estadoCuentaUsuario")
     private TipoEstadoCuenta estadoCuentaUsuario;
+
+    //Constructor
+    public UsuarioEntity(){}
 
     //Constructor
     public UsuarioEntity(Long idUsuario, String nombreCuentaUsuario, String emailUsuario, String passwordUsuario,
@@ -25,6 +44,23 @@ public class UsuarioEntity {
                          LocalDate fechaRegUsuario, String avatarUsuario, double saldoUsuario,
                          TipoEstadoCuenta estadoCuentaUsuario) {
         this.idUsuario = idUsuario;
+        this.nombreCuentaUsuario = nombreCuentaUsuario;
+        this.emailUsuario = emailUsuario;
+        this.passwordUsuario = passwordUsuario;
+        this.nombreRealUsuario = nombreRealUsuario;
+        this.paisUsuario = paisUsuario;
+        this.fechaNacUsuario = fechaNacUsuario;
+        this.fechaRegUsuario = fechaRegUsuario;
+        this.avatarUsuario = avatarUsuario;
+        this.saldoUsuario = saldoUsuario;
+        this.estadoCuentaUsuario = estadoCuentaUsuario;
+    }
+
+    //Constructor
+    public UsuarioEntity(String nombreCuentaUsuario, String emailUsuario, String passwordUsuario,
+                         String nombreRealUsuario, String paisUsuario, LocalDate fechaNacUsuario,
+                         LocalDate fechaRegUsuario, String avatarUsuario, double saldoUsuario,
+                         TipoEstadoCuenta estadoCuentaUsuario) {
         this.nombreCuentaUsuario = nombreCuentaUsuario;
         this.emailUsuario = emailUsuario;
         this.passwordUsuario = passwordUsuario;

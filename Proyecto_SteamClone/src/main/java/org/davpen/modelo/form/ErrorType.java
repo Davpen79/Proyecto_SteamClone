@@ -26,6 +26,7 @@ public enum ErrorType {
     COMPRA_FALLIDA("La compra no se ha efectuado"),
     COMPRA_COMPLETADA("La compra ya se completó"),
     RESENHA_NO_PUBLICADA("La reseña no se ha publicado"),
+    COMPRA_INCOMPLETA("La compra no se ha completado"),
     SALDO_INSUFICIENTE("El saldo en cartera no es suficiente");
 
     private final String mensaje;

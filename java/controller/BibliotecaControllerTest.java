@@ -12,10 +12,10 @@ import org.davpen.modelo.entity.JuegoEntity;
 import org.davpen.modelo.entity.UsuarioEntity;
 import org.davpen.modelo.form.BibliotecaForm;
 import org.davpen.modelo.form.ErrorType;
-import org.davpen.repositorio.intefaces.IBibliotecaRepo;
-import org.davpen.repositorio.intefaces.ICompraRepo;
-import org.davpen.repositorio.intefaces.IJuegoRepo;
-import org.davpen.repositorio.intefaces.IUsuarioRepo;
+import org.davpen.repositorio.interfaces.IBibliotecaRepo;
+import org.davpen.repositorio.interfaces.ICompraRepo;
+import org.davpen.repositorio.interfaces.IJuegoRepo;
+import org.davpen.repositorio.interfaces.IUsuarioRepo;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -318,7 +318,7 @@ public class BibliotecaControllerTest {
     }
 
     @Test
-    public void testVerEstadisticasBiblioteca_DatosValidos() {
+    public void testVerEstadisticasBiblioteca_DatosValidos() throws ValidationException {
         // Arrange
         var idUsuario = 1L;
         JuegoEntity juegoValido2 = new JuegoEntity(2L, "Game2", "Descripcion",

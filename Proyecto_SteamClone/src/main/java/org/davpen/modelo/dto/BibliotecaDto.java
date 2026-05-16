@@ -95,4 +95,19 @@ public class BibliotecaDto {
         return Objects.hash(idBiblio, idUsuarioBiblio, usuarioDto, idJuegoBiblio, juegoDto, fechaCompraJuegoBiblio,
                 tiempoJuegoBiblio, ultiFechaJuegoBiblio, estadoInstJuegoBiblio);
     }
+
+    @Override
+    public String toString() {
+        return "BibliotecaDto{" +
+                "idBiblio=" + idBiblio +
+                ", idUsuarioBiblio=" + idUsuarioBiblio +
+                ", usuarioDto=" + usuarioDto +
+                ", idJuegoBiblio=" + idJuegoBiblio +
+                ", juegoDto=" + juegoDto +
+                ", fechaCompraJuegoBiblio=" + fechaCompraJuegoBiblio +
+                ", tiempoJuegoBiblio=" + tiempoJuegoBiblio +
+                ", ultiFechaJuegoBiblio=" + ultiFechaJuegoBiblio +
+                ", estadoInstJuegoBiblio=" + estadoInstJuegoBiblio +
+                '}';
+    }
 }

@@ -1,27 +1,53 @@
 package org.davpen.modelo.entity;
 
+import jakarta.persistence.*;
 import org.davpen.enums.TipoEstadoInstalacion;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
+@Table(name = "bibliotecas")
+@Entity
 public class BibliotecaEntity {
 
     //Atributos
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idBiblio;
+    @Column(name = "idUsuarioBiblio")
     private Long idUsuarioBiblio;
+    @Column(name = "idJuegoBiblio")
     private Long idJuegoBiblio;
+    @Column(name = "fechaCompraJuegoBiblio")
     private LocalDate fechaCompraJuegoBiblio;
+    @Column(name = "tiempoJuegoBiblio")
     private double tiempoJuegoBiblio;
+    @Column(name = "ultiFechaJuegoBiblio")
     private LocalDateTime ultiFechaJuegoBiblio;
+    @Column(name = "estadoInstJuegoBiblio")
     private TipoEstadoInstalacion estadoInstJuegoBiblio;
+
+    //Constructor
+    public BibliotecaEntity(){}
 
     //Constructor
     public BibliotecaEntity(Long idBiblio, Long idUsuarioBiblio, Long idJuegoBiblio, LocalDate fechaCompraJuegoBiblio
             , double tiempoJuegoBiblio, LocalDateTime ultiFechaJuegoBiblio,
                             TipoEstadoInstalacion estadoInstJuegoBiblio) {
         this.idBiblio = idBiblio;
+        this.idUsuarioBiblio = idUsuarioBiblio;
+        this.idJuegoBiblio = idJuegoBiblio;
+        this.fechaCompraJuegoBiblio = fechaCompraJuegoBiblio;
+        this.tiempoJuegoBiblio = tiempoJuegoBiblio;
+        this.ultiFechaJuegoBiblio = ultiFechaJuegoBiblio;
+        this.estadoInstJuegoBiblio = estadoInstJuegoBiblio;
+    }
+
+    //Constructor
+    public BibliotecaEntity(Long idUsuarioBiblio, Long idJuegoBiblio, LocalDate fechaCompraJuegoBiblio
+            , double tiempoJuegoBiblio, LocalDateTime ultiFechaJuegoBiblio,
+                            TipoEstadoInstalacion estadoInstJuegoBiblio) {
         this.idUsuarioBiblio = idUsuarioBiblio;
         this.idJuegoBiblio = idJuegoBiblio;
         this.fechaCompraJuegoBiblio = fechaCompraJuegoBiblio;

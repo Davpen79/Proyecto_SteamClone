@@ -2,7 +2,7 @@ package org.davpen.repositorio.inmemory;
 
 import org.davpen.modelo.entity.ResenhaEntity;
 import org.davpen.modelo.form.ResenhaForm;
-import org.davpen.repositorio.intefaces.IResenhaRepo;
+import org.davpen.repositorio.interfaces.IResenhaRepo;
 
 import java.util.ArrayList;
 import java.util.List;

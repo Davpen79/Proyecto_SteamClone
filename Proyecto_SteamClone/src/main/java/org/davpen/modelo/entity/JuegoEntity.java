@@ -4,24 +4,48 @@ import org.davpen.enums.TipoCategoriaJuego;
 import org.davpen.enums.TipoClasificacionEdades;
 import org.davpen.enums.TipoEstadoJuego;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Objects;
 
+@Table(name = "juegos")
+@Entity
 public class JuegoEntity {
 
     //Atributos
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idJuego;
+    @Column(name = "tituloJuego")
     private String tituloJuego;
+    @Column(name = "descripcionJuego")
     private String descripcionJuego;
+    @Column(name = "desarrolladorJuego")
     private String desarrolladorJuego;
+    @Column(name = "fechaLanzaJuego")
     private LocalDate fechaLanzaJuego;
+    @Column(name = "precioBaseJuego")
     private double precioBaseJuego;
+    @Column(name = "descuentoActualJuego")
     private int descuentoActualJuego;
+    @Column(name = "categoriaJuego")
     private TipoCategoriaJuego categoriaJuego;
+    @Column(name = "clasEdadJuego")
     private TipoClasificacionEdades clasEdadJuego;
+    @Column(name = "idiomasJuego")
     private ArrayList<String> idiomasJuego;
+    @Column(name = "estadoJuego")
     private TipoEstadoJuego estadoJuego;
+
+    //Constructor
+    public JuegoEntity(){}
 
     //Constructor
     public JuegoEntity(Long idJuego, String tituloJuego, String descripcionJuego, String desarrolladorJuego,
@@ -41,6 +65,23 @@ public class JuegoEntity {
         this.estadoJuego = estadoJuego;
     }
 
+
+    //Constructor
+    public JuegoEntity( String tituloJuego, String descripcionJuego, String desarrolladorJuego,
+                       LocalDate fechaLanzaJuego, double precioBaseJuego, int descuentoActualJuego,
+                       TipoCategoriaJuego categoriaJuego, TipoClasificacionEdades clasEdadJuego,
+                       ArrayList<String> idiomasJuego, TipoEstadoJuego estadoJuego) {
+        this.tituloJuego = tituloJuego;
+        this.descripcionJuego = descripcionJuego;
+        this.desarrolladorJuego = desarrolladorJuego;
+        this.fechaLanzaJuego = fechaLanzaJuego;
+        this.precioBaseJuego = precioBaseJuego;
+        this.descuentoActualJuego = descuentoActualJuego;
+        this.categoriaJuego = categoriaJuego;
+        this.clasEdadJuego = clasEdadJuego;
+        this.idiomasJuego = idiomasJuego;
+        this.estadoJuego = estadoJuego;
+    }
     //Getters
 
     public Long getIdJuego() {
@@ -126,4 +167,5 @@ public class JuegoEntity {
                 ", estadoJuego=" + estadoJuego +
                 '}';
     }
+
 }
